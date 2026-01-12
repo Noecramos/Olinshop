@@ -1,0 +1,469 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* OlinShop Premium Palette (Apple-inspired) */
+  --primary: #1D1D1F;
+  /* Space Black */
+  --primary-hover: #333336;
+  --accent: #007AFF;
+  /* Apple Blue for links/actions */
+  --accent-hover: #0062CC;
+
+  --background: #F5F5F7;
+  /* Apple Light Gray Background */
+  --surface: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+
+  --text: #1D1D1F;
+  /* SF Black */
+  --text-secondary: #86868B;
+  /* SF Gray */
+  --text-on-primary: #FFFFFF;
+
+  --border: #D2D2D7;
+  /* Apple-style border */
+  --success: #34C759;
+  --danger: #FF3B30;
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+
+  --header-height: 64px;
+  --container-max: 1100px;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  background: none;
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  color: #333;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-outline {
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #EFF3F6;
+  color: #555;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Product Card */
+.product-card {
+  background: white;
+  border-radius: 16px;
+  /* More rounded corners */
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1 / 1;
+  /* Square cards */
+  width: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  /* Reduced from -8px */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  /* Softer shadow */
+  border-color: transparent;
+}
+
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 0 0 60%;
+  /* Image takes 60% of card height */
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+.product-image-transition {
+  transition: transform 0.5s ease;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.product-card:hover .product-image-transition {
+  transform: scale(1.08);
+}
+
+.add-btn {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-btn:hover {
+  transform: scale(1.15);
+  background-color: var(--primary-hover);
+}
+
+.add-btn:active {
+  transform: scale(0.95);
+}
+
+/* Header Modern */
+.header-modern {
+  position: relative;
+  height: 280px;
+  border-radius: 0 0 24px 24px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.header-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.header-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8));
+}
+
+.header-content-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  z-index: 20;
+}
+
+.header-flex {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.header-logo-container {
+  width: 140px;
+  /* Bigger logo as requested */
+  height: 140px;
+  border-radius: 50%;
+  border: 4px solid white;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  flex-shrink: 0;
+  position: relative;
+  /* Make it pop out a bit if desired, or keep inline. Inline is cleaner for "clean layout" */
+}
+
+.header-text {
+  color: white;
+  flex: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+.header-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.header-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Mobile App Aesthetic & Adjustments */
+/* Font import moved to top */
+
+body {
+  font-family: 'Inter', sans-serif !important;
+  background-color: #F5F5F7;
+}
+
+.mobile-container {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  padding-bottom: 80px;
+  /* Space for bottom nav if we had one */
+}
+
+/* Search Bar - Icon on Left */
+.search-input-modern {
+  background: #FAFAFA;
+  border: 1px solid #EBEBEB;
+  border-radius: 12px;
+  padding: 14px 14px 14px 48px;
+  /* High left padding for icon */
+  width: 100%;
+  outline: none;
+  font-size: 0.95rem;
+  color: #333;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.search-input-modern:focus {
+  background: #fff;
+  border-color: #F6D55C;
+  box-shadow: 0 4px 15px rgba(246, 213, 92, 0.15);
+}
+
+/* Pill Tabs */
+.category-tab {
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.category-tab.active {
+  background: #F6D55C;
+  color: #000;
+  font-weight: 600;
+  border-color: #F6D55C;
+  box-shadow: 0 4px 10px rgba(246, 213, 92, 0.2);
+}
+
+/* Item Card - The "Cards" user requested */
+.item-card-row {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #f2f2f2;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  /* Stronger shadow */
+}
+
+.item-card-row:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
