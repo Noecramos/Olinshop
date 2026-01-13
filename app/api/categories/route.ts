@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
         }
 
         const { rows } = await sql`
-            SELECT id, restaurant_id as "restaurantId", name, created_at as "createdAt"
+            SELECT id, restaurant_id as "restaurantId", name, subcategory, created_at as "createdAt"
             FROM categories 
             WHERE restaurant_id = ${restaurantId} 
             ORDER BY name
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { restaurantId, name } = body;
+        const { restaurantId, name, subcategory } = body;
 
         if (!restaurantId || !name) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -45,9 +45,9 @@ export async function POST(req: NextRequest) {
         }
 
         const { rows } = await sql`
-            INSERT INTO categories (restaurant_id, name)
-            VALUES (${restaurantId}, ${name})
-            RETURNING id, restaurant_id as "restaurantId", name
+            INSERT INTO categories (restaurant_id, name, subcategory)
+            VALUES (${restaurantId}, ${name}, ${subcategory})
+            RETURNING id, restaurant_id as "restaurantId", name, subcategory
         `;
 
         return NextResponse.json(rows[0]);
