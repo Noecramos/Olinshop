@@ -162,30 +162,40 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 <input
                                     className="w-full pl-24 md:pl-28 p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100 font-mono text-sm font-bold text-gray-800"
                                     value={form.slug || ''}
-                                    onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                                    onChange={e => {
+                                        // Sanitize: lowercase, replace spaces with hyphens, remove special chars
+                                        const sanitized = e.target.value
+                                            .toLowerCase()
+                                            .replace(/\s+/g, '-') // Convert spaces to hyphens
+                                            .replace(/[^a-z0-9-]/g, ''); // Remove special chars
+                                        setForm({ ...form, slug: sanitized });
+                                    }}
                                     placeholder="nome-da-loja"
                                 />
                             </div>
                             <button
                                 type="button"
                                 onClick={() => {
-                                    if (confirm('Gerar novo slug baseado no nome da loja? O link anterior deixará de funcionar!')) {
-                                        if (!form.name) {
-                                            alert('Por favor, preencha o nome da loja primeiro!');
-                                            return;
-                                        }
-                                        const words = form.name.toLowerCase()
-                                            .replace(/[^a-z0-9\s-]/g, '')
-                                            .split(/\s+/)
-                                            .filter((word: string) => word.length > 0);
-
-                                        let newSlug = '';
-                                        if (words.length === 1) newSlug = words[0];
-                                        else if (words.length === 2) newSlug = words.join('-');
-                                        else newSlug = `${words[0]}-${words[words.length - 1]}`;
-
-                                        setForm({ ...form, slug: newSlug });
+                                    if (!form.name) {
+                                        alert('Por favor, preencha o nome da loja primeiro!');
+                                        return;
                                     }
+
+                                    if (!confirm('Gerar novo slug baseado no nome da loja? O link anterior deixará de funcionar!')) {
+                                        return;
+                                    }
+
+                                    const words = form.name.toLowerCase()
+                                        .replace(/[^a-z0-9\s-]/g, '')
+                                        .split(/\s+/)
+                                        .filter((word: string) => word.length > 0);
+
+                                    let newSlug = '';
+                                    if (words.length === 1) newSlug = words[0];
+                                    else if (words.length === 2) newSlug = words.join('-');
+                                    else newSlug = `${words[0]}-${words[words.length - 1]}`;
+
+                                    setForm({ ...form, slug: newSlug });
                                 }}
                                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold whitespace-nowrap"
                                 title="Gerar Slug do Nome"
