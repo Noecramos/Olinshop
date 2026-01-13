@@ -215,23 +215,41 @@ export default function StoreAdmin() {
                 </div>
             </aside>
 
+            {/* Mobile Bottom Bar */}
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around items-center p-2 z-[60] shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+                {[
+                    { id: 'dashboard', label: 'Início', icon: '📊' },
+                    { id: 'products', label: 'Produtos', icon: '📦' },
+                    { id: 'settings', label: 'Ajustes', icon: '⚙️' }
+                ].map(item => (
+                    <button
+                        key={item.id}
+                        onClick={() => setTab(item.id)}
+                        className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${tab === item.id ? 'text-accent' : 'text-gray-400'}`}
+                    >
+                        <span className="text-2xl">{item.icon}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                    </button>
+                ))}
+            </nav>
+
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <header className="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+            <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
+                <header className="bg-white border-b border-gray-100 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-10">
                     <div>
                         <h2 className="text-lg font-black text-gray-900">{tabLabels[tab] || tab}</h2>
-                        <p className="text-xs text-green-500 font-bold flex items-center gap-1">
+                        <p className="text-[10px] md:text-xs text-green-500 font-bold flex items-center gap-1">
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
                         </p>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <Link href={`/loja/${slug}`} target="_blank" className="text-xs font-bold text-gray-400 hover:text-accent transition-colors">
-                            Ver minha loja ↗
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <Link href={`/loja/${slug}`} target="_blank" className="text-[10px] md:text-xs font-bold text-gray-400 hover:text-accent transition-colors">
+                            Ver loja ↗
                         </Link>
                     </div>
                 </header>
 
-                <div className="p-8">
+                <div className="p-4 md:p-8">
                     {tab === 'dashboard' && (
                         <div className="space-y-8 animate-fade-in">
                             {/* Summary Cards */}
