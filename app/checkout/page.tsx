@@ -446,8 +446,18 @@ export default function CheckoutPage() {
                                 <h3 className="text-sm font-semibold text-gray-500 uppercase">Tipo de Pedido</h3>
                                 <div className="grid grid-cols-3 gap-2">
                                     {[
-                                        { id: 'delivery', label: 'Entrega', icon: '🛵' },
-                                        { id: 'pickup', label: 'Retirada', icon: '🛍️' }
+                                        {
+                                            id: 'delivery',
+                                            label: 'Entrega',
+                                            icon: '🛵',
+                                            activeClass: 'bg-[#FDF2F8] text-[#E91E8C] border-[#FBCFE8] shadow-[0_8px_20px_-4px_rgba(233,30,140,0.2)]'
+                                        },
+                                        {
+                                            id: 'pickup',
+                                            label: 'Retirada',
+                                            icon: '🛍️',
+                                            activeClass: 'bg-[#F0F9FF] text-[#0284C7] border-[#BAE6FD] shadow-[0_8px_20px_-4px_rgba(2,132,199,0.2)]'
+                                        }
                                     ].map(type => (
                                         <button
                                             key={type.id}
@@ -455,7 +465,7 @@ export default function CheckoutPage() {
                                                 setForm({ ...form, serviceType: type.id });
                                                 if (type.id !== 'delivery') setDeliveryFee(0);
                                             }}
-                                            className={`p-3 rounded-2xl flex flex-col items-center gap-1 transition-all border ${form.serviceType === type.id ? 'bg-black text-white border-black shadow-lg scale-[1.02]' : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-white'}`}
+                                            className={`p-3 rounded-2xl flex flex-col items-center gap-1 transition-all border ${form.serviceType === type.id ? `${type.activeClass} scale-[1.02]` : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-white'}`}
                                         >
                                             <span className="text-xl">{type.icon}</span>
                                             <span className="text-[10px] font-black uppercase tracking-tight">{type.label}</span>
