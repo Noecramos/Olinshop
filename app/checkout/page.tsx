@@ -541,65 +541,54 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Unicode Emojis for better compatibility
-            const EMOJI = {
-                TICKET: '\uD83C\uDFAB',
-                USER: '\uD83D\uDC64',
-                PHONE: '\uD83D\uDCF1',
-                MAP: '\uD83D\uDCCD',
-                POST: '\uD83D\uDCEE',
-                CART: '\uD83D\uDED2',
-                MONEY: '\uD83D\uDCB5',
-                TRUCK: '\uD83D\uDE9A',
-                TOTAL: '\uD83D\uDCB0',
-                NOTE: '\uD83D\uDCDD',
-                ROCKET: '\uD83D\uDE80',
-                PIX: '\u2728', // Using sparkles for PIX as a safer alternative to 💠
-                CARD: '\uD83D\uDCB3',
-                BAG: '\uD83D\uDDE3\uFE0F' // 🛍️
+            // Encoded Emojis for absolute URL compatibility
+            const E = {
+                TICKET: '%F0%9F%8E%AB', // 🎫
+                USER: '%F0%9F%91%A4',   // 👤
+                PHONE: '%F0%9F%93%B1',  // 📱
+                MAP: '%F0%9F%93%8D',    // 📍
+                POST: '%F0%9F%93%AE',   // 📮
+                CART: '%F0%9F%92%92',   // 🛒
+                MONEY: '%F0%9F%92%B5',  // 💵
+                TRUCK: '%F0%9F%9A%9A',  // 🚚
+                TOTAL: '%F0%9F%92%B0',  // 💰
+                NOTE: '%F0%9F%93%9D',   // 📝
+                ROCKET: '%F0%9F%9A%80', // 🚀
+                PIX: '%E2%9C%A8',       // ✨
+                CARD: '%F0%9F%92%B3',   // 💳
+                PACKAGE: '%F0%9F%93%A6' // 📦
             };
 
-            // Format Message
-            const getIcon = (cat: string) => {
-                const lower = (cat || '').toLowerCase();
-                if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda')) return '\uD83D\uDC55'; // 👕
-                if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu')) return '\uD83D\uDCF1'; // 📱
-                if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato')) return '\uD83D\uDC5F'; // 👟
-                if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo')) return '\u231A'; // ⌚
-                if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return '\uD83C\uDFE0'; // 🏠
-                if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return '\uD83D\uDC84'; // 💄
-                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '\uD83E\uDDC3'; // 🥤
-                return '\uD83D\uDCE6'; // 📦
-            };
-
+            // Format Message Parts
             const itemsList = cart.map((i: any) => {
-                const icon = getIcon(i.category);
                 const itemTotal = i.price * i.quantity;
-                return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                return `${E.PACKAGE} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             }).join('\n');
 
-            const paymentInfo = form.paymentMethod === 'pix' ? `${EMOJI.PIX} PIX` :
-                (form.paymentMethod === 'card' ? `${EMOJI.CARD} Cartão` :
-                    `${EMOJI.MONEY} Dinheiro (Troco para R$ ${form.changeFor})`);
+            const paymentInfo = form.paymentMethod === 'pix' ? `${E.PIX} PIX` :
+                (form.paymentMethod === 'card' ? `${E.CARD} Cartão` :
+                    `${E.MONEY} Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const message = `*${restData.name.toUpperCase()}*\n` +
-                `${EMOJI.TICKET} *PEDIDO #${ticketNumber}*\n\n` +
-                `${EMOJI.USER} *Cliente:* ${form.name}\n` +
-                `${EMOJI.PHONE} *Telefone:* ${form.phone}\n` +
-                `${EMOJI.MAP} *Endereço:* ${form.address}\n` +
-                `${EMOJI.POST} *CEP:* ${form.zipCode}\n\n` +
-                `${EMOJI.CART} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
-                `${EMOJI.MONEY} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${EMOJI.TRUCK} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${EMOJI.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
-                (form.observations ? `${EMOJI.NOTE} *Observações:* ${form.observations}\n\n` : '') +
+            const rawMessage = `*${restData.name.toUpperCase()}*\n` +
+                `${E.TICKET} *PEDIDO #${ticketNumber}*\n\n` +
+                `${E.USER} *Cliente:* ${form.name}\n` +
+                `${E.PHONE} *Telefone:* ${form.phone}\n` +
+                `${E.MAP} *Endereço:* ${form.address}\n` +
+                `${E.POST} *CEP:* ${form.zipCode}\n\n` +
+                `${E.CART} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                `${E.MONEY} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${E.TRUCK} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${E.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
+                (form.observations ? `${E.NOTE} *Observações:* ${form.observations}\n\n` : '') +
                 `${paymentInfo}\n\n` +
-                `_Enviado via OlinShop ${EMOJI.ROCKET}_`;
+                `_Enviado via OlinShop ${E.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
-            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
+
+            // Encode the MESSAGE but preserve the % symbols from our manual emoji encoding
+            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(rawMessage).replace(/%25/g, '%')}`;
 
             setWhatsappLink(link);
             clearCart();
