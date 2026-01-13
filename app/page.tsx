@@ -14,7 +14,7 @@ function MarketplaceContent() {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/zodpPs7.png',
+    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-logo.png',
     welcomeTitle: 'O que você\nbusca hoje?',
     welcomeSubtitle: 'Shopping no WhatsApp',
     footerText: '© 2025 OlinShop Premium retail',

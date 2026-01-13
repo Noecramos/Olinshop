@@ -151,7 +151,7 @@ export default function RegisterRestaurant() {
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-4xl">
                 {/* Header Banner */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/zodpPs7.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-header.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
