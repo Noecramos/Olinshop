@@ -16,11 +16,40 @@ function LoginForm() {
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/';
 
-    const handleForgotPassword = () => {
-        const identifier = email || "";
-        const message = `Olá, perdi minha senha de acesso ao OlinShop. ${identifier ? `Meu email/identificador é: ${identifier}` : ''}`;
-        const whatsappUrl = `https://wa.me/5581995515777?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
+    const handleForgotPassword = async () => {
+        if (!email) {
+            alert("Por favor, preencha o campo de email para recuperar sua senha.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await res.json();
+            setLoading(false);
+
+            if (res.ok && data.success) {
+                const message = `Olá, ${data.userName}! Sua nova senha de acesso ao OlinShop foi gerada com sucesso: %0A%0A🔑 Senha: *${data.newPassword}*%0A%0AUtilize esta senha para fazer seu próximo login.`;
+                const whatsappUrl = `https://wa.me/${data.phone}?text=${message}`;
+
+                if (confirm("Sua nova senha foi gerada com sucesso! Deseja recebê-la agora via WhatsApp?")) {
+                    window.open(whatsappUrl, '_blank');
+                } else {
+                    alert(`Sua nova senha é: ${data.newPassword}\n\nPor favor, anote-a.`);
+                }
+            } else {
+                alert(data.error || "Erro ao processar solicitação");
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
+            alert("Erro de conexão");
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

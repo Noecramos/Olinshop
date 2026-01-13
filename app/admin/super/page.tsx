@@ -82,7 +82,20 @@ export default function SuperAdmin() {
             const data = await res.json();
             if (res.ok) {
                 setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, password: data.password } : r));
-                alert(`Nova senha de ${restaurant.name}: ${data.password}`);
+
+                const phone = restaurant.whatsapp || restaurant.phone;
+                if (phone) {
+                    let cleanPhone = phone.replace(/\D/g, '');
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
+
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua senha de acesso ao painel do OlinShop foi resetada. %0A%0A🔑 Nova Senha: *${data.password}*%0A%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
+
+                    if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o parceiro?`)) {
+                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                    }
+                } else {
+                    alert(`Nova senha de ${restaurant.name}: ${data.password}`);
+                }
             }
         } catch (e) {
             alert('Erro ao resetar senha');

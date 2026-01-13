@@ -163,6 +163,17 @@ export default function StoreAdmin() {
                             Entrar no Painel
                         </button>
                     </form>
+                    <div className="mt-6 text-center">
+                        <button
+                            onClick={() => {
+                                const message = `Olá, esqueci minha senha de acesso ao painel da loja *${restaurant.name}*. Pode me ajudar?`;
+                                window.open(`https://wa.me/5581995515777?text=${encodeURIComponent(message)}`, '_blank');
+                            }}
+                            className="text-xs text-gray-400 hover:text-accent font-bold transition-all"
+                        >
+                            Esqueceu sua senha?
+                        </button>
+                    </div>
                 </div>
             </div>
         );
