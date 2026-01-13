@@ -169,13 +169,19 @@ export default function StoreAdmin() {
     const historyOrders = orders.filter(o => ['sent', 'delivered', 'cancelled'].includes(o.status?.toLowerCase()));
     const displayedOrders = showHistory ? historyOrders : activeOrders;
 
+    const tabLabels: { [key: string]: string } = {
+        dashboard: 'Início',
+        products: 'Produtos',
+        settings: 'Ajustes'
+    };
+
     return (
         <div className="min-h-screen bg-[#F8F9FB] flex">
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
                 <div className="p-6 border-b border-gray-50">
                     <h1 className="text-xl font-black text-gray-900">OLIN<span className="text-accent">SHOP</span></h1>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Admin Panel</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Painel Administrativo</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
@@ -213,7 +219,7 @@ export default function StoreAdmin() {
             <main className="flex-1 overflow-y-auto">
                 <header className="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
                     <div>
-                        <h2 className="text-lg font-black text-gray-900 capitalize">{tab}</h2>
+                        <h2 className="text-lg font-black text-gray-900">{tabLabels[tab] || tab}</h2>
                         <p className="text-xs text-green-500 font-bold flex items-center gap-1">
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
                         </p>
@@ -294,8 +300,8 @@ export default function StoreAdmin() {
                                                         <div className="flex items-center gap-3 mb-4">
                                                             <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg text-xs font-black">#{order.ticketNumber}</span>
                                                             <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                    order.status?.toLowerCase() === 'preparing' ? 'bg-blue-100 text-blue-700' :
-                                                                        'bg-green-100 text-green-700'
+                                                                order.status?.toLowerCase() === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                    'bg-green-100 text-green-700'
                                                                 }`}>
                                                                 {order.status?.toLowerCase() === 'pending' ? 'Pendente' :
                                                                     order.status?.toLowerCase() === 'preparing' ? 'Expedição' :
