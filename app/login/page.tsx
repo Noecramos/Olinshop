@@ -12,8 +12,16 @@ function LoginForm() {
     const { login } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/';
+
+    const handleForgotPassword = () => {
+        const identifier = email || "";
+        const message = `Olá, perdi minha senha de acesso ao OlinShop. ${identifier ? `Meu email/identificador é: ${identifier}` : ''}`;
+        const whatsappUrl = `https://wa.me/5581995515777?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,17 +55,39 @@ function LoginForm() {
                     />
                 </div>
                 <div>
-                    <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-1">Senha</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent transition-all"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                    />
+                    <div className="flex justify-between items-center mb-1">
+                        <label htmlFor="password" className="block text-sm font-bold text-gray-700">Senha</label>
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="text-xs text-accent font-bold hover:underline"
+                        >
+                            Perdeu sua senha?
+                        </button>
+                    </div>
+                    <div className="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-2"
+                        >
+                            {showPassword ? (
+                                <span title="Ocultar">👁️‍🗨️</span>
+                            ) : (
+                                <span title="Ver">👁️</span>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
                 <button

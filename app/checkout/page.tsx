@@ -28,12 +28,13 @@ export default function CheckoutPage() {
     const [form, setForm] = useState({
         name: "",
         phone: "",
+        cpf: "",
         zipCode: "",
         address: "",
         paymentMethod: "pix",
         changeFor: "",
         observations: "",
-        serviceType: "delivery", // delivery, pickup
+        serviceType: "delivery", // delivery, pickup, shipping
     });
 
     // Fetch restaurant data
@@ -67,6 +68,7 @@ export default function CheckoutPage() {
                 ...prev,
                 name: prev.name || user.name || "",
                 phone: prev.phone || user.phone || "",
+                cpf: prev.cpf || user.cpf || "",
                 zipCode: prev.zipCode || user.zipCode || "",
                 address: prev.address || user.address || ""
             }));
@@ -340,6 +342,7 @@ export default function CheckoutPage() {
                 restaurantId,
                 customerName: form.name,
                 customerPhone: form.phone,
+                customerCpf: form.cpf,
                 customerAddress: form.address,
                 customerZipCode: form.zipCode,
                 items: cart,
@@ -538,7 +541,22 @@ export default function CheckoutPage() {
                                 value={form.phone}
                                 onChange={e => setForm({ ...form, phone: e.target.value })}
                             />
-
+                            <input
+                                id="customerCpf"
+                                name="customerCpf"
+                                className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                placeholder="CPF (000.000.000-00)"
+                                value={form.cpf}
+                                onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, '').slice(0, 11);
+                                    let formatted = val;
+                                    if (val.length > 9) formatted = `${val.slice(0, 3)}.${val.slice(3, 6)}.${val.slice(6, 9)}-${val.slice(9)}`;
+                                    else if (val.length > 6) formatted = `${val.slice(0, 3)}.${val.slice(3, 6)}.${val.slice(6)}`;
+                                    else if (val.length > 3) formatted = `${val.slice(0, 3)}.${val.slice(3)}`;
+                                    setForm({ ...form, cpf: formatted });
+                                }}
+                                maxLength={14}
+                            />
 
                             {(form.serviceType === 'delivery' || form.serviceType === 'shipping') && (
                                 <>

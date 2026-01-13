@@ -122,6 +122,7 @@ export default function StoreAdmin() {
                     <hr>
                     <p><strong>Tipo:</strong> ${order.serviceType === 'delivery' ? 'Entrega' : 'Retirada'}</p>
                     <p><strong>Cliente:</strong> ${order.customer?.name}</p>
+                    ${order.customer?.cpf ? `<p><strong>CPF:</strong> ${order.customer.cpf}</p>` : ''}
                     <p><strong>Telefone:</strong> ${order.customer?.phone}</p>
                     ${order.serviceType === 'delivery' ? `<p><strong>Endereço:</strong> ${order.customer?.address}</p>` : ''}
                     <hr>
@@ -430,6 +431,7 @@ export default function StoreAdmin() {
 
                                                         <div className="mb-4">
                                                             <h4 className="font-black text-gray-900 text-lg leading-none mb-1">{order.customer?.name}</h4>
+                                                            {order.customer?.cpf && <p className="text-xs text-blue-600 font-bold mb-1">CPF: {order.customer.cpf}</p>}
                                                             {order.serviceType === 'delivery' && <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>}
                                                             <p className="text-xs text-gray-400 mt-1">📞 {order.customer?.phone}</p>
                                                         </div>

@@ -10,6 +10,7 @@ interface User {
     phone: string;
     zipCode: string;
     address: string;
+    cpf: string;
 }
 
 interface AuthContextType {

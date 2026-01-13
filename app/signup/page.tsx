@@ -12,7 +12,7 @@ function SignupForm() {
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/';
     const [cpfError, setCpfError] = useState("");
-
+    const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -202,17 +202,30 @@ function SignupForm() {
                             onChange={e => setForm({ ...form, email: e.target.value })}
                         />
                     </div>
-                    <div>
+                    <div className="relative">
                         <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-1">Senha</label>
-                        <input
-                            id="password"
-                            name="password"
-                            required
-                            type="password"
-                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                            value={form.password}
-                            onChange={e => setForm({ ...form, password: e.target.value })}
-                        />
+                        <div className="relative">
+                            <input
+                                id="password"
+                                name="password"
+                                required
+                                type={showPassword ? "text" : "password"}
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent pr-12"
+                                value={form.password}
+                                onChange={e => setForm({ ...form, password: e.target.value })}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-2"
+                            >
+                                {showPassword ? (
+                                    <span title="Ocultar">👁️‍🗨️</span>
+                                ) : (
+                                    <span title="Ver">👁️</span>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
