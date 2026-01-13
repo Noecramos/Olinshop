@@ -13,6 +13,27 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
         }
     }, [restaurant]);
 
+    // Auto-generate slug from name when name changes
+    useEffect(() => {
+        if (form.name && !form.slug) {
+            // Generate slug from name
+            const generateSlug = (name: string) => {
+                const words = name.toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+                    .split(/\s+/)
+                    .filter(word => word.length > 0);
+
+                if (words.length === 1) return words[0];
+                if (words.length === 2) return words.join('-');
+                // For 3+ words, use first and last word
+                return `${words[0]}-${words[words.length - 1]}`;
+            };
+
+            const newSlug = generateSlug(form.name);
+            setForm((prev: any) => ({ ...prev, slug: newSlug }));
+        }
+    }, [form.name]);
+
     const handleSave = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         setLoading(true);
@@ -141,21 +162,35 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 <input
                                     className="w-full pl-24 md:pl-28 p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100 font-mono text-sm font-bold text-gray-800"
                                     value={form.slug || ''}
-                                    onChange={e => setForm({ ...form, slug: e.target.value })}
+                                    onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                                    placeholder="nome-da-loja"
                                 />
                             </div>
                             <button
                                 type="button"
                                 onClick={() => {
-                                    if (confirm('Gerar novo link aleatório? O link anterior deixará de funcionar!')) {
-                                        const randomSlug = Math.random().toString(36).substring(2, 10);
-                                        setForm({ ...form, slug: randomSlug });
+                                    if (confirm('Gerar novo slug baseado no nome da loja? O link anterior deixará de funcionar!')) {
+                                        if (!form.name) {
+                                            alert('Por favor, preencha o nome da loja primeiro!');
+                                            return;
+                                        }
+                                        const words = form.name.toLowerCase()
+                                            .replace(/[^a-z0-9\s-]/g, '')
+                                            .split(/\s+/)
+                                            .filter((word: string) => word.length > 0);
+
+                                        let newSlug = '';
+                                        if (words.length === 1) newSlug = words[0];
+                                        else if (words.length === 2) newSlug = words.join('-');
+                                        else newSlug = `${words[0]}-${words[words.length - 1]}`;
+
+                                        setForm({ ...form, slug: newSlug });
                                     }
                                 }}
                                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold whitespace-nowrap"
-                                title="Gerar Link Aleatório"
+                                title="Gerar Slug do Nome"
                             >
-                                🎲 Gerar
+                                🔄 Gerar
                             </button>
                         </div>
                         <p className="text-xs text-amber-600 mt-1">⚠️ Alterar isso quebrará links e QR Codes existentes!</p>
