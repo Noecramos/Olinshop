@@ -169,7 +169,7 @@ export default function StoreAdmin() {
         { name: 'Enviado', value: orders.filter(o => o.status === 'sent').length },
         { name: 'Pendente', value: orders.filter(o => o.status === 'pending').length },
         { name: 'Cancelado', value: orders.filter(o => o.status === 'cancelled').length },
-        { name: 'Preparo', value: orders.filter(o => o.status === 'preparing').length },
+        { name: 'Expedição', value: orders.filter(o => o.status === 'preparing').length },
     ].filter(i => i.value > 0);
 
     if (!restaurant) return <div className="p-10 text-center">Carregando loja...</div>;
@@ -652,7 +652,7 @@ export default function StoreAdmin() {
                                                                             'bg-gray-100 text-gray-600'
                                                                     }`}>
                                                                     {order.status === 'pending' ? 'Pendente' :
-                                                                        order.status === 'preparing' ? 'Preparo' :
+                                                                        order.status === 'preparing' ? 'Expedição' :
                                                                             order.status === 'sent' ? 'Enviado' : order.status}
                                                                 </span>
                                                             </div>
@@ -731,12 +731,18 @@ export default function StoreAdmin() {
                                                                                 if (!confirm('Aprovar este pedido?')) return;
                                                                                 setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
                                                                                 try {
-                                                                                    await fetch('/api/orders', {
+                                                                                    const response = await fetch('/api/orders', {
                                                                                         method: 'PUT',
                                                                                         headers: { 'Content-Type': 'application/json' },
                                                                                         body: JSON.stringify({ id: order.id, status: 'preparing' })
                                                                                     });
-                                                                                } catch (error) { fetchOrders(); }
+                                                                                    if (!response.ok) {
+                                                                                        throw new Error('Failed to update order');
+                                                                                    }
+                                                                                } catch (error) {
+                                                                                    console.error('Error approving order:', error);
+                                                                                    fetchOrders();
+                                                                                }
                                                                             }}
                                                                             className="px-3 py-1 bg-black text-white hover:bg-gray-800 rounded-lg text-[10px] font-bold uppercase"
                                                                         >
@@ -746,7 +752,7 @@ export default function StoreAdmin() {
                                                                     {order.status === 'preparing' && (
                                                                         <button
                                                                             onClick={async () => {
-                                                                                if (!confirm('Marcar como enviado?')) return;
+                                                                                if (!confirm('Remeter pedido?')) return;
                                                                                 setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
                                                                                 try {
                                                                                     await fetch('/api/orders', {
@@ -758,7 +764,7 @@ export default function StoreAdmin() {
                                                                             }}
                                                                             className="px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[10px] font-bold uppercase"
                                                                         >
-                                                                            Enviar
+                                                                            Remeter
                                                                         </button>
                                                                     )}
                                                                 </div>
