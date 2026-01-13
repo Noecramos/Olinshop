@@ -33,8 +33,8 @@ export default function StoreFront() {
                 if (data) {
                     // Fetch Products for this restaurant
                     fetch(`/api/products?restaurantId=${data.id}`)
-                        .then(res => res.json())
-                        .then(setProducts);
+                        .then(res => res.ok ? res.json() : [])
+                        .then(data => setProducts(Array.isArray(data) ? data : []));
                 }
             });
     }, [slug]);

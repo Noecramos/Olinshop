@@ -39,8 +39,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
         // Fetch Products
         fetch(`/api/products?restaurantId=${restaurantId}`)
-            .then(res => res.json())
-            .then(data => setProducts(data || []));
+            .then(res => res.ok ? res.json() : [])
+            .then(data => setProducts(Array.isArray(data) ? data : []));
     };
 
     useEffect(() => {

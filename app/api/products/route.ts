@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
         }
 
         const { rows } = await sql`
+            SELECT 
                 id, restaurant_id as "restaurantId", name, price, category, 
                 image, description, variants, weight, height, width, length,
                 created_at as "createdAt"
