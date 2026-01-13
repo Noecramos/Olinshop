@@ -138,11 +138,21 @@ export async function PUT(req: NextRequest) {
             id, name, slug, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
-            popularTitle, welcomeSubtitle, resetPassword, isOpen
+            popularTitle, welcomeSubtitle, resetPassword, isOpen, responsibleName
         } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
+        }
+
+        // If slug is being updated, check for duplicates
+        if (slug) {
+            const { rows: existing } = await sql`
+                SELECT id FROM restaurants WHERE slug = ${slug} AND id != ${id}
+            `;
+            if (existing.length > 0) {
+                return NextResponse.json({ error: "Este slug já está em uso por outra loja" }, { status: 409 });
+            }
         }
 
         // Generate a random 8-char password
@@ -162,6 +172,7 @@ export async function PUT(req: NextRequest) {
             UPDATE restaurants SET
                 name = COALESCE(${name}, name),
                 slug = COALESCE(${slug}, slug),
+                responsible_name = COALESCE(${responsibleName}, responsible_name),
                 email = COALESCE(${email}, email),
                 whatsapp = COALESCE(${whatsapp}, whatsapp),
                 instagram = COALESCE(${instagram}, instagram),
@@ -184,7 +195,15 @@ export async function PUT(req: NextRequest) {
                 welcome_subtitle = COALESCE(${welcomeSubtitle}, welcome_subtitle),
                 updated_at = NOW()
             WHERE id = ${id}
-            RETURNING *
+            RETURNING 
+                id, name, slug, responsible_name as "responsibleName",
+                email, whatsapp, instagram,
+                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                latitude, longitude, delivery_radius as "deliveryRadius",
+                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                delivery_time as "deliveryTime", popular_title as "popularTitle",
+                welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                created_at as "createdAt", updated_at as "updatedAt"
         `;
 
         return NextResponse.json({ success: true, ...rows[0] });
