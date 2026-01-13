@@ -725,7 +725,7 @@ export default function StoreAdmin() {
                                                                     >
                                                                         <span className="text-2xl">🖨️</span>
                                                                     </button>
-                                                                    {order.status === 'pending' && (
+                                                                    {order.status?.toLowerCase() === 'pending' && (
                                                                         <button
                                                                             onClick={async () => {
                                                                                 if (!confirm('Aprovar este pedido?')) return;
@@ -737,10 +737,12 @@ export default function StoreAdmin() {
                                                                                         body: JSON.stringify({ id: order.id, status: 'preparing' })
                                                                                     });
                                                                                     if (!response.ok) {
-                                                                                        throw new Error('Failed to update order');
+                                                                                        const errorData = await response.json();
+                                                                                        throw new Error(errorData.error || 'Failed to update order');
                                                                                     }
-                                                                                } catch (error) {
+                                                                                } catch (error: any) {
                                                                                     console.error('Error approving order:', error);
+                                                                                    alert('Erro ao aprovar: ' + error.message);
                                                                                     fetchOrders();
                                                                                 }
                                                                             }}
@@ -749,18 +751,26 @@ export default function StoreAdmin() {
                                                                             Aprovar
                                                                         </button>
                                                                     )}
-                                                                    {order.status === 'preparing' && (
+                                                                    {order.status?.toLowerCase() === 'preparing' && (
                                                                         <button
                                                                             onClick={async () => {
                                                                                 if (!confirm('Remeter pedido?')) return;
                                                                                 setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
                                                                                 try {
-                                                                                    await fetch('/api/orders', {
+                                                                                    const response = await fetch('/api/orders', {
                                                                                         method: 'PUT',
                                                                                         headers: { 'Content-Type': 'application/json' },
                                                                                         body: JSON.stringify({ id: order.id, status: 'sent' })
                                                                                     });
-                                                                                } catch (error) { fetchOrders(); }
+                                                                                    if (!response.ok) {
+                                                                                        const errorData = await response.json();
+                                                                                        throw new Error(errorData.error || 'Failed to update order');
+                                                                                    }
+                                                                                } catch (error: any) {
+                                                                                    console.error('Error remitting order:', error);
+                                                                                    alert('Erro ao remeter: ' + error.message);
+                                                                                    fetchOrders();
+                                                                                }
                                                                             }}
                                                                             className="px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[10px] font-bold uppercase"
                                                                         >
