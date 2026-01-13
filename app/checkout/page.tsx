@@ -541,23 +541,22 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Dynamic Emoji Generation to prevent file encoding issues
-            const getE = (code: number) => String.fromCodePoint(code);
+            // Manual Surrogate Pairs for maximum compatibility
             const emojis = {
-                ticket: getE(0x1F3AB), // 🎫
-                user: getE(0x1F464),   // 👤
-                phone: getE(0x1F4F1),  // 📱
-                map: getE(0x1F4CD),    // 📍
-                post: getE(0x1F4EE),   // 📮
-                cart: getE(0x1F6D2),   // 🛒
-                money: getE(0x1F4B5),  // 💵
-                truck: getE(0x1F69A),  // 🚚
-                total: getE(0x1F4B0),  // 💰
-                note: getE(0x1F4DD),   // 📝
-                rocket: getE(0x1F680), // 🚀
-                pix: getE(0x2728),     // ✨
-                card: getE(0x1F4B3),   // 💳
-                package: getE(0x1F4E6) // 📦
+                ticket: '\uD83C\uDFAB', // 🎫
+                user: '\uD83D\uDC64',   // 👤
+                phone: '\uD83D\uDCF1',  // 📱
+                map: '\uD83D\uDCCD',    // 📍
+                post: '\uD83D\uDCEE',   // 📮
+                cart: '\uD83D\uDED2',   // 🛒
+                money: '\uD83D\uDCB5',  // 💵
+                truck: '\uD83D\uDE9A',  // 🚚
+                total: '\uD83D\uDCB0',  // 💰
+                note: '\uD83D\uDCDD',   // 📝
+                rocket: '\uD83D\uDE80', // 🚀
+                pix: '\u2728',          // ✨
+                card: '\uD83D\uDCB3',   // 💳
+                package: '\uD83D\uDCE6' // 📦
             };
 
             // Format Message Parts
@@ -588,15 +587,15 @@ export default function CheckoutPage() {
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
 
-            // Encode the MESSAGE but preserve the % symbols from our manual emoji encoding
-            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
+            // Use API endpoint directly for better encoding support
+            const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
 
             setWhatsappLink(link);
             clearCart();
             setLoading(false);
             setShowSuccess(true);
 
-            // Try automatic redirect, but keep button as fallback
+            // Redirect to the API link
             window.location.href = link;
 
         } catch (e) {
