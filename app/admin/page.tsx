@@ -62,7 +62,7 @@ export default function AdminPortal() {
                             </h2>
                             <div className="flex-1 flex flex-col justify-between">
                                 <p className="text-gray-600 mb-6 leading-relaxed font-medium">
-                                    Cadastre seu negócio no maior shopping de delivery de Olinda e comece a vender hoje mesmo!
+                                    Cadastre seu negócio no maior shopping de Olinda e comece a vender hoje mesmo!
                                 </p>
                                 <div className="mt-auto">
                                     <Link href="/register" className="block">
