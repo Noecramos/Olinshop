@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
                 customer_address as "customerAddress", customer_zip_code as "customerZipCode",
                 items, subtotal, delivery_fee as "deliveryFee", total, 
                 payment_method as "paymentMethod", change_for as "changeFor", observations,
-                status, created_at as "createdAt"
+                status, created_at as "createdAt", service_type as "serviceType", table_number as "tableNumber"
             FROM orders 
             WHERE restaurant_id = ${restaurantId} 
             ORDER BY created_at DESC 
@@ -73,7 +73,9 @@ export async function GET(req: NextRequest) {
             changeFor: order.changeFor ? Number(order.changeFor) : null,
             observations: order.observations,
             status: order.status,
-            createdAt: order.createdAt
+            createdAt: order.createdAt,
+            serviceType: order.serviceType,
+            tableNumber: order.tableNumber
         }));
 
         return NextResponse.json(orders);
@@ -89,7 +91,8 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const {
             restaurantId, customerName, customerPhone, customerAddress, customerZipCode,
-            items, subtotal, deliveryFee, total, paymentMethod, changeFor, observations
+            items, subtotal, deliveryFee, total, paymentMethod, changeFor, observations,
+            serviceType, tableNumber
         } = body;
 
         // Validations
@@ -113,19 +116,20 @@ export async function POST(req: NextRequest) {
                 restaurant_id, ticket_number, customer_name, customer_phone, 
                 customer_address, customer_zip_code, items, subtotal, 
                 delivery_fee, total, payment_method, change_for, observations, 
-                status
+                status, service_type, table_number
             ) VALUES (
                 ${restaurantId}, ${ticketNumber}, ${customerName}, ${customerPhone},
                 ${customerAddress}, ${customerZipCode}, ${JSON.stringify(items)}, 
                 ${nSubtotal}, ${nDeliveryFee}, ${nTotal}, ${paymentMethod}, 
-                ${nChangeFor}, ${observations}, 'pending'
+                ${nChangeFor}, ${observations}, 'pending', ${serviceType || 'delivery'}, ${tableNumber}
             ) RETURNING 
                 id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
                 customer_name as "customerName", customer_phone as "customerPhone",
                 customer_address as "customerAddress", customer_zip_code as "customerZipCode",
                 items, subtotal, delivery_fee as "deliveryFee", total,
                 payment_method as "paymentMethod", change_for as "changeFor",
-                observations, status, created_at as "createdAt"
+                observations, status, created_at as "createdAt",
+                service_type as "serviceType", table_number as "tableNumber"
         `;
 
         const order = rows[0];

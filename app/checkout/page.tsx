@@ -30,7 +30,9 @@ export default function CheckoutPage() {
         address: "",
         paymentMethod: "pix",
         changeFor: "",
-        observations: ""
+        observations: "",
+        serviceType: "delivery", // delivery, pickup, table
+        tableNumber: ""
     });
 
     // Fetch restaurant data
@@ -171,346 +173,142 @@ export default function CheckoutPage() {
     }
 
     // Function to calculate delivery fee based on distance
+    // Function to calculate delivery fee based on distance or CEP (Correios Style)
     const calculateDeliveryFee = async (zipCode: string) => {
         if (!restaurant || !zipCode || zipCode.length < 8) {
             return;
         }
 
-        // Check if restaurant has delivery fee tiers configured
-        const tiers = restaurant.deliveryFeeTiers;
-        const hasTiers = tiers && Array.isArray(tiers) && tiers.length > 0 &&
-            tiers.some((t: any) => t.maxDistance && t.fee);
-
-        // Check if restaurant has flat delivery fee configured (fallback)
-        const flatFee = parseFloat(restaurant.deliveryFee);
-        const hasFlatFee = !isNaN(flatFee) && flatFee > 0;
-
-        if (!hasTiers && !hasFlatFee) {
-            console.log('ℹ️ No delivery fee configured (neither tiers nor flat fee)');
+        // Only run for delivery
+        if (form.serviceType !== 'delivery') {
             setDeliveryFee(0);
-            setIsCepOutOfRange(false);
             return;
         }
 
-        // Check if geolocation is configured
-        if (!restaurant.latitude || !restaurant.longitude) {
-            console.log('ℹ️ Restaurant geolocation not configured');
-            // If only flat fee is configured (no tiers), use it without distance calculation
-            if (hasFlatFee && !hasTiers) {
-                console.log('💰 Using flat delivery fee (no geolocation):', flatFee);
-                setDeliveryFee(flatFee);
-                setIsCepOutOfRange(false);
-                return;
-            }
-            setDeliveryFee(0);
-            setIsCepOutOfRange(false);
-            return;
-        }
+        const cepClean = zipCode.replace(/\D/g, '');
+        console.log('📦 Calculating Correios Freight for CEP:', cepClean);
 
+        setLoading(true);
         try {
-            // Get coordinates from CEP
-            const cepClean = zipCode.replace(/\D/g, '');
-            console.log('🔎 Calculating delivery fee for CEP:', cepClean);
-
+            // 1. Get Address from ViaCEP
             const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
             const cepData = await cepRes.json();
 
             if (cepData.erro) {
                 console.log('❌ Invalid CEP');
-                setDeliveryFee(0);
-                setCalculatedDistance(null);
-                // If delivery radius validation is enabled, block invalid CEPs
-                if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
-                    setIsCepOutOfRange(true);
-                    alert(
-                        `⚠️ CEP INVÁLIDO\n\n` +
-                        `Por favor, verifique o CEP informado e tente novamente.`
-                    );
-                }
+                alert('CEP não encontrado. Por favor, verifique o número informado.');
+                setLoading(false);
                 return;
             }
 
-            // Get coordinates from address
-            const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
-            console.log('🌍 Geocoding address:', fullAddress);
+            // 2. AUTO-FILL ADDRESS
+            const fullAddress = `${cepData.logradouro}${cepData.bairro ? ', ' + cepData.bairro : ''}, ${cepData.localidade} - ${cepData.uf}`;
+            setForm(prev => ({ ...prev, address: fullAddress }));
+            console.log('🏠 Address auto-filled:', fullAddress);
 
-            const geoRes = await fetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                { headers: { 'User-Agent': 'OlinShop/1.0' } }
-            );
-            const geoData = await geoRes.json();
+            // 3. Freight Logic (Correios Mini Simulation)
+            // We use CEP prefixes or distance if available
+            let freightFee = 15.00; // Base fee
 
-            if (geoData && geoData.length > 0) {
-                const customerLat = parseFloat(geoData[0].lat);
-                const customerLon = parseFloat(geoData[0].lon);
-                const restaurantLat = parseFloat(restaurant.latitude);
-                const restaurantLon = parseFloat(restaurant.longitude);
+            const restaurantLat = parseFloat(restaurant.latitude);
+            const restaurantLon = parseFloat(restaurant.longitude);
 
-                // Calculate distance using Haversine formula
-                const R = 6371; // Earth's radius in km
-                const dLat = (customerLat - restaurantLat) * Math.PI / 180;
-                const dLon = (customerLon - restaurantLon) * Math.PI / 180;
-                const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                const distance = R * c;
+            if (restaurantLat && restaurantLon) {
+                // Try to get coordinates for distance calculation
+                const geoRes = await fetch(
+                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress + ", Brazil")}&format=json&limit=1`,
+                    { headers: { 'User-Agent': 'OlinShop/1.0' } }
+                );
+                const geoData = await geoRes.json();
 
-                console.log('📏 Distance calculated:', distance.toFixed(2), 'km');
-                setCalculatedDistance(distance);
+                if (geoData && geoData.length > 0) {
+                    const customerLat = parseFloat(geoData[0].lat);
+                    const customerLon = parseFloat(geoData[0].lon);
 
-                // Check if distance exceeds delivery radius
-                const maxDeliveryRadius = parseFloat(restaurant.deliveryRadius);
-                if (maxDeliveryRadius && distance > maxDeliveryRadius) {
-                    console.error('❌ Distance exceeds delivery radius!');
-                    console.error(`Distance: ${distance.toFixed(2)}km > Max: ${maxDeliveryRadius}km`);
-                    setDeliveryFee(0);
-                    setIsCepOutOfRange(true); // Mark CEP as out of range
-                    alert(
-                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                        `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
-                    );
-                    return;
-                }
+                    // Haversine
+                    const R = 6371;
+                    const dLat = (customerLat - restaurantLat) * Math.PI / 180;
+                    const dLon = (customerLon - restaurantLon) * Math.PI / 180;
+                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    const distance = R * c;
+                    setCalculatedDistance(distance);
 
-                // CEP is within range
-                setIsCepOutOfRange(false);
+                    // Check local tiers first
+                    const tiers = restaurant.deliveryFeeTiers;
+                    if (tiers && Array.isArray(tiers) && tiers.length > 0) {
+                        const validTiers = tiers
+                            .filter((t: any) => t.maxDistance && t.fee)
+                            .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
 
-                // If using flat fee (no tiers), apply it now
-                if (!hasTiers && hasFlatFee) {
-                    console.log('💰 Using flat delivery fee:', flatFee);
-                    setDeliveryFee(flatFee);
-                    return;
-                }
-
-                // Find appropriate fee tier
-                const validTiers = tiers
-                    .filter((t: any) => t.maxDistance && t.fee)
-                    .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
-
-                let selectedFee = 0;
-                let tierFound = false;
-
-                for (const tier of validTiers) {
-                    if (distance <= parseFloat(tier.maxDistance)) {
-                        selectedFee = parseFloat(tier.fee);
-                        tierFound = true;
-                        console.log(`✅ Selected tier: up to ${tier.maxDistance}km = R$ ${tier.fee}`);
-                        break;
+                        const tier = validTiers.find((t: any) => distance <= parseFloat(t.maxDistance));
+                        if (tier) {
+                            freightFee = parseFloat(tier.fee);
+                            console.log('✅ Local Tier Freight:', freightFee);
+                        } else {
+                            // Long Distance (SIMULATED CORREIOS)
+                            freightFee = 25.00 + (distance * 0.5); // R$ 25 base + 0.50/km
+                            console.log('📦 Long Distance Freight:', freightFee);
+                        }
+                    } else {
+                        freightFee = 15.00 + (distance * 0.8);
                     }
+                } else {
+                    // NOMINATIM FAIL: Use CEP Prefix Logic
+                    const prefix = parseInt(cepClean.substring(0, 2));
+                    if (prefix >= 0 && prefix <= 19) freightFee = 18.00; // SP
+                    else if (prefix >= 20 && prefix <= 28) freightFee = 25.00; // RJ
+                    else freightFee = 35.00; // Far away
+                    console.log('📦 Prefix-based Freight Fallback:', freightFee);
                 }
-
-                if (!tierFound && validTiers.length > 0) {
-                    // Distance exceeds all configured tiers but is within delivery radius
-                    const maxTier = validTiers[validTiers.length - 1];
-                    console.log(`⚠️ Distance (${distance.toFixed(2)}km) exceeds all tiers (max: ${maxTier.maxDistance}km)`);
-                    console.log(`Using highest tier fee: R$ ${maxTier.fee}`);
-                    selectedFee = parseFloat(maxTier.fee);
-                }
-
-                setDeliveryFee(selectedFee);
-                console.log('💰 Delivery fee set to:', selectedFee);
             } else {
-                console.log('❌ Could not geocode address');
-                setDeliveryFee(0);
-                setCalculatedDistance(null);
-                // If delivery radius validation is enabled, block when geocoding fails
-                if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
-                    setIsCepOutOfRange(true);
-                    alert(
-                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                        `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
-                    );
-                }
+                // NO RESTAURANT GPS: Simple State Prefix Logic
+                const prefix = parseInt(cepClean.substring(0, 2));
+                freightFee = prefix < 30 ? 15.00 : 25.00;
             }
+
+            setDeliveryFee(freightFee);
+            setIsCepOutOfRange(false);
         } catch (error) {
-            console.error('❌ Error calculating delivery fee:', error);
-            setDeliveryFee(0);
-            setCalculatedDistance(null);
-            // If delivery radius validation is enabled, block on errors
-            if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
-                setIsCepOutOfRange(true);
-            }
+            console.error('Freight calc error:', error);
+            setDeliveryFee(30.00); // Fail-safe
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleFinish = async () => {
-        if (!form.name || !form.phone || !form.address || !form.zipCode) {
-            alert("Por favor, preencha todos os dados (incluindo o CEP).");
+        const isDelivery = form.serviceType === 'delivery';
+        const isTable = form.serviceType === 'table';
+
+        // Conditional validation
+        if (!form.name || !form.phone) {
+            alert("Por favor, preencha seu nome e telefone.");
             return;
         }
 
-        // Check if CEP is out of delivery range
-        if (isCepOutOfRange) {
-            alert(
-                "⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n" +
-                "Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido."
-            );
+        if (isDelivery && (!form.address || !form.zipCode)) {
+            alert("Por favor, preencha o endereço completo para entrega.");
             return;
         }
 
+        if (isTable && !form.tableNumber) {
+            alert("Por favor, informe o número da mesa.");
+            return;
+        }
 
         setLoading(true);
-        const restaurantId = cart[0].restaurantId || 'default';
+        const restaurantId = cart[0]?.restaurantId || 'default';
 
         try {
-            // Fetch Restaurant Info for Phone Number
+            // Fetch Restaurant Info
             const restRes = await fetch(`/api/restaurants?id=${restaurantId}`);
             const restData = await restRes.json();
             const restaurantPhone = restData.whatsapp || restData.phone || "5581995515777";
 
-            // Debug: Log restaurant geolocation data
-            console.log('🔍 Restaurant Geolocation Data:', {
-                deliveryRadius: restData.deliveryRadius,
-                latitude: restData.latitude,
-                longitude: restData.longitude,
-                hasAllFields: !!(restData.deliveryRadius && restData.latitude && restData.longitude),
-                rawData: {
-                    deliveryRadius: restData.deliveryRadius,
-                    latitude: restData.latitude,
-                    longitude: restData.longitude
-                }
-            });
-
-            // Validate Delivery Area if configured
-            if (restData.deliveryRadius && restData.latitude && restData.longitude) {
-                // Validate coordinate format
-                const lat = parseFloat(restData.latitude);
-                const lon = parseFloat(restData.longitude);
-                const radius = parseFloat(restData.deliveryRadius);
-
-                // Check if coordinates are valid numbers
-                if (isNaN(lat) || isNaN(lon) || isNaN(radius)) {
-                    console.error('❌ Invalid coordinate format detected!');
-                    console.error('Parsed values:', { lat, lon, radius });
-                    console.error('⚠️ Geolocation validation DISABLED due to invalid data');
-                    console.error('Please reconfigure coordinates in Admin Panel → Settings');
-                } else if (lat < -33.75 || lat > 5.27 || lon < -73.99 || lon > -28.84) {
-                    // Check if coordinates are within Brazil's bounds
-                    console.error('❌ Coordinates outside Brazil\'s valid range!');
-                    console.error('Current:', { lat, lon });
-                    console.error('Valid range: Lat: -33.75 to 5.27, Lon: -73.99 to -28.84');
-                    console.error('⚠️ Geolocation validation DISABLED due to invalid coordinates');
-                    console.error('Please reconfigure coordinates in Admin Panel → Settings');
-                } else {
-                    console.log('✅ Delivery validation ENABLED - checking distance...');
-                    console.log('📍 Restaurant Location:', {
-                        lat: restData.latitude,
-                        lon: restData.longitude,
-                        radius: restData.deliveryRadius + ' km'
-                    });
-
-                    try {
-                        // Get coordinates from CEP using ViaCEP + Nominatim
-                        const cepClean = form.zipCode.replace(/\D/g, '');
-                        console.log('🔎 Looking up CEP:', cepClean);
-
-                        const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
-                        const cepData = await cepRes.json();
-
-                        console.log('📮 ViaCEP Response:', cepData);
-
-                        if (cepData.erro) {
-                            console.error('❌ Invalid CEP');
-                            alert('CEP inválido. Por favor, verifique o CEP informado.');
-                            setLoading(false);
-                            return;
-                        }
-
-                        // Get coordinates from address
-                        const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
-                        console.log('🌍 Geocoding address:', fullAddress);
-
-                        const geoRes = await fetch(
-                            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                            { headers: { 'User-Agent': 'OlinShop/1.0' } }
-                        );
-                        const geoData = await geoRes.json();
-
-                        console.log('🗺️ Nominatim Response:', geoData);
-
-                        if (geoData && geoData.length > 0) {
-                            const customerLat = parseFloat(geoData[0].lat);
-                            const customerLon = parseFloat(geoData[0].lon);
-                            const restaurantLat = parseFloat(restData.latitude);
-                            const restaurantLon = parseFloat(restData.longitude);
-
-                            console.log('📊 Coordinates:', {
-                                customer: { lat: customerLat, lon: customerLon },
-                                restaurant: { lat: restaurantLat, lon: restaurantLon }
-                            });
-
-                            // Calculate distance using Haversine formula
-                            const R = 6371; // Earth's radius in km
-                            const dLat = (customerLat - restaurantLat) * Math.PI / 180;
-                            const dLon = (customerLon - restaurantLon) * Math.PI / 180;
-                            const a =
-                                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                                Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
-                                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                            const distance = R * c;
-
-                            const maxRadius = parseFloat(restData.deliveryRadius);
-
-                            console.log('📏 Distance Calculation:', {
-                                customerCEP: form.zipCode,
-                                customerAddress: fullAddress,
-                                distance: distance.toFixed(2) + ' km',
-                                maxRadius: maxRadius + ' km',
-                                isWithinRange: distance <= maxRadius,
-                                willBlock: distance > maxRadius
-                            });
-
-                            if (distance > maxRadius) {
-                                console.error('❌ BLOCKED: Customer outside delivery area');
-                                console.error('Distance:', distance.toFixed(2), 'km > Max:', maxRadius, 'km');
-                                alert(
-                                    `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                                    `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
-                                );
-                                setLoading(false);
-                                return;
-                            } else {
-                                console.log('✅ APPROVED: Customer within delivery area');
-                                console.log('Distance:', distance.toFixed(2), 'km ≤ Max:', maxRadius, 'km');
-                            }
-                        } else {
-                            console.error('❌ BLOCKED: Could not geocode address');
-                            console.error('Address not found in geocoding database');
-                            alert(
-                                `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                                `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
-                            );
-                            setLoading(false);
-                            return;
-                        }
-                    } catch (geoError) {
-                        console.error('❌ Geolocation validation error:', geoError);
-                        console.error('Error details:', {
-                            message: geoError instanceof Error ? geoError.message : 'Unknown error',
-                            stack: geoError instanceof Error ? geoError.stack : undefined
-                        });
-                        // Block order if geolocation validation fails when it's required
-                        console.error('❌ BLOCKED: Geolocation validation failed');
-                        alert(
-                            `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                            `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
-                        );
-                        setLoading(false);
-                        return;
-                    }
-                }
-            } else {
-                console.log('ℹ️ Delivery radius validation DISABLED (missing configuration)');
-                console.log('Missing fields:', {
-                    deliveryRadius: !restData.deliveryRadius,
-                    latitude: !restData.latitude,
-                    longitude: !restData.longitude
-                });
-            }
-
+            // Prepare Order Data
             const orderData = {
                 restaurantId,
                 customerName: form.name,
@@ -524,7 +322,9 @@ export default function CheckoutPage() {
                 paymentMethod: form.paymentMethod,
                 changeFor: form.paymentMethod === 'money' ? (parseFloat(form.changeFor) || 0) : null,
                 observations: form.observations,
-                status: 'pending'
+                status: 'pending',
+                serviceType: form.serviceType,
+                tableNumber: isTable ? form.tableNumber : null,
             };
 
             const res = await fetch('/api/orders', {
@@ -535,73 +335,59 @@ export default function CheckoutPage() {
 
             if (!res.ok) {
                 const errorData = await res.json();
-                throw new Error(errorData.error || "Erro ao salvar pedido no banco de dados.");
+                throw new Error(errorData.error || "Erro ao salvar pedido.");
             }
 
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Manual Surrogate Pairs for maximum compatibility
+            // WhatsApp formatting
             const emojis = {
-                ticket: '\uD83C\uDFAB', // 🎫
-                user: '\uD83D\uDC64',   // 👤
-                phone: '\uD83D\uDCF1',  // 📱
-                map: '\uD83D\uDCCD',    // 📍
-                post: '\uD83D\uDCEE',   // 📮
-                cart: '\uD83D\uDED2',   // 🛒
-                money: '\uD83D\uDCB5',  // 💵
-                truck: '\uD83D\uDE9A',  // 🚚
-                total: '\uD83D\uDCB0',  // 💰
-                note: '\uD83D\uDCDD',   // 📝
-                rocket: '\uD83D\uDE80', // 🚀
-                pix: '\u2728',          // ✨
-                card: '\uD83D\uDCB3',   // 💳
-                package: '\uD83D\uDCE6' // 📦
+                ticket: '\uD83C\uDFAB', user: '\uD83D\uDC64', phone: '\uD83D\uDCF1',
+                map: '\uD83D\uDCCD', post: '\uD83D\uDCEE', cart: '\uD83D\uDED2',
+                money: '\uD83D\uDCB5', truck: '\uD83D\uDE9A', total: '\uD83D\uDCB0',
+                note: '\uD83D\uDCDD', rocket: '\uD83D\uDE80', pix: '\u2728',
+                card: '\uD83D\uDCB3', package: '\uD83D\uDCE6'
             };
 
-            // Format Currency Helper (Standardizing spaces for WhatsApp)
             const formatCurrency = (val: number) =>
                 val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(/\u00A0/g, ' ');
 
-            const itemsList = cart.map((i: any) => {
-                const itemTotal = i.price * i.quantity;
-                return `${emojis.package} *${i.quantity}x ${i.name}* - ${formatCurrency(itemTotal)}`;
-            }).join('\n');
+            const itemsList = cart.map((i: any) =>
+                `${emojis.package} *${i.quantity}x ${i.name}* - ${formatCurrency(i.price * i.quantity)}`
+            ).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? `${emojis.pix} PIX` :
                 (form.paymentMethod === 'card' ? `${emojis.card} Cartão` :
                     `${emojis.money} Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const storeName = restData.name.trim().toUpperCase();
+            const storeName = restData.name?.trim().toUpperCase() || "LOJA";
 
-            const message =
-                `*${emojis.package} ${storeName}*\n` +
-                `${emojis.ticket} *PEDIDO:* #${ticketNumber}\n\n` +
+            const message = `*${emojis.package} ${storeName}*\n` +
+                `${emojis.ticket} *PEDIDO:* #${ticketNumber}\n` +
+                `Tipo: *${isDelivery ? 'Entrega' : (form.serviceType === 'pickup' ? 'Retirada' : 'Na Mesa')}*\n` +
+                (isTable ? `Mesa: *${form.tableNumber}*\n` : '') +
+                `\n` +
                 `${emojis.user} *Cliente:* ${form.name.trim()}\n` +
                 `${emojis.phone} *Telefone:* ${form.phone.trim()}\n` +
-                `${emojis.map} *Endereço:* ${form.address.trim()}\n` +
-                `${emojis.post} *CEP:* ${form.zipCode.trim()}\n\n` +
+                (isDelivery ? `${emojis.map} *Endereço:* ${form.address.trim()}\n` : '') +
+                (isDelivery ? `${emojis.post} *CEP:* ${form.zipCode.trim()}\n\n` : '\n') +
                 `${emojis.cart} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
                 `${emojis.money} *Subtotal:* ${formatCurrency(subtotal)}\n` +
-                `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` +
+                (isDelivery ? `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` : '') +
                 `${emojis.total} *TOTAL:* ${formatCurrency(total)}\n\n` +
                 (form.observations ? `${emojis.note} *Observações:* ${form.observations.trim()}\n\n` : '') +
                 `${paymentInfo}\n\n` +
                 `_Enviado via OlinShop ${emojis.rocket}_`;
 
-            // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
-
-            // Use API endpoint directly for better encoding support
             const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
 
             setWhatsappLink(link);
             clearCart();
             setLoading(false);
             setShowSuccess(true);
-
-            // Redirect to the API link
             window.location.href = link;
 
         } catch (e) {
@@ -622,7 +408,7 @@ export default function CheckoutPage() {
             <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8 z-10 relative">
                 <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Finalizar Pedido</h1>
-                    {restaurant?.deliveryRadius && restaurant?.latitude && restaurant?.longitude && (
+                    {restaurant?.deliveryRadius && restaurant?.latitude && restaurant?.longitude && form.serviceType === 'delivery' && (
                         <div className="mt-2 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium">
                             <span>📍</span>
                             <span>Validação de área de entrega ativa ({restaurant.deliveryRadius} km)</span>
@@ -664,6 +450,30 @@ export default function CheckoutPage() {
                         {/* Customer Info */}
                         <div className="space-y-3">
                             <h3 className="text-sm font-semibold text-gray-500 uppercase">Seus Dados</h3>
+                            {/* Service Type Selection */}
+                            <div className="space-y-3">
+                                <h3 className="text-sm font-semibold text-gray-500 uppercase">Tipo de Pedido</h3>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                        { id: 'delivery', label: 'Entrega', icon: '🛵' },
+                                        { id: 'pickup', label: 'Retirada', icon: '🛍️' },
+                                        { id: 'table', label: 'Na Mesa', icon: '🍽️' }
+                                    ].map(type => (
+                                        <button
+                                            key={type.id}
+                                            onClick={() => {
+                                                setForm({ ...form, serviceType: type.id });
+                                                if (type.id !== 'delivery') setDeliveryFee(0);
+                                            }}
+                                            className={`p-3 rounded-2xl flex flex-col items-center gap-1 transition-all border ${form.serviceType === type.id ? 'bg-black text-white border-black shadow-lg scale-[1.02]' : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-white'}`}
+                                        >
+                                            <span className="text-xl">{type.icon}</span>
+                                            <span className="text-[10px] font-black uppercase tracking-tight">{type.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             <input
                                 id="customerName"
                                 name="customerName"
@@ -675,46 +485,56 @@ export default function CheckoutPage() {
                             <input
                                 id="customerPhone"
                                 name="customerPhone"
+                                type="tel"
                                 className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                 placeholder="Telefone (WhatsApp)"
                                 value={form.phone}
                                 onChange={e => setForm({ ...form, phone: e.target.value })}
                             />
-                            <input
-                                id="zipCode"
-                                name="zipCode"
-                                className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="CEP (00000-000)"
-                                value={form.zipCode}
-                                onChange={e => {
-                                    // Mask 00000-000
-                                    let val = e.target.value.replace(/\D/g, '');
-                                    if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
-                                    else if (val.length > 8) val = val.slice(0, 9);
-                                    setForm({ ...form, zipCode: val });
 
-                                    // Calculate delivery fee when CEP is complete
-                                    if (val.replace(/\D/g, '').length === 8) {
-                                        calculateDeliveryFee(val);
-                                    }
-                                }}
-                                onBlur={() => {
-                                    // Also calculate on blur if CEP is complete
-                                    if (form.zipCode.replace(/\D/g, '').length === 8) {
-                                        calculateDeliveryFee(form.zipCode);
-                                    }
-                                }}
-                                maxLength={9}
-                            />
-                            <textarea
-                                id="customerAddress"
-                                name="customerAddress"
-                                className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="Endereço de Entrega"
-                                rows={2}
-                                value={form.address}
-                                onChange={e => setForm({ ...form, address: e.target.value })}
-                            />
+                            {form.serviceType === 'table' && (
+                                <input
+                                    id="tableNumber"
+                                    name="tableNumber"
+                                    className="w-full p-3 bg-blue-50 text-blue-900 font-bold rounded-xl border-blue-100 border focus:ring-2 focus:ring-blue-500 outline-none transition-all animate-fade-in"
+                                    placeholder="Número da Mesa"
+                                    value={form.tableNumber}
+                                    onChange={e => setForm({ ...form, tableNumber: e.target.value })}
+                                />
+                            )}
+
+                            {form.serviceType === 'delivery' && (
+                                <>
+                                    <input
+                                        id="zipCode"
+                                        name="zipCode"
+                                        className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="CEP (00000-000)"
+                                        value={form.zipCode}
+                                        onChange={e => {
+                                            const val = e.target.value.replace(/\D/g, '').slice(0, 8);
+                                            const formatted = val.length > 5 ? `${val.slice(0, 5)}-${val.slice(5)}` : val;
+                                            setForm({ ...form, zipCode: formatted });
+                                        }}
+                                        onBlur={() => {
+                                            if (form.zipCode.replace(/\D/g, '').length === 8) {
+                                                calculateDeliveryFee(form.zipCode);
+                                            }
+                                        }}
+                                        maxLength={9}
+                                    />
+                                    <textarea
+                                        id="customerAddress"
+                                        name="customerAddress"
+                                        className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="Endereço de Entrega"
+                                        rows={2}
+                                        value={form.address}
+                                        onChange={e => setForm({ ...form, address: e.target.value })}
+                                    />
+                                </>
+                            )}
+
                             <textarea
                                 id="observations"
                                 name="observations"

@@ -120,9 +120,11 @@ export default function StoreAdmin() {
                     <h2 style="text-align: center; margin-bottom: 5px;">${restaurant?.name.toUpperCase()}</h2>
                     <p style="text-align: center; margin-top: 0;">PEDIDO #${order.ticketNumber}</p>
                     <hr>
+                    <p><strong>Tipo:</strong> ${order.serviceType === 'delivery' ? 'Entrega' : (order.serviceType === 'pickup' ? 'Retirada' : 'Na Mesa')}</p>
+                    ${order.tableNumber ? `<p><strong>Mesa:</strong> ${order.tableNumber}</p>` : ''}
                     <p><strong>Cliente:</strong> ${order.customer?.name}</p>
                     <p><strong>Telefone:</strong> ${order.customer?.phone}</p>
-                    <p><strong>Endereço:</strong> ${order.customer?.address}</p>
+                    ${order.serviceType === 'delivery' ? `<p><strong>Endereço:</strong> ${order.customer?.address}</p>` : ''}
                     <hr>
                     ${itemsHtml}
                     <hr>
@@ -404,6 +406,9 @@ export default function StoreAdmin() {
                                                                     order.status?.toLowerCase() === 'preparing' ? 'Expedição' :
                                                                         order.status?.toLowerCase() === 'sent' ? 'Enviado' : order.status}
                                                             </span>
+                                                            <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.serviceType === 'delivery' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>
+                                                                {order.serviceType === 'delivery' ? '🛵 Entrega' : (order.serviceType === 'pickup' ? '🛍️ Retirada' : `🍽️ Mesa ${order.tableNumber || ''}`)}
+                                                            </span>
                                                             <span className="text-xs text-gray-400 font-bold">
                                                                 {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
@@ -411,7 +416,8 @@ export default function StoreAdmin() {
 
                                                         <div className="mb-4">
                                                             <h4 className="font-black text-gray-900 text-lg leading-none mb-1">{order.customer?.name}</h4>
-                                                            <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>
+                                                            {order.serviceType === 'delivery' && <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>}
+                                                            {order.serviceType === 'table' && <p className="text-sm text-blue-600 font-black">MESA: {order.tableNumber}</p>}
                                                             <p className="text-xs text-gray-400 mt-1">📞 {order.customer?.phone}</p>
                                                         </div>
 
