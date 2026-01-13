@@ -8,8 +8,9 @@ export default function SuperAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
-    const [tab, setTab] = useState<'restaurants' | 'config'>('restaurants');
+    const [tab, setTab] = useState<'restaurants' | 'users' | 'config'>('restaurants');
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -20,7 +21,10 @@ export default function SuperAdmin() {
     }, []);
 
     useEffect(() => {
-        if (auth) fetchRestaurants();
+        if (auth) {
+            fetchRestaurants();
+            fetchUsers();
+        }
     }, [auth]);
 
     const fetchRestaurants = async () => {
@@ -28,6 +32,16 @@ export default function SuperAdmin() {
             const res = await fetch(`/api/restaurants?all=true&t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             setRestaurants(data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch(`/api/admin/users?t=${Date.now()}`, { cache: 'no-store' });
+            const data = await res.json();
+            setUsers(data);
         } catch (e) {
             console.error(e);
         }
@@ -53,6 +67,7 @@ export default function SuperAdmin() {
                 const phone = restaurant.whatsapp || restaurant.phone;
                 if (phone) {
                     let cleanPhone = phone.replace(/\D/g, '');
+                    if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
                     // Ensure country code 55 is present
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
                         cleanPhone = '55' + cleanPhone;
@@ -60,7 +75,7 @@ export default function SuperAdmin() {
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
-                    alert('Restaurante aprovado! Senha gerada: ' + finalPassword);
+                    alert('Loja aprovada! Senha gerada: ' + finalPassword);
                 }
             } else {
                 setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, approved: false } : r));
@@ -71,7 +86,7 @@ export default function SuperAdmin() {
     };
 
     const resetPassword = async (restaurant: any) => {
-        if (!confirm(`Deseja realmente resetar a senha de ${restaurant.name}?`)) return;
+        if (!confirm(`Deseja realmente resetar a senha da loja ${restaurant.name}?`)) return;
         try {
             const res = await fetch('/api/restaurants', {
                 method: 'PUT',
@@ -86,6 +101,7 @@ export default function SuperAdmin() {
                 const phone = restaurant.whatsapp || restaurant.phone;
                 if (phone) {
                     let cleanPhone = phone.replace(/\D/g, '');
+                    if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
 
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua senha de acesso ao painel do OlinShop foi resetada. %0A%0A🔑 Nova Senha: *${data.password}*%0A%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
@@ -94,7 +110,7 @@ export default function SuperAdmin() {
                         window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                     }
                 } else {
-                    alert(`Nova senha de ${restaurant.name}: ${data.password}`);
+                    alert(`Nova senha da loja ${restaurant.name}: ${data.password}`);
                 }
             }
         } catch (e) {
@@ -103,7 +119,7 @@ export default function SuperAdmin() {
     };
 
     const deleteRestaurant = async (id: string) => {
-        if (!confirm('Tem certeza que deseja excluir este restaurante? Essa ação não pode ser desfeita.')) return;
+        if (!confirm('Tem certeza que deseja excluir esta loja? Essa ação não pode ser desfeita.')) return;
 
         try {
             const res = await fetch(`/api/restaurants?id=${id}`, {
@@ -112,17 +128,64 @@ export default function SuperAdmin() {
 
             if (!res.ok) {
                 const errorData = await res.json();
-                throw new Error(errorData.error || 'Erro ao excluir restaurante');
+                throw new Error(errorData.error || 'Erro ao excluir loja');
             }
 
             const data = await res.json();
             if (data.success) {
-                alert('Restaurante excluído com sucesso!');
+                alert('Loja excluída com sucesso!');
                 fetchRestaurants();
             }
         } catch (e: any) {
             console.error('Delete error:', e);
-            alert(e.message || 'Erro ao excluir restaurante');
+            alert(e.message || 'Erro ao excluir loja');
+        }
+    };
+
+    const resetUserPassword = async (user: any) => {
+        if (!confirm(`Deseja realmente resetar a senha de ${user.name}?`)) return;
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: user.id, resetPassword: true })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setUsers(prev => prev.map(u => u.id === user.id ? { ...u, password: data.password } : u));
+
+                const phone = user.whatsapp || user.phone;
+                if (phone) {
+                    let cleanPhone = phone.replace(/\D/g, '');
+                    if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
+
+                    const message = `Olá, ${user.name}! %0A%0ASua senha de acesso ao OlinShop foi resetada. %0A%0A🔑 Nova Senha: *${data.password}*%0A%0ALink: https://olinshop.vercel.app`;
+
+                    if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o usuário?`)) {
+                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                    }
+                } else {
+                    alert(`Nova senha de ${user.name}: ${data.password}`);
+                }
+            }
+        } catch (e) {
+            alert('Erro ao resetar senha do usuário');
+        }
+    };
+
+    const deleteUser = async (id: string) => {
+        if (!confirm('Tem certeza que deseja excluir este usuário? Essa ação não pode ser desfeita.')) return;
+
+        try {
+            const res = await fetch('/api/admin/users?id=' + id, { method: 'DELETE' });
+            if (res.ok) {
+                alert("Usuário excluído com sucesso!");
+                fetchUsers();
+            }
+        } catch (e) {
+            alert("Erro ao excluir usuário");
         }
     };
 
@@ -235,7 +298,7 @@ export default function SuperAdmin() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Gestão Global</h1>
-                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinShop</p>
+                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de Lojas OlinShop</p>
                     </div>
                     <button
                         onClick={handleLogout}
@@ -299,7 +362,13 @@ export default function SuperAdmin() {
                             onClick={() => setTab('restaurants')}
                             className={`pb-4 px-2 font-bold transition-all relative ${tab === 'restaurants' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
                         >
-                            Restaurantes
+                            Lojas
+                        </button>
+                        <button
+                            onClick={() => setTab('users')}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'users' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            Usuários
                         </button>
                         <button
                             onClick={() => setTab('config')}
@@ -310,11 +379,12 @@ export default function SuperAdmin() {
                     </div>
 
                     {tab === 'restaurants' ? (
+                        // Existing Restaurants Table...
                         <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 border-b border-gray-100">
                                     <tr>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
@@ -331,14 +401,10 @@ export default function SuperAdmin() {
                                                             src={r.image}
                                                             alt={r.name}
                                                             className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                                                            onError={(e) => {
-                                                                const target = e.target as HTMLImageElement;
-                                                                target.style.display = 'none';
-                                                            }}
                                                         />
                                                     ) : (
                                                         <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
-                                                            {r.name?.charAt(0)?.toUpperCase() || '?'}
+                                                            {r.name?.charAt(0)?.toUpperCase()}
                                                         </div>
                                                     )}
                                                     <div>
@@ -348,10 +414,10 @@ export default function SuperAdmin() {
                                                 </div>
                                             </td>
                                             <td className="p-6">
-                                                <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug || '---'}</code>
+                                                <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug}</code>
                                             </td>
                                             <td className="p-6">
-                                                <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
+                                                <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
                                             </td>
                                             <td className="p-6 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
@@ -360,41 +426,54 @@ export default function SuperAdmin() {
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
-                                                    <button
-                                                        onClick={() => setEditingRestaurant(r)}
-                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all"
-                                                        title="Editar Detalhes"
-                                                    >
-                                                        <span className="text-lg">✏️</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => toggleApproval(r)}
-                                                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-accent hover:bg-accent-hover text-white'}`}
-                                                    >
-                                                        {r.approved ? 'Pausar' : 'Aprovar'}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => resetPassword(r)}
-                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all"
-                                                        title="Resetar Senha"
-                                                    >
-                                                        <span className="text-lg">🔑</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => deleteRestaurant(r.id)}
-                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-red-50 rounded-xl transition-all"
-                                                        title="Excluir"
-                                                    >
-                                                        <span className="text-lg">🗑️</span>
-                                                    </button>
+                                                    <button onClick={() => setEditingRestaurant(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">✏️</button>
+                                                    <button onClick={() => toggleApproval(r)} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${r.approved ? 'bg-amber-500' : 'bg-accent'} text-white`}>{r.approved ? 'Pausar' : 'Aprovar'}</button>
+                                                    <button onClick={() => resetPassword(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">🔑</button>
+                                                    <button onClick={() => deleteRestaurant(r.id)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-red-50 rounded-xl transition-all">🗑️</button>
                                                 </div>
                                             </td>
                                         </tr>
                                     ))}
-                                    {restaurants.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : tab === 'users' ? (
+                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Cliente</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Contato</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Localização</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {users.map((u: any) => (
+                                        <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                                            <td className="p-6">
+                                                <div className="font-bold text-gray-900">{u.name}</div>
+                                                <div className="text-xs text-gray-500">{u.email}</div>
+                                                <div className="text-[10px] text-accent font-bold uppercase mt-1">CPF: {u.cpf || '---'}</div>
+                                            </td>
+                                            <td className="p-6 font-medium text-gray-600 text-sm">
+                                                <div>📞 {u.phone}</div>
+                                                <div className="text-xs text-green-600">📱 {u.whatsapp || '---'}</div>
+                                            </td>
+                                            <td className="p-6">
+                                                <div className="text-xs text-gray-600 max-w-xs truncate">{u.address}</div>
+                                                <div className="text-[10px] text-gray-400 font-bold">{u.zipCode}</div>
+                                            </td>
+                                            <td className="p-6 text-right">
+                                                <div className="flex justify-end gap-3">
+                                                    <button onClick={() => resetUserPassword(u)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all" title="Resetar Senha">🔑</button>
+                                                    <button onClick={() => deleteUser(u.id)} className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Excluir Usuário">🗑️</button>
+                                                </div>
+                                            </td>
                                         </tr>
+                                    ))}
+                                    {users.length === 0 && (
+                                        <tr><td colSpan={4} className="p-20 text-center text-gray-400">Nenhum usuário cadastrado.</td></tr>
                                     )}
                                 </tbody>
                             </table>

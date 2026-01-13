@@ -409,7 +409,8 @@ export default function CheckoutPage() {
                 (form.observations ? `${emojis.note} *Observações:* ${form.observations.trim()}\n\n` : '') +
                 `${paymentInfo}\n\n` +
                 `_Enviado via OlinShop ${emojis.rocket}_`;
-            const cleanPhone = restaurantPhone.replace(/\D/g, '');
+            let cleanPhone = restaurantPhone.replace(/\D/g, '');
+            if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
 

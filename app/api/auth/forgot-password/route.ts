@@ -27,11 +27,22 @@ export async function POST(req: NextRequest) {
         // 3. Update database
         await sql`UPDATE users SET password = ${hashedPassword} WHERE id = ${user.id}`;
 
-        // 4. Determine destination phone
-        let destPhone = user.whatsapp || user.phone || "";
-        destPhone = destPhone.replace(/\D/g, '');
+        // 4. Determine destination phone and fix formatting
+        let destPhone = (user.whatsapp || user.phone || "").toString().replace(/\D/g, '');
 
-        if (destPhone && !destPhone.startsWith('55')) {
+        // Remove leading zero if present (common in Brazil like 081...)
+        if (destPhone.startsWith('0')) {
+            destPhone = destPhone.substring(1);
+        }
+
+        // If it looks like a BR number without country code (10 or 11 digits)
+        if (destPhone.length >= 10 && destPhone.length <= 11 && !destPhone.startsWith('55')) {
+            destPhone = '55' + destPhone;
+        }
+
+        // Ensure some country code is present if not already (safeguard)
+        if (destPhone.length > 0 && !destPhone.startsWith('55') && destPhone.length <= 11) {
+            // Default to 55 for this app's main market
             destPhone = '55' + destPhone;
         }
 
