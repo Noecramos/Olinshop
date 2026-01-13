@@ -30,6 +30,39 @@ export async function GET(req: Request) {
     }
 }
 
+export async function POST(req: Request) {
+    try {
+        const body = await req.json();
+        const { name, slug, responsibleName, email, whatsapp, address, zipCode, image, hours, type, instagram, pixKey } = body;
+
+        // Validation
+        if (!name || !slug) {
+            return NextResponse.json({ error: 'Nome e Slug são obrigatórios' }, { status: 400 });
+        }
+
+        // Check for duplicate slug
+        const existing = await sql`SELECT id FROM restaurants WHERE slug = ${slug}`;
+        if (existing.rows.length > 0) {
+            return NextResponse.json({ error: 'Este link (slug) já está em uso.' }, { status: 409 });
+        }
+
+        // Insert
+        await sql`
+            INSERT INTO restaurants (
+                name, slug, responsible_name, email, whatsapp, address, zip_code, image, hours, type, instagram, pix_key, approved, created_at
+            ) VALUES (
+                ${name}, ${slug}, ${responsibleName}, ${email}, ${whatsapp}, ${address}, ${zipCode}, ${image}, ${hours}, ${type}, ${instagram}, ${pixKey}, false, NOW()
+            )
+        `;
+
+        return NextResponse.json({ success: true, message: 'Cadastro realizado com sucesso!' });
+
+    } catch (error: any) {
+        console.error('Registration Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
 export async function PUT(req: Request) {
     try {
         const body = await req.json();
