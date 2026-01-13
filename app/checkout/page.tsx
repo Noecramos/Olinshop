@@ -180,8 +180,8 @@ export default function CheckoutPage() {
             return;
         }
 
-        // Only run for delivery
-        if (form.serviceType !== 'delivery') {
+        // Only run for delivery or shipping
+        if (form.serviceType === 'pickup') {
             setDeliveryFee(0);
             return;
         }
@@ -270,11 +270,14 @@ export default function CheckoutPage() {
                 freightFee = prefix < 30 ? 15.00 : 25.00;
             }
 
-            setDeliveryFee(freightFee);
-            setIsCepOutOfRange(false);
+            if (form.serviceType === 'delivery') {
+                setDeliveryFee(freightFee);
+                setIsCepOutOfRange(false);
+                setShippingOptions([]); // Clear correios options
+            }
 
-            // 4. REAL CORREIOS CALCULATION (If outside Radius or as an option)
-            if (restaurant.zipCode) {
+            // 4. REAL CORREIOS CALCULATION (If Correios is selected)
+            if (form.serviceType === 'shipping' && restaurant.zipCode) {
                 try {
                     const shipRes = await fetch('/api/shipping/calculate', {
                         method: 'POST',
@@ -289,9 +292,10 @@ export default function CheckoutPage() {
                         setShippingOptions(shipData.options);
                         // Automatically select PAC if available as default
                         const pac = shipData.options.find((o: any) => o.name === 'PAC');
-                        if (pac) {
-                            setSelectedShipping(pac);
-                            setDeliveryFee(pac.price);
+                        const defaultOpt = pac || shipData.options[0];
+                        if (defaultOpt) {
+                            setSelectedShipping(defaultOpt);
+                            setDeliveryFee(defaultOpt.price);
                         }
                     }
                 } catch (e) {
@@ -308,6 +312,8 @@ export default function CheckoutPage() {
 
     const handleFinish = async () => {
         const isDelivery = form.serviceType === 'delivery';
+        const isShipping = form.serviceType === 'shipping';
+        const needsAddress = isDelivery || isShipping;
 
         // Conditional validation
         if (!form.name || !form.phone) {
@@ -315,7 +321,7 @@ export default function CheckoutPage() {
             return;
         }
 
-        if (isDelivery && (!form.address || !form.zipCode)) {
+        if (needsAddress && (!form.address || !form.zipCode)) {
             alert("Por favor, preencha o endereço completo para entrega.");
             return;
         }
@@ -386,21 +392,20 @@ export default function CheckoutPage() {
 
             const message = `*${emojis.package} ${storeName}*\n` +
                 `${emojis.ticket} *PEDIDO:* #${ticketNumber}\n` +
-                `Tipo: *${isDelivery ? 'Entrega' : 'Retirada'}*\n` +
+                `Tipo: *${form.serviceType === 'delivery' ? 'Entrega Local' : (form.serviceType === 'shipping' ? 'Correios' : 'Retirada')}*\n` +
                 `\n` +
                 `${emojis.user} *Cliente:* ${form.name.trim()}\n` +
                 `${emojis.phone} *Telefone:* ${form.phone.trim()}\n` +
-                (isDelivery ? `${emojis.map} *Endereço:* ${form.address.trim()}\n` : '') +
-                (isDelivery ? `${emojis.post} *CEP:* ${form.zipCode.trim()}\n` : '') +
-                (isDelivery && selectedShipping ? `${emojis.truck} *Envio:* ${selectedShipping.name}\n\n` : (isDelivery ? '\n' : '\n')) +
+                (needsAddress ? `${emojis.map} *Endereço:* ${form.address.trim()}\n` : '') +
+                (needsAddress ? `${emojis.post} *CEP:* ${form.zipCode.trim()}\n` : '') +
+                (isShipping && selectedShipping ? `${emojis.truck} *Envio:* ${selectedShipping.name}\n\n` : (needsAddress ? '\n' : '\n')) +
                 `${emojis.cart} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
                 `${emojis.money} *Subtotal:* ${formatCurrency(subtotal)}\n` +
-                (isDelivery ? `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` : '') +
+                (needsAddress ? `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` : '') +
                 `${emojis.total} *TOTAL:* ${formatCurrency(total)}\n\n` +
                 (form.observations ? `${emojis.note} *Observações:* ${form.observations.trim()}\n\n` : '') +
                 `${paymentInfo}\n\n` +
                 `_Enviado via OlinShop ${emojis.rocket}_`;
-
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
@@ -483,6 +488,12 @@ export default function CheckoutPage() {
                                             activeClass: 'bg-[#FDF2F8] text-[#E91E8C] border-[#FBCFE8] shadow-[0_8px_20px_-4px_rgba(233,30,140,0.2)]'
                                         },
                                         {
+                                            id: 'shipping',
+                                            label: 'Correios',
+                                            icon: '📦',
+                                            activeClass: 'bg-[#F0FDFA] text-[#0D9488] border-[#CCFBF1] shadow-[0_8px_20px_-4px_rgba(13,148,136,0.2)]'
+                                        },
+                                        {
                                             id: 'pickup',
                                             label: 'Retirada',
                                             icon: '🛍️',
@@ -493,7 +504,13 @@ export default function CheckoutPage() {
                                             key={type.id}
                                             onClick={() => {
                                                 setForm({ ...form, serviceType: type.id });
-                                                if (type.id !== 'delivery') setDeliveryFee(0);
+                                                setDeliveryFee(0);
+                                                setShippingOptions([]);
+                                                setSelectedShipping(null);
+                                                // If changed and has zip, recalculate
+                                                if (form.zipCode.replace(/\D/g, '').length === 8) {
+                                                    calculateDeliveryFee(form.zipCode);
+                                                }
                                             }}
                                             className={`p-3 rounded-2xl flex flex-col items-center gap-1 transition-all border ${form.serviceType === type.id ? `${type.activeClass} scale-[1.02]` : 'bg-gray-50 text-gray-400 border-gray-100 hover:bg-white'}`}
                                         >
@@ -523,7 +540,7 @@ export default function CheckoutPage() {
                             />
 
 
-                            {form.serviceType === 'delivery' && (
+                            {(form.serviceType === 'delivery' || form.serviceType === 'shipping') && (
                                 <>
                                     <input
                                         id="zipCode"
@@ -566,7 +583,7 @@ export default function CheckoutPage() {
                             />
 
                             {/* Correios Shipping Options */}
-                            {shippingOptions.length > 0 && form.serviceType === 'delivery' && (
+                            {shippingOptions.length > 0 && form.serviceType === 'shipping' && (
                                 <div className="mt-4 space-y-3 animate-fade-in">
                                     <h3 className="text-sm font-semibold text-gray-500 uppercase flex items-center gap-2">
                                         <span>📦</span> Opções de Envio (Correios)
