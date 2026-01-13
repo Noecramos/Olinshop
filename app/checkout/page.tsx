@@ -146,15 +146,19 @@ export default function CheckoutPage() {
                                 <span className="text-4xl">✅</span>
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
-                            <p className="text-gray-500 mb-6 font-medium">Seu pedido foi enviado com sucesso!</p>
+                            <p className="text-gray-500 mb-6 font-medium">Siga para o WhatsApp para confirmar seu pedido e enviar o comprovante.</p>
 
-                            <div className="bg-gray-100 p-4 rounded-xl mb-6">
-                                <div className="text-lg font-bold text-green-600 animate-pulse mb-4">
-                                    Abrindo WhatsApp...
-                                </div>
+                            <div className="space-y-3">
+                                <a
+                                    href={whatsappLink}
+                                    className="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl shadow-lg shadow-green-200 hover:bg-[#128C7E] transition-all flex items-center justify-center gap-3 text-lg"
+                                >
+                                    <span>📱</span> ENVIAR NO WHATSAPP
+                                </a>
+
                                 <button
                                     onClick={() => router.push(restaurant?.slug ? `/loja/${restaurant.slug}` : '/')}
-                                    className="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors"
+                                    className="w-full bg-gray-50 text-gray-400 font-bold py-3 px-4 rounded-2xl hover:bg-gray-100 transition-colors text-sm"
                                 >
                                     Voltar à Loja
                                 </button>
@@ -540,13 +544,13 @@ export default function CheckoutPage() {
             // Format Message
             const getIcon = (cat: string) => {
                 const lower = (cat || '').toLowerCase();
-                if (lower.includes('roupa') || lower.includes('vest')) return '👕';
-                if (lower.includes('eletr') || lower.includes('tech')) return '💻';
-                if (lower.includes('calc') || lower.includes('tenis')) return '👟';
-                if (lower.includes('acess')) return '⌚';
-                if (lower.includes('casa') || lower.includes('decor')) return '🏠';
-                if (lower.includes('beleza') || lower.includes('cosm')) return '💄';
-                if (lower.includes('bebida')) return '🥤';
+                if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda')) return '👕';
+                if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu')) return '📱';
+                if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato')) return '👟';
+                if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo')) return '⌚';
+                if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return '🏠';
+                if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return '💄';
+                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '🥤';
                 return '📦';
             };
 
@@ -556,11 +560,12 @@ export default function CheckoutPage() {
                 return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             }).join('\n');
 
-            const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
-                (form.paymentMethod === 'card' ? 'Cartão' :
-                    `Dinheiro (Troco para R$ ${form.changeFor})`);
+            const paymentInfo = form.paymentMethod === 'pix' ? '💠 PIX' :
+                (form.paymentMethod === 'card' ? '💳 Cartão' :
+                    `💵 Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const message = ` *${restData.name.toUpperCase()}*\\n` + `🎫 *PEDIDO #${ticketNumber}*\n\n` +
+            const message = `*${restData.name.toUpperCase()}*\n` +
+                `🎫 *PEDIDO #${ticketNumber}*\n\n` +
                 `👤 *Cliente:* ${form.name}\n` +
                 `📱 *Telefone:* ${form.phone}\n` +
                 `📍 *Endereço:* ${form.address}\n` +
@@ -570,7 +575,7 @@ export default function CheckoutPage() {
                 `🚚 *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
                 `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
                 (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
-                `💳 *Pagamento:* ${paymentInfo}\n\n` +
+                `${paymentInfo}\n\n` +
                 `_Enviado via OlinShop 🚀_`;
 
             // Sanitize phone
@@ -618,22 +623,22 @@ export default function CheckoutPage() {
                         <div className="space-y-3">
                             <h3 className="text-sm font-semibold text-gray-500 uppercase">Resumo do Pedido</h3>
                             <div className="space-y-2">
-                                {cart.map((item) => (
-                                    <div key={item.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                {cart.map((item, index) => (
+                                    <div key={`${item.id}-${index}`} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
                                         <div className="flex-1">
                                             <p className="font-bold text-gray-800">{item.name}</p>
                                             <p className="text-sm text-gray-500">{(item.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
                                         </div>
                                         <div className="flex items-center gap-3 bg-white p-1 rounded-lg border shadow-sm">
                                             <button
-                                                onClick={() => removeOne(item.id)}
+                                                onClick={() => removeOne(index)}
                                                 className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-red-50 text-accent font-bold transition-colors"
                                             >
                                                 -
                                             </button>
                                             <span className="font-bold w-4 text-center">{item.quantity}</span>
                                             <button
-                                                onClick={() => addToCart({ ...item, quantity: 1 } as any)}
+                                                onClick={() => addToCart(item)}
                                                 className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-green-50 text-green-500 font-bold transition-colors"
                                             >
                                                 +

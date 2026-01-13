@@ -221,8 +221,12 @@ export default function StoreAdmin() {
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
                 <div className="p-6 border-b border-gray-50">
-                    <h1 className="text-xl font-black text-gray-900">OLIN<span className="text-accent">SHOP</span></h1>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Painel Administrativo</p>
+                    <h1 className="text-xl font-black text-gray-900 leading-tight">OLIN<span className="text-accent">SHOP</span></h1>
+                    <div className="mt-2 text-xs font-bold text-gray-500 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-accent rounded-full"></span>
+                        <span className="truncate">{restaurant?.name}</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2 opacity-60">Painel Administrativo</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
@@ -283,7 +287,11 @@ export default function StoreAdmin() {
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
                         </p>
                     </div>
-                    <div className="flex items-center gap-2 md:gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Loja</p>
+                            <p className="text-sm font-black text-gray-900 leading-none">{restaurant?.name}</p>
+                        </div>
                         <Link href={`/loja/${slug}`} target="_blank" className="text-[10px] md:text-xs font-bold text-gray-400 hover:text-accent transition-colors">
                             Ver loja ↗
                         </Link>
@@ -293,6 +301,12 @@ export default function StoreAdmin() {
                 <div className="p-4 md:p-8">
                     {tab === 'dashboard' && (
                         <div className="space-y-8 animate-fade-in">
+                            {/* Dashboard Header with Shop Name */}
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Bem-vindo, {restaurant?.name}! 👋</h3>
+                                <p className="text-gray-500 font-bold text-sm mt-1">Aqui está o resumo da sua loja para hoje.</p>
+                            </div>
+
                             {/* Summary & Graphics Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Sales Summary Card */}
