@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 export default function CategoryForm({ restaurantId, onSave }: { restaurantId: string, onSave: () => void }) {
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
-    const [subcategory, setSubcategory] = useState("");
+    const [subcategories, setSubcategories] = useState<string[]>([]);
+    const [customSubcategory, setCustomSubcategory] = useState("");
     const [categories, setCategories] = useState<any[]>([]);
 
     const fetchCategories = () => {
@@ -24,15 +25,19 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
         e.preventDefault();
         setLoading(true);
         try {
+            // Combine selected subcategories into a comma-separated string
+            const subcategoryString = subcategories.length > 0 ? subcategories.join(', ') : null;
+
             const res = await fetch('/api/categories', {
                 method: 'POST',
-                body: JSON.stringify({ restaurantId, name, subcategory: subcategory || null })
+                body: JSON.stringify({ restaurantId, name, subcategory: subcategoryString })
             });
             const data = await res.json();
 
             if (res.ok) {
                 setName("");
-                setSubcategory("");
+                setSubcategories([]);
+                setCustomSubcategory("");
                 fetchCategories(); // Refresh local list
                 onSave(); // Notify parent
             } else {
@@ -57,6 +62,27 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
     };
 
     const subcategoryOptions = ['Jovem', 'Adulto', 'Infantil', 'Feminino', 'Masculino', 'Unissex'];
+
+    const toggleSubcategory = (option: string) => {
+        setSubcategories(prev => {
+            if (prev.includes(option)) {
+                return prev.filter(s => s !== option);
+            } else {
+                return [...prev, option];
+            }
+        });
+    };
+
+    const addCustomSubcategory = () => {
+        if (customSubcategory.trim() && !subcategories.includes(customSubcategory.trim())) {
+            setSubcategories(prev => [...prev, customSubcategory.trim()]);
+            setCustomSubcategory("");
+        }
+    };
+
+    const removeSubcategory = (sub: string) => {
+        setSubcategories(prev => prev.filter(s => s !== sub));
+    };
 
     return (
         <div className="w-full">
@@ -86,15 +112,39 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                 {/* Subcategory Selection */}
                 <div>
                     <label className="text-xs font-semibold text-gray-500 uppercase ml-1 mb-2 block">
-                        Subcategoria (Opcional)
+                        Subcategorias (Opcional - Selecione múltiplas)
                     </label>
-                    <div className="flex flex-wrap gap-2">
+
+                    {/* Selected subcategories display */}
+                    {subcategories.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <span className="text-xs font-semibold text-blue-700">Selecionadas:</span>
+                            {subcategories.map(sub => (
+                                <span
+                                    key={sub}
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-medium"
+                                >
+                                    {sub}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSubcategory(sub)}
+                                        className="hover:bg-blue-700 rounded-full p-0.5 transition-colors"
+                                    >
+                                        ✕
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Predefined options */}
+                    <div className="flex flex-wrap gap-2 mb-2">
                         {subcategoryOptions.map(option => (
                             <button
                                 key={option}
                                 type="button"
-                                onClick={() => setSubcategory(subcategory === option ? '' : option)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${subcategory === option
+                                onClick={() => toggleSubcategory(option)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${subcategories.includes(option)
                                         ? 'bg-accent text-white shadow-md'
                                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
@@ -103,13 +153,30 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                             </button>
                         ))}
                     </div>
-                    <input
-                        type="text"
-                        className="w-full mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200 focus:border-accent outline-none transition-all text-sm"
-                        placeholder="Ou digite uma subcategoria personalizada..."
-                        value={!subcategoryOptions.includes(subcategory) ? subcategory : ''}
-                        onChange={e => setSubcategory(e.target.value)}
-                    />
+
+                    {/* Custom subcategory input */}
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            className="flex-1 p-2 bg-gray-50 rounded-lg border border-gray-200 focus:border-accent outline-none transition-all text-sm"
+                            placeholder="Ou digite uma subcategoria personalizada..."
+                            value={customSubcategory}
+                            onChange={e => setCustomSubcategory(e.target.value)}
+                            onKeyPress={e => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    addCustomSubcategory();
+                                }
+                            }}
+                        />
+                        <button
+                            type="button"
+                            onClick={addCustomSubcategory}
+                            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            + Adicionar
+                        </button>
+                    </div>
                 </div>
             </form>
 
