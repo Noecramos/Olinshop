@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "O seu shopping no WhatsApp.",
   manifest: "/manifest.json",
   icons: {
-    icon: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-logo.png',
-    apple: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-logo.png',
+    icon: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/app-logo.png',
+    apple: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/app-logo.png',
   },
 };
 

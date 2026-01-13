@@ -14,7 +14,9 @@ function MarketplaceContent() {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-logo.png',
+    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/app-logo.png',
+    splashImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/splash-screen.jpg',
+    headerBackgroundImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/header-main-page.png',
     welcomeTitle: 'O que você\nbusca hoje?',
     welcomeSubtitle: 'Shopping no WhatsApp',
     footerText: '© 2025 OlinShop Premium retail',
@@ -49,7 +51,7 @@ function MarketplaceContent() {
           const timer = setTimeout(() => {
             setLoading(false);
             try { sessionStorage.setItem('splashShown', 'true'); } catch (e) { }
-          }, 4000);
+          }, 3000); // reduced to 3s for better ux
           return () => clearTimeout(timer);
         }
       } catch (e) {
@@ -84,17 +86,15 @@ function MarketplaceContent() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-gradient-to-br from-purple-100 to-pink-100 p-4">
-        <div className="w-full max-w-md aspect-square relative">
-          <Image
-            src={config.splashImage || config.headerImage || "/olinshop-logo.png"}
-            alt="OlinShop"
-            fill
-            style={{ objectFit: 'contain' }}
-            priority
-            unoptimized
-          />
-        </div>
+      <div className="fixed inset-0 z-[9999] bg-white">
+        <Image
+          src={config.splashImage}
+          alt="OlinShop Loading"
+          fill
+          className="object-cover"
+          priority
+          unoptimized
+        />
       </div>
     );
   }
