@@ -541,54 +541,55 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Encoded Emojis for absolute URL compatibility
-            const E = {
-                TICKET: '%F0%9F%8E%AB', // 🎫
-                USER: '%F0%9F%91%A4',   // 👤
-                PHONE: '%F0%9F%93%B1',  // 📱
-                MAP: '%F0%9F%93%8D',    // 📍
-                POST: '%F0%9F%93%AE',   // 📮
-                CART: '%F0%9F%92%92',   // 🛒
-                MONEY: '%F0%9F%92%B5',  // 💵
-                TRUCK: '%F0%9F%9A%9A',  // 🚚
-                TOTAL: '%F0%9F%92%B0',  // 💰
-                NOTE: '%F0%9F%93%9D',   // 📝
-                ROCKET: '%F0%9F%9A%80', // 🚀
-                PIX: '%E2%9C%A8',       // ✨
-                CARD: '%F0%9F%92%B3',   // 💳
-                PACKAGE: '%F0%9F%93%A6' // 📦
+            // Dynamic Emoji Generation to prevent file encoding issues
+            const getE = (code: number) => String.fromCodePoint(code);
+            const emojis = {
+                ticket: getE(0x1F3AB), // 🎫
+                user: getE(0x1F464),   // 👤
+                phone: getE(0x1F4F1),  // 📱
+                map: getE(0x1F4CD),    // 📍
+                post: getE(0x1F4EE),   // 📮
+                cart: getE(0x1F6D2),   // 🛒
+                money: getE(0x1F4B5),  // 💵
+                truck: getE(0x1F69A),  // 🚚
+                total: getE(0x1F4B0),  // 💰
+                note: getE(0x1F4DD),   // 📝
+                rocket: getE(0x1F680), // 🚀
+                pix: getE(0x2728),     // ✨
+                card: getE(0x1F4B3),   // 💳
+                package: getE(0x1F4E6) // 📦
             };
 
             // Format Message Parts
             const itemsList = cart.map((i: any) => {
                 const itemTotal = i.price * i.quantity;
-                return `${E.PACKAGE} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                return `${emojis.package} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             }).join('\n');
 
-            const paymentInfo = form.paymentMethod === 'pix' ? `${E.PIX} PIX` :
-                (form.paymentMethod === 'card' ? `${E.CARD} Cartão` :
-                    `${E.MONEY} Dinheiro (Troco para R$ ${form.changeFor})`);
+            const paymentInfo = form.paymentMethod === 'pix' ? `${emojis.pix} PIX` :
+                (form.paymentMethod === 'card' ? `${emojis.card} Cartão` :
+                    `${emojis.money} Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const rawMessage = `*${restData.name.toUpperCase()}*\n` +
-                `${E.TICKET} *PEDIDO #${ticketNumber}*\n\n` +
-                `${E.USER} *Cliente:* ${form.name}\n` +
-                `${E.PHONE} *Telefone:* ${form.phone}\n` +
-                `${E.MAP} *Endereço:* ${form.address}\n` +
-                `${E.POST} *CEP:* ${form.zipCode}\n\n` +
-                `${E.CART} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
-                `${E.MONEY} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${E.TRUCK} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${E.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
-                (form.observations ? `${E.NOTE} *Observações:* ${form.observations}\n\n` : '') +
+            const message = `*${restData.name.toUpperCase()}*\n` +
+                `${emojis.ticket} *PEDIDO #${ticketNumber}*\n\n` +
+                `${emojis.user} *Cliente:* ${form.name}\n` +
+                `${emojis.phone} *Telefone:* ${form.phone}\n` +
+                `${emojis.map} *Endereço:* ${form.address}\n` +
+                `${emojis.post} *CEP:* ${form.zipCode}\n\n` +
+                `${emojis.cart} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                `${emojis.money} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${emojis.truck} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${emojis.total} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
+                (form.observations ? `${emojis.note} *Observações:* ${form.observations}\n\n` : '') +
                 `${paymentInfo}\n\n` +
-                `_Enviado via OlinShop ${E.ROCKET}_`;
+                `_Enviado via OlinShop ${emojis.rocket}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
 
             // Encode the MESSAGE but preserve the % symbols from our manual emoji encoding
-            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(rawMessage).replace(/%25/g, '%')}`;
+            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
             setWhatsappLink(link);
             clearCart();
