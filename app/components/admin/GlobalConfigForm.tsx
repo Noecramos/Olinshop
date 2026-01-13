@@ -153,7 +153,7 @@ export default function GlobalConfigForm() {
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-800">Customização do App</h2>
-                    <p className="text-sm text-gray-500">Altere o visual global do seu delivery</p>
+                    <p className="text-sm text-gray-500">Altere o visual global da sua loja</p>
                 </div>
             </div>
 
@@ -317,7 +317,7 @@ export default function GlobalConfigForm() {
                             value={config.welcomeTitle}
                             onChange={e => setConfig({ ...config, welcomeTitle: e.target.value })}
                             className="w-full p-4 bg-white border-2 border-gray-200 rounded-xl h-32 focus:border-gray-900 outline-none resize-none transition-colors"
-                            placeholder="Ex: O que vamos pedir hoje?"
+                            placeholder="Ex: Encontre o que procura!"
                         />
                     </div>
                     <div className="col-span-1 space-y-6">
@@ -327,7 +327,7 @@ export default function GlobalConfigForm() {
                                 value={config.welcomeSubtitle}
                                 onChange={e => setConfig({ ...config, welcomeSubtitle: e.target.value })}
                                 className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                                placeholder="Ex: Entregar em Casa"
+                                placeholder="Ex: Compre Online"
                             />
                         </div>
                         <div>
@@ -346,7 +346,7 @@ export default function GlobalConfigForm() {
                             value={config.footerText}
                             onChange={e => setConfig({ ...config, footerText: e.target.value })}
                             className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                            placeholder="© 2025 OlindAki Delivery..."
+                            placeholder="© 2025 OlinShop..."
                         />
                     </div>
                 </div>
@@ -484,7 +484,7 @@ export default function GlobalConfigForm() {
                                         value={item.name}
                                         onChange={e => updateFeaturedItem(index, 'name', e.target.value)}
                                         className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-sm"
-                                        placeholder="Ex: Pizza Calabresa"
+                                        placeholder="Ex: Camiseta Oversized"
                                     />
                                 </div>
                                 <div>
@@ -503,7 +503,7 @@ export default function GlobalConfigForm() {
                                         value={item.link}
                                         onChange={e => updateFeaturedItem(index, 'link', e.target.value)}
                                         className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-sm font-mono text-gray-600"
-                                        placeholder="Ex: /loja/olin-burgers"
+                                        placeholder="Ex: /loja/fashion-store"
                                     />
                                 </div>
                             </div>
