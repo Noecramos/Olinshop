@@ -23,6 +23,7 @@ export default function StoreAdmin() {
     const [tab, setTab] = useState('dashboard'); // dashboard | products | categories | settings
     const [showHistory, setShowHistory] = useState(false);
     const [catRefresh, setCatRefresh] = useState(0);
+    const [orderLoading, setOrderLoading] = useState<string | null>(null);
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -76,7 +77,7 @@ export default function StoreAdmin() {
                 const statusRank: any = { 'pending': 0, 'preparing': 1, 'sent': 2, 'delivered': 3, 'cancelled': 4 };
 
                 return serverOrders.map((serverOrder: any) => {
-                    const localOrder = prevOrders.find(p => p.id === serverOrder.id);
+                    const localOrder = prevOrders.find(p => String(p.id) === String(serverOrder.id));
 
                     if (localOrder) {
                         // Check priorities to prevent stale read overwriting optimistic update
@@ -531,6 +532,13 @@ export default function StoreAdmin() {
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <button
+                                                    onClick={() => fetchOrders()}
+                                                    className="bg-white text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-200 hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-all active:scale-95"
+                                                    title="Atualizar Pedidos"
+                                                >
+                                                    🔄 Atualizar
+                                                </button>
+                                                <button
                                                     onClick={printDailyReport}
                                                     className="bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-black shadow-lg transition-transform hover:-translate-y-0.5"
                                                 >
@@ -727,9 +735,14 @@ export default function StoreAdmin() {
                                                                     </button>
                                                                     {order.status?.toLowerCase() === 'pending' && (
                                                                         <button
+                                                                            disabled={orderLoading === order.id}
                                                                             onClick={async () => {
                                                                                 if (!confirm('Aprovar este pedido?')) return;
-                                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
+                                                                                setOrderLoading(order.id);
+
+                                                                                // Optimistic UI update
+                                                                                setOrders(prev => prev.map(o => String(o.id) === String(order.id) ? { ...o, status: 'preparing' } : o));
+
                                                                                 try {
                                                                                     const response = await fetch('/api/orders', {
                                                                                         method: 'PUT',
@@ -744,18 +757,25 @@ export default function StoreAdmin() {
                                                                                     console.error('Error approving order:', error);
                                                                                     alert('Erro ao aprovar: ' + error.message);
                                                                                     fetchOrders();
+                                                                                } finally {
+                                                                                    setOrderLoading(null);
                                                                                 }
                                                                             }}
-                                                                            className="px-3 py-1 bg-black text-white hover:bg-gray-800 rounded-lg text-[10px] font-bold uppercase"
+                                                                            className={`px-3 py-1 bg-black text-white hover:bg-gray-800 rounded-lg text-[10px] font-bold uppercase transition-all ${orderLoading === order.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                                         >
-                                                                            Aprovar
+                                                                            {orderLoading === order.id ? '...' : 'Aprovar'}
                                                                         </button>
                                                                     )}
                                                                     {order.status?.toLowerCase() === 'preparing' && (
                                                                         <button
+                                                                            disabled={orderLoading === order.id}
                                                                             onClick={async () => {
                                                                                 if (!confirm('Remeter pedido?')) return;
-                                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
+                                                                                setOrderLoading(order.id);
+
+                                                                                // Optimistic UI update
+                                                                                setOrders(prev => prev.map(o => String(o.id) === String(order.id) ? { ...o, status: 'sent' } : o));
+
                                                                                 try {
                                                                                     const response = await fetch('/api/orders', {
                                                                                         method: 'PUT',
@@ -770,11 +790,13 @@ export default function StoreAdmin() {
                                                                                     console.error('Error remitting order:', error);
                                                                                     alert('Erro ao remeter: ' + error.message);
                                                                                     fetchOrders();
+                                                                                } finally {
+                                                                                    setOrderLoading(null);
                                                                                 }
                                                                             }}
-                                                                            className="px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[10px] font-bold uppercase"
+                                                                            className={`px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[10px] font-bold uppercase transition-all ${orderLoading === order.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                                         >
-                                                                            Remeter
+                                                                            {orderLoading === order.id ? '...' : 'Remeter'}
                                                                         </button>
                                                                     )}
                                                                 </div>
