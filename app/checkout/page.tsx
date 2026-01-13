@@ -31,8 +31,7 @@ export default function CheckoutPage() {
         paymentMethod: "pix",
         changeFor: "",
         observations: "",
-        serviceType: "delivery", // delivery, pickup, table
-        tableNumber: ""
+        serviceType: "delivery", // delivery, pickup
     });
 
     // Fetch restaurant data
@@ -281,7 +280,6 @@ export default function CheckoutPage() {
 
     const handleFinish = async () => {
         const isDelivery = form.serviceType === 'delivery';
-        const isTable = form.serviceType === 'table';
 
         // Conditional validation
         if (!form.name || !form.phone) {
@@ -291,11 +289,6 @@ export default function CheckoutPage() {
 
         if (isDelivery && (!form.address || !form.zipCode)) {
             alert("Por favor, preencha o endereço completo para entrega.");
-            return;
-        }
-
-        if (isTable && !form.tableNumber) {
-            alert("Por favor, informe o número da mesa.");
             return;
         }
 
@@ -324,7 +317,6 @@ export default function CheckoutPage() {
                 observations: form.observations,
                 status: 'pending',
                 serviceType: form.serviceType,
-                tableNumber: isTable ? form.tableNumber : null,
             };
 
             const res = await fetch('/api/orders', {
@@ -365,8 +357,7 @@ export default function CheckoutPage() {
 
             const message = `*${emojis.package} ${storeName}*\n` +
                 `${emojis.ticket} *PEDIDO:* #${ticketNumber}\n` +
-                `Tipo: *${isDelivery ? 'Entrega' : (form.serviceType === 'pickup' ? 'Retirada' : 'Na Mesa')}*\n` +
-                (isTable ? `Mesa: *${form.tableNumber}*\n` : '') +
+                `Tipo: *${isDelivery ? 'Entrega' : 'Retirada'}*\n` +
                 `\n` +
                 `${emojis.user} *Cliente:* ${form.name.trim()}\n` +
                 `${emojis.phone} *Telefone:* ${form.phone.trim()}\n` +
@@ -456,8 +447,7 @@ export default function CheckoutPage() {
                                 <div className="grid grid-cols-3 gap-2">
                                     {[
                                         { id: 'delivery', label: 'Entrega', icon: '🛵' },
-                                        { id: 'pickup', label: 'Retirada', icon: '🛍️' },
-                                        { id: 'table', label: 'Na Mesa', icon: '🍽️' }
+                                        { id: 'pickup', label: 'Retirada', icon: '🛍️' }
                                     ].map(type => (
                                         <button
                                             key={type.id}
@@ -492,16 +482,6 @@ export default function CheckoutPage() {
                                 onChange={e => setForm({ ...form, phone: e.target.value })}
                             />
 
-                            {form.serviceType === 'table' && (
-                                <input
-                                    id="tableNumber"
-                                    name="tableNumber"
-                                    className="w-full p-3 bg-blue-50 text-blue-900 font-bold rounded-xl border-blue-100 border focus:ring-2 focus:ring-blue-500 outline-none transition-all animate-fade-in"
-                                    placeholder="Número da Mesa"
-                                    value={form.tableNumber}
-                                    onChange={e => setForm({ ...form, tableNumber: e.target.value })}
-                                />
-                            )}
 
                             {form.serviceType === 'delivery' && (
                                 <>

@@ -7,13 +7,14 @@
   /* OlinShop Vibrant Gradient Palette (from logo) */
   --primary: #2E1A47;
   /* Deep Purple (from logo text) */
-  --primary-hover: #3D2558;
+  --primary-hover: #FF4081;
+  /* Pastel Vivid Magenta Pink */
   --accent: #E91E8C;
-  /* Vibrant Magenta/Pink (from logo) */
-  --accent-hover: #D01A7D;
+  /* Vibrant Magenta/Pink */
+  --accent-hover: #FF80AB;
+  /* Softer Pastel Vivid Magenta */
   --accent-secondary: #6B4CE6;
-  /* Purple-Blue (from logo gradient) */
-  --accent-secondary-hover: #5A3FD1;
+  --accent-secondary-hover: #826AF0;
 
   --background: #FAF8FC;
   /* Very light purple tint */
