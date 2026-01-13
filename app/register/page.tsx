@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function RegisterRestaurant() {
+export default function RegisterShop() {
     const router = useRouter();
 
     const [form, setForm] = useState({
@@ -108,7 +108,7 @@ export default function RegisterRestaurant() {
         setLoading(true);
 
         try {
-            // Auto-generate shorter slug from restaurant name
+            // Auto-generate shorter slug from shop name
             let finalSlug = form.slug;
             if (!finalSlug) {
                 const words = form.name.toLowerCase().replace(/[^\w\s-]/g, '').split(/\s+/).filter(word => word.length > 0);
@@ -125,7 +125,7 @@ export default function RegisterRestaurant() {
 
             const submitData = { ...form, slug: finalSlug, whatsapp: finalWhatsapp };
 
-            const res = await fetch('/api/restaurants', {
+            const res = await fetch('/api/restaurants', { // API endpoint name kept for compatibility
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submitData)
@@ -171,7 +171,7 @@ export default function RegisterRestaurant() {
                                     id="name"
                                     name="name"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    placeholder="Ex: Olin Burgers"
+                                    placeholder="Ex: Olin Shop"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
                                     required
@@ -361,18 +361,19 @@ export default function RegisterRestaurant() {
                                     id="type"
                                     name="type"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
+                                    value={['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type) ? form.type : 'Outro'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
                                 >
-                                    <option value="Lanchonete">Lanchonete</option>
-                                    <option value="Restaurante">Restaurante</option>
-                                    <option value="Hamburgueria">Hamburgueria</option>
-                                    <option value="Pizzaria">Pizzaria</option>
-                                    <option value="Comida">Comida Caseira</option>
-                                    <option value="Bebidas">Bebidas</option>
+                                    <option value="Moda">Moda e Acessórios</option>
+                                    <option value="Eletrônicos">Eletrônicos e Tech</option>
+                                    <option value="Beleza">Beleza e Cosméticos</option>
+                                    <option value="Casa">Casa e Decoração</option>
+                                    <option value="Esportes">Esportes e Fitness</option>
+                                    <option value="Livros">Livros e Papelaria</option>
+                                    <option value="Alimentos">Alimentos e Bebidas</option>
                                     <option value="Outro">Outro (Especificar)</option>
                                 </select>
-                                {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
+                                {(!['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type)) && (
                                     <input
                                         className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-accent animate-fade-in"
                                         placeholder="Especifique o tipo (ex: Japonês)"
