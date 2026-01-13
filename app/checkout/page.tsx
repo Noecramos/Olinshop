@@ -541,17 +541,35 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
+            // Unicode Emojis for better compatibility
+            const EMOJI = {
+                TICKET: '\uD83C\uDFAB',
+                USER: '\uD83D\uDC64',
+                PHONE: '\uD83D\uDCF1',
+                MAP: '\uD83D\uDCCD',
+                POST: '\uD83D\uDCEE',
+                CART: '\uD83D\uDED2',
+                MONEY: '\uD83D\uDCB5',
+                TRUCK: '\uD83D\uDE9A',
+                TOTAL: '\uD83D\uDCB0',
+                NOTE: '\uD83D\uDCDD',
+                ROCKET: '\uD83D\uDE80',
+                PIX: '\u2728', // Using sparkles for PIX as a safer alternative to 💠
+                CARD: '\uD83D\uDCB3',
+                BAG: '\uD83D\uDDE3\uFE0F' // 🛍️
+            };
+
             // Format Message
             const getIcon = (cat: string) => {
                 const lower = (cat || '').toLowerCase();
-                if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda')) return '👕';
-                if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu')) return '📱';
-                if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato')) return '👟';
-                if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo')) return '⌚';
-                if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return '🏠';
-                if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return '💄';
-                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '🥤';
-                return '📦';
+                if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda')) return '\uD83D\uDC55'; // 👕
+                if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu')) return '\uD83D\uDCF1'; // 📱
+                if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato')) return '\uD83D\uDC5F'; // 👟
+                if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo')) return '\u231A'; // ⌚
+                if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return '\uD83C\uDFE0'; // 🏠
+                if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return '\uD83D\uDC84'; // 💄
+                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '\uD83E\uDDC3'; // 🥤
+                return '\uD83D\uDCE6'; // 📦
             };
 
             const itemsList = cart.map((i: any) => {
@@ -560,23 +578,23 @@ export default function CheckoutPage() {
                 return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             }).join('\n');
 
-            const paymentInfo = form.paymentMethod === 'pix' ? '💠 PIX' :
-                (form.paymentMethod === 'card' ? '💳 Cartão' :
-                    `💵 Dinheiro (Troco para R$ ${form.changeFor})`);
+            const paymentInfo = form.paymentMethod === 'pix' ? `${EMOJI.PIX} PIX` :
+                (form.paymentMethod === 'card' ? `${EMOJI.CARD} Cartão` :
+                    `${EMOJI.MONEY} Dinheiro (Troco para R$ ${form.changeFor})`);
 
             const message = `*${restData.name.toUpperCase()}*\n` +
-                `🎫 *PEDIDO #${ticketNumber}*\n\n` +
-                `👤 *Cliente:* ${form.name}\n` +
-                `📱 *Telefone:* ${form.phone}\n` +
-                `📍 *Endereço:* ${form.address}\n` +
-                `📮 *CEP:* ${form.zipCode}\n\n` +
-                `🛒 *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
-                `💵 *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `🚚 *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
-                (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
+                `${EMOJI.TICKET} *PEDIDO #${ticketNumber}*\n\n` +
+                `${EMOJI.USER} *Cliente:* ${form.name}\n` +
+                `${EMOJI.PHONE} *Telefone:* ${form.phone}\n` +
+                `${EMOJI.MAP} *Endereço:* ${form.address}\n` +
+                `${EMOJI.POST} *CEP:* ${form.zipCode}\n\n` +
+                `${EMOJI.CART} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                `${EMOJI.MONEY} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${EMOJI.TRUCK} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `${EMOJI.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
+                (form.observations ? `${EMOJI.NOTE} *Observações:* ${form.observations}\n\n` : '') +
                 `${paymentInfo}\n\n` +
-                `_Enviado via OlinShop 🚀_`;
+                `_Enviado via OlinShop ${EMOJI.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
