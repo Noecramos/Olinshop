@@ -349,7 +349,7 @@ export default function RegisterShop() {
                                     id="hours"
                                     name="hours"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    placeholder="Ex: Seg-Sex 18h às 23h"
+                                    placeholder="Ex: Seg-Sex 9h às 18h"
                                     value={form.hours}
                                     onChange={e => setForm({ ...form, hours: e.target.value })}
                                     required
@@ -376,7 +376,7 @@ export default function RegisterShop() {
                                 {(!['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type)) && (
                                     <input
                                         className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-accent animate-fade-in"
-                                        placeholder="Especifique o tipo (ex: Japonês)"
+                                        placeholder="Especifique o tipo (ex: Vestuário)"
                                         value={form.type === 'Outro' ? '' : form.type}
                                         onChange={e => setForm({ ...form, type: e.target.value })}
                                     />
