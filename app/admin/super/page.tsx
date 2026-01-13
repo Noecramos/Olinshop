@@ -72,8 +72,8 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
-                    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀\n\nAcesse seu painel administrativo:\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${restaurant.slug}\nSenha: ${finalPassword}\n\nBoas vendas!`;
+                    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
                 } else {
                     alert('Loja aprovada! Senha gerada: ' + finalPassword);
                 }
@@ -104,10 +104,10 @@ export default function SuperAdmin() {
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
 
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua senha de acesso ao painel do OlinShop foi resetada. %0A%0A🔑 Nova Senha: *${data.password}*%0A%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua senha de acesso ao painel do OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o parceiro?`)) {
-                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                        window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
                     }
                 } else {
                     alert(`Nova senha da loja ${restaurant.name}: ${data.password}`);
@@ -161,10 +161,10 @@ export default function SuperAdmin() {
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
 
-                    const message = `Olá, ${user.name}! %0A%0ASua senha de acesso ao OlinShop foi resetada. %0A%0A🔑 Nova Senha: *${data.password}*%0A%0ALink: https://olinshop.vercel.app`;
+                    const message = `Olá, ${user.name}! \n\nSua senha de acesso ao OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o usuário?`)) {
-                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                        window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
                     }
                 } else {
                     alert(`Nova senha de ${user.name}: ${data.password}`);
