@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
-import RestaurantHeader from "../../components/RestaurantHeader";
+import StoreHeader from "../../components/StoreHeader";
 import CategoryNav from "../../components/CategoryNav";
 import ProductCard from "../../components/ProductCard";
 import FloatingCart from "../../components/FloatingCart";
+import ProductModal from "../../components/ProductModal";
 
 export const dynamic = 'force-dynamic';
 
@@ -17,14 +18,15 @@ export default function StoreFront() {
 
     const [restaurant, setRestaurant] = useState<any>(null);
     const [products, setProducts] = useState<any[]>([]);
-    const [activeCategory, setActiveCategory] = useState("Lanches");
+    const [activeCategory, setActiveCategory] = useState("Geral");
     const [toast, setToast] = useState<string | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
     useEffect(() => {
         if (!slug) return;
 
         // Fetch Restaurant Details
-        fetch(`/api/restaurants?slug=${slug}`)
+        fetch(`/api/stores?slug=${slug}`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 setRestaurant(data);
@@ -45,8 +47,20 @@ export default function StoreFront() {
     const categories = Array.from(new Set(activeProducts.map((item: any) => item.category))).filter((c: any) => c && c.trim() !== "");
 
     const handleAdd = (item: any) => {
-        addToCart(item);
-        setToast(`${item.name} adicionado!`);
+        if (item.variants && item.variants.length > 0) {
+            setSelectedProduct(item);
+        } else {
+            addToCart({ ...item, selectedVariants: {} });
+            setToast(`${item.name} adicionado!`);
+            setTimeout(() => setToast(null), 2000);
+        }
+    };
+
+    const handleConfirmVariants = (variants: Record<string, string>) => {
+        if (!selectedProduct) return;
+        addToCart({ ...selectedProduct, selectedVariants: variants });
+        setToast(`${selectedProduct.name} adicionado!`);
+        setSelectedProduct(null);
         setTimeout(() => setToast(null), 2000);
     };
 
@@ -64,7 +78,7 @@ export default function StoreFront() {
         <main style={{ paddingBottom: "100px", minHeight: "100vh" }}>
 
             {/* Pass dynamic data to header if needed, for now resizing to match */}
-            <RestaurantHeader
+            <StoreHeader
                 name={restaurant.name}
                 image={restaurant.image}
                 banner={restaurant.banner}
@@ -110,6 +124,14 @@ export default function StoreFront() {
             )}
 
             {restaurant.isOpen && <FloatingCart count={count} total={total} />}
+
+            {selectedProduct && (
+                <ProductModal
+                    item={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                    onConfirm={handleConfirmVariants}
+                />
+            )}
 
             {toast && (
                 <div className="animate-fade-in" style={{

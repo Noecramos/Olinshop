@@ -13,14 +13,14 @@ interface HeaderProps {
     ratingCount?: number;
 }
 
-export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount }: HeaderProps) {
+export default function StoreHeader({ name = "OlinShop", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount }: HeaderProps) {
     return (
         <div className="relative mb-8">
             {/* Banner Section */}
             <div className="h-48 md:h-64 lg:h-72 w-full relative">
                 <div className="absolute inset-0 bg-center" style={{
-                    backgroundImage: `url('${banner || 'https://i.imgur.com/7Z4y7Qk.png'}')`,
-                    backgroundSize: '100% 100%'
+                    backgroundImage: `url('${banner || 'https://i.imgur.com/zodpPs7.png'}')`,
+                    backgroundSize: 'cover'
                 }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             </div>
@@ -39,14 +39,11 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                 </div>
 
                 {/* Text Info */}
-                <div className="text-center md:text-left text-gray-900 flex-1 md:mt-2">
+                <div className="text-center md:text-left text-gray-900 flex-1 md:mt-2 text-white">
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
-                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600">
+                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-white/90">
                         <div className="flex items-center gap-3">
                             <StarRating restaurantId={restaurantId || ''} initialSum={ratingSum || 0} initialCount={ratingCount || 0} />
-                            <span></span>
-                            <span>•</span>
-                            <span>•</span>
                             <span>{deliveryTime}</span>
                         </div>
                         {address && (

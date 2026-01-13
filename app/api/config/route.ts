@@ -13,9 +13,12 @@ export async function GET() {
         });
 
         return NextResponse.json(config);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Config GET Error:', error);
-        return NextResponse.json({ error: 'Failed to load settings' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Failed to load settings',
+            details: error.message
+        }, { status: 500 });
     }
 }
 

@@ -162,7 +162,7 @@ function SignupForm() {
                         id="name"
                         name="name"
                         required
-                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                         value={form.name}
                         onChange={e => setForm({ ...form, name: e.target.value })}
                     />
@@ -176,7 +176,7 @@ function SignupForm() {
                             id="cpf"
                             name="cpf"
                             required
-                            className={`w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 ${cpfError ? 'ring-2 ring-red-500 focus:ring-red-500' : 'focus:ring-[#EA1D2C]'}`}
+                            className={`w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 ${cpfError ? 'ring-2 ring-red-500 focus:ring-accent' : 'focus:ring-accent'}`}
                             placeholder="000.000.000-00"
                             value={form.cpf}
                             onChange={e => handleCPFChange(e.target.value)}
@@ -186,7 +186,7 @@ function SignupForm() {
                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">✓</span>
                         )}
                     </div>
-                    {cpfError && <p className="text-red-500 text-xs mt-1">{cpfError}</p>}
+                    {cpfError && <p className="text-accent text-xs mt-1">{cpfError}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -197,7 +197,7 @@ function SignupForm() {
                             name="email"
                             required
                             type="email"
-                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                             value={form.email}
                             onChange={e => setForm({ ...form, email: e.target.value })}
                         />
@@ -209,7 +209,7 @@ function SignupForm() {
                             name="password"
                             required
                             type="password"
-                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                             value={form.password}
                             onChange={e => setForm({ ...form, password: e.target.value })}
                         />
@@ -222,7 +222,7 @@ function SignupForm() {
                         id="phone"
                         name="phone"
                         required
-                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                        className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                         placeholder="(81) 99999-9999"
                         value={form.phone}
                         onChange={e => setForm({ ...form, phone: e.target.value })}
@@ -294,7 +294,7 @@ function SignupForm() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg disabled:opacity-50"
+                    className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg disabled:opacity-50"
                 >
                     {loading ? "Cadastrando..." : "Cadastrar"}
                 </button>
@@ -303,7 +303,7 @@ function SignupForm() {
             <div className="mt-6 text-center">
                 <p className="text-gray-500">
                     Já tem conta?{" "}
-                    <Link href={`/login?returnUrl=${encodeURIComponent(returnUrl)}`} className="text-[#EA1D2C] font-bold hover:underline">
+                    <Link href={`/login?returnUrl=${encodeURIComponent(returnUrl)}`} className="text-accent font-bold hover:underline">
                         Fazer Login
                     </Link>
                 </p>

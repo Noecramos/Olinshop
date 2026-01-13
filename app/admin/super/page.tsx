@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import RestaurantSettings from "../../components/admin/RestaurantSettings";
+import StoreSettings from "../../components/admin/StoreSettings";
 import GlobalConfigForm from "../../components/admin/GlobalConfigForm";
 
 export default function SuperAdmin() {
@@ -57,7 +57,7 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olinshop.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
                     alert('Restaurante aprovado! Senha gerada: ' + finalPassword);
@@ -152,7 +152,7 @@ export default function SuperAdmin() {
             <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
                 <div className="w-full max-w-lg">
                     {/* Header Banner - Same width as card */}
-                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                     </div>
 
@@ -170,7 +170,7 @@ export default function SuperAdmin() {
                                     id="master-password"
                                     name="password"
                                     type="password"
-                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 outline-none transition-all font-medium"
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all font-medium"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
@@ -179,7 +179,7 @@ export default function SuperAdmin() {
                                 <div className="mt-2 text-right">
                                     <button
                                         onClick={handleResetPassword}
-                                        className="text-xs text-gray-400 hover:text-[#EA1D2C] transition-colors font-medium"
+                                        className="text-xs text-gray-400 hover:text-accent transition-colors font-medium"
                                     >
                                         Esqueci minha senha
                                     </button>
@@ -196,7 +196,7 @@ export default function SuperAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a>
+                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors">www.noviapp.com.br</a>
                     </footer>
                 </div>
             </div>
@@ -207,15 +207,15 @@ export default function SuperAdmin() {
         <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center py-10 px-4">
             <div className="w-full max-w-7xl">
                 {/* Header Banner - Same width as card */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Gestão Global</h1>
-                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinDelivery</p>
+                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinShop</p>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="absolute bottom-4 right-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg font-bold hover:bg-white hover:text-red-600 transition-all text-sm border border-white/30"
+                        className="absolute bottom-4 right-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg font-bold hover:bg-white hover:text-accent transition-all text-sm border border-white/30"
                     >
                         Sair
                     </button>
@@ -232,7 +232,7 @@ export default function SuperAdmin() {
                             </button>
                             <div className="p-8">
                                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Editar: {editingRestaurant.name}</h2>
-                                <RestaurantSettings
+                                <StoreSettings
                                     restaurant={editingRestaurant}
                                     onUpdate={() => {
                                         fetchRestaurants();
@@ -295,7 +295,7 @@ export default function SuperAdmin() {
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
+                                                        <div className="font-bold text-gray-900 group-hover:text-accent transition-colors">{r.name}</div>
                                                         <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
                                                     </div>
                                                 </div>
@@ -315,27 +315,27 @@ export default function SuperAdmin() {
                                                 <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
                                                     <button
                                                         onClick={() => setEditingRestaurant(r)}
-                                                        className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all"
                                                         title="Editar Detalhes"
                                                     >
                                                         <span className="text-lg">✏️</span>
                                                     </button>
                                                     <button
                                                         onClick={() => toggleApproval(r)}
-                                                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}
+                                                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-accent hover:bg-accent-hover text-white'}`}
                                                     >
                                                         {r.approved ? 'Pausar' : 'Aprovar'}
                                                     </button>
                                                     <button
                                                         onClick={() => resetPassword(r)}
-                                                        className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all"
                                                         title="Resetar Senha"
                                                     >
                                                         <span className="text-lg">🔑</span>
                                                     </button>
                                                     <button
                                                         onClick={() => deleteRestaurant(r.id)}
-                                                        className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                                        className="p-2.5 text-gray-400 hover:text-accent hover:bg-red-50 rounded-xl transition-all"
                                                         title="Excluir"
                                                     >
                                                         <span className="text-lg">🗑️</span>
@@ -359,7 +359,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-500 text-xs py-10 mt-2">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinShop
                 </footer>
             </div>
         </div>

@@ -18,6 +18,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         categoryId: "",
         image: ""
     });
+    const [variants, setVariants] = useState<any[]>([]); // [{ name: "Tamanho", options: ["P", "M", "G"] }]
 
     // Fetch Data
     const fetchData = async () => {
@@ -74,7 +75,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         const selectedCat = categories.find(c => c.id === form.categoryId);
         const categoryName = selectedCat ? selectedCat.name : "Geral";
 
-        const body: any = { ...form, restaurantId, price: parseFloat(form.price), category: categoryName };
+        const body: any = { ...form, restaurantId, price: parseFloat(form.price), category: categoryName, variants };
         if (editingId) body.id = editingId;
 
         try {
@@ -86,6 +87,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             if (res.ok) {
                 // Reset
                 setForm({ ...form, name: "", description: "", price: "", image: "" });
+                setVariants([]);
                 setEditingId(null);
                 fetchData(); // Refresh list
                 onSave();
@@ -110,12 +112,14 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             categoryId: catId,
             image: prod.image || ""
         });
+        setVariants(prod.variants || []);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCancel = () => {
         setEditingId(null);
         setForm({ ...form, name: "", description: "", price: "", image: "" });
+        setVariants([]);
     };
 
     const handleDelete = async (id: string) => {
@@ -134,7 +138,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                     <div className="flex justify-between items-center mb-2">
                         <h3 className="font-bold text-lg">{editingId ? 'Editar Produto' : 'Novo Produto'}</h3>
                         {editingId && (
-                            <button type="button" onClick={handleCancel} className="text-xs text-red-500 font-bold hover:underline">
+                            <button type="button" onClick={handleCancel} className="text-xs text-accent font-bold hover:underline">
                                 Cancelar
                             </button>
                         )}
@@ -218,7 +222,58 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             />
                         </div>
 
-                        <button type="submit" className={`w-full py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all ${editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-[#1D1D1F] hover:bg-black'}`} disabled={loading || uploading}>
+                        {/* Variants Section */}
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div className="flex justify-between items-center mb-3">
+                                <h4 className="text-xs font-bold text-gray-700 uppercase">Grade / Variações</h4>
+                                <button
+                                    type="button"
+                                    onClick={() => setVariants([...variants, { name: "", options: "" }])}
+                                    className="text-[10px] bg-white border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-100 font-bold"
+                                >
+                                    + Adicionar
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {variants.map((v, i) => (
+                                    <div key={i} className="bg-white p-3 rounded-lg border border-gray-100 flex flex-col gap-2 relative group">
+                                        <button
+                                            type="button"
+                                            onClick={() => setVariants(variants.filter((_, idx) => idx !== i))}
+                                            className="absolute -top-2 -right-2 bg-red-100 text-accent w-5 h-5 rounded-full flex items-center justify-center text-[10px] hover:bg-red-200"
+                                        >
+                                            ✕
+                                        </button>
+                                        <input
+                                            placeholder="Nome (ex: Tamanho ou Cor)"
+                                            className="text-xs font-bold border-b border-gray-100 w-full focus:outline-none focus:border-blue-300 pb-1"
+                                            value={v.name}
+                                            onChange={e => {
+                                                const newV = [...variants];
+                                                newV[i].name = e.target.value;
+                                                setVariants(newV);
+                                            }}
+                                        />
+                                        <input
+                                            placeholder="Opções (ex: P, M, G ou Azul, Preto)"
+                                            className="text-xs border-none w-full focus:outline-none text-gray-500"
+                                            value={typeof v.options === 'string' ? v.options : v.options.join(', ')}
+                                            onChange={e => {
+                                                const newV = [...variants];
+                                                newV[i].options = e.target.value;
+                                                setVariants(newV);
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                                {variants.length === 0 && (
+                                    <p className="text-[10px] text-gray-400 text-center italic">Nenhuma variação (Tamanho, Cor, etc)</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <button type="submit" className={`w-full py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all ${editingId ? 'bg-accent hover:bg-accent-hover' : 'bg-[#1D1D1F] hover:bg-black'}`} disabled={loading || uploading}>
                             {loading ? 'Salvando...' : editingId ? 'Salvar Alterações' : 'Adicionar Produto'}
                         </button>
                     </div>
@@ -243,15 +298,24 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                     <div className="flex justify-between items-start">
                                         <h4 className="font-bold text-gray-900 truncate">{prod.name}</h4>
                                         <div className="flex gap-1">
-                                            <button onClick={() => handleEdit(prod)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                                            <button onClick={() => handleEdit(prod)} className="p-1.5 text-accent hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
                                                 ✏️
                                             </button>
-                                            <button onClick={() => handleDelete(prod.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Excluir">
+                                            <button onClick={() => handleDelete(prod.id)} className="p-1.5 text-accent hover:bg-red-50 rounded-lg transition-colors" title="Excluir">
                                                 🗑️
                                             </button>
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-500 line-clamp-2 mt-1">{prod.description}</p>
+                                    {prod.variants && prod.variants.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {prod.variants.map((v: any, idx: number) => (
+                                                <span key={idx} className="text-[9px] bg-blue-50 text-accent px-1.5 py-0.5 rounded border border-blue-100">
+                                                    {v.name}: {typeof v.options === 'string' ? v.options : (Array.isArray(v.options) ? v.options.join(',') : '')}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                     <div className="mt-2 flex justify-between items-center">
                                         <span className="font-bold text-green-700">R$ {Number(prod.price).toFixed(2)}</span>
                                         <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full text-gray-600 font-medium">{prod.category}</span>

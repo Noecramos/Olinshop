@@ -4,37 +4,48 @@
 @tailwind utilities;
 
 :root {
-  /* OlinShop Premium Palette (Apple-inspired) */
-  --primary: #1D1D1F;
-  /* Space Black */
-  --primary-hover: #333336;
-  --accent: #007AFF;
-  /* Apple Blue for links/actions */
-  --accent-hover: #0062CC;
+  /* OlinShop Vibrant Gradient Palette (from logo) */
+  --primary: #2E1A47;
+  /* Deep Purple (from logo text) */
+  --primary-hover: #3D2558;
+  --accent: #E91E8C;
+  /* Vibrant Magenta/Pink (from logo) */
+  --accent-hover: #D01A7D;
+  --accent-secondary: #6B4CE6;
+  /* Purple-Blue (from logo gradient) */
+  --accent-secondary-hover: #5A3FD1;
 
-  --background: #F5F5F7;
-  /* Apple Light Gray Background */
+  --background: #FAF8FC;
+  /* Very light purple tint */
   --surface: #FFFFFF;
   --surface-glass: rgba(255, 255, 255, 0.72);
 
-  --text: #1D1D1F;
-  /* SF Black */
-  --text-secondary: #86868B;
-  /* SF Gray */
+  --text: #2E1A47;
+  /* Deep Purple for text */
+  --text-secondary: #8B7BA8;
+  /* Muted purple-gray */
   --text-on-primary: #FFFFFF;
 
-  --border: #D2D2D7;
-  /* Apple-style border */
+  --border: #E8E0F0;
+  /* Light purple border */
   --success: #34C759;
   --danger: #FF3B30;
+
+  /* Gradient definitions */
+  --gradient-primary: linear-gradient(135deg, #E91E8C 0%, #6B4CE6 100%);
+  /* Magenta to Purple-Blue */
+  --gradient-secondary: linear-gradient(135deg, #F06292 0%, #9575CD 100%);
+  /* Lighter version */
 
   --radius-sm: 8px;
   --radius: 14px;
   --radius-lg: 20px;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 2px 4px rgba(46, 26, 71, 0.04);
+  --shadow-md: 0 4px 12px rgba(46, 26, 71, 0.08);
+  --shadow-lg: 0 20px 40px rgba(46, 26, 71, 0.12);
+  --shadow-glow: 0 8px 32px rgba(233, 30, 140, 0.25);
+  /* Magenta glow */
 
   --header-height: 64px;
   --container-max: 1100px;

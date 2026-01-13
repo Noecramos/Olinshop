@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
+import PageHeader from "../components/PageHeader";
 
 function LoginForm() {
     const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ function LoginForm() {
                         id="email"
                         name="email"
                         type="email"
-                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C] transition-all"
+                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent transition-all"
                         placeholder="seu@email.com"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
@@ -51,7 +52,7 @@ function LoginForm() {
                         id="password"
                         name="password"
                         type="password"
-                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C] transition-all"
+                        className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent transition-all"
                         placeholder="••••••••"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
@@ -62,7 +63,7 @@ function LoginForm() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg disabled:opacity-50"
+                    className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg disabled:opacity-50"
                 >
                     {loading ? "Entrando..." : "Entrar"}
                 </button>
@@ -71,7 +72,7 @@ function LoginForm() {
             <div className="mt-6 text-center">
                 <p className="text-gray-500">
                     Não tem uma conta?{" "}
-                    <Link href={`/signup?returnUrl=${encodeURIComponent(returnUrl)}`} className="text-[#EA1D2C] font-bold hover:underline">
+                    <Link href={`/signup?returnUrl=${encodeURIComponent(returnUrl)}`} className="text-accent font-bold hover:underline">
                         Cadastre-se
                     </Link>
                 </p>
@@ -88,10 +89,13 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
-            <Suspense fallback={<div className="text-center">Carregando...</div>}>
-                <LoginForm />
-            </Suspense>
+        <div className="min-h-screen bg-[#FAF8FC] flex flex-col">
+            <PageHeader />
+            <div className="flex-1 flex items-center justify-center py-8 px-4">
+                <Suspense fallback={<div className="text-center">Carregando...</div>}>
+                    <LoginForm />
+                </Suspense>
+            </div>
         </div>
     );
 }

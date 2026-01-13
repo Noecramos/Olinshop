@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { SalesChart, TopProductsChart, StatusPieChart } from "../../components/admin/Charts";
 import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
-import RestaurantSettings from "../../components/admin/RestaurantSettings";
+import StoreSettings from "../../components/admin/StoreSettings";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +18,7 @@ export default function StoreAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurant, setRestaurant] = useState<any>(null);
+    const [config, setConfig] = useState<any>({});
     const [orders, setOrders] = useState<any[]>([]);
     const [tab, setTab] = useState('dashboard'); // dashboard | products | categories | settings
     const [showHistory, setShowHistory] = useState(false);
@@ -36,7 +37,7 @@ export default function StoreAdmin() {
     const fetchRestaurant = async () => {
         if (!slug) return;
         try {
-            const res = await fetch(`/api/restaurants?slug=${slug}`);
+            const res = await fetch(`/api/stores?slug=${slug}`);
             if (res.ok) {
                 const data = await res.json();
                 setRestaurant(data);
@@ -46,10 +47,21 @@ export default function StoreAdmin() {
         }
     };
 
-    // Fetch Restaurant Info
+    // Fetch Restaurant Info & Config
     useEffect(() => {
         fetchRestaurant();
+        fetchConfig();
     }, [slug]);
+
+    const fetchConfig = async () => {
+        try {
+            const res = await fetch('/api/config');
+            const data = await res.json();
+            setConfig(data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     // Fetch Orders when Auth is true
     const fetchOrders = async () => {
@@ -167,7 +179,7 @@ export default function StoreAdmin() {
             <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
                 <div className="w-full max-w-lg">
                     {/* Header Banner - Same width as card */}
-                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                     </div>
 
@@ -200,7 +212,7 @@ export default function StoreAdmin() {
                                     id="adminPassword"
                                     name="adminPassword"
                                     type="password"
-                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 outline-none transition-all font-medium"
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-accent focus:ring-4 focus:ring-accent/10 outline-none transition-all font-medium"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
@@ -209,7 +221,7 @@ export default function StoreAdmin() {
                             </div>
                             <button
                                 onClick={handleLogin}
-                                className="w-full bg-gradient-to-r from-[#EA1D2C] to-[#C51623] hover:from-[#C51623] hover:to-[#A01419] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+                                className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
                             >
                                 Entrar no Painel →
                             </button>
@@ -218,7 +230,7 @@ export default function StoreAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a>
+                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">www.noviapp.com.br</a>
                     </footer>
                 </div>
             </div>
@@ -320,7 +332,7 @@ export default function StoreAdmin() {
                     
                     <div class="footer">
                         Relatório Gerado por<br>
-                        <strong>OlinDelivery Sistema</strong>
+                        <strong>OlinShop Sistema</strong>
                     </div>
 
                     <script>
@@ -424,7 +436,7 @@ export default function StoreAdmin() {
 
                     <div class="divider"></div>
                     <div class="footer">
-                        OlinDelivery
+                        OlinShop
                     </div>
 
                     <script>
@@ -470,14 +482,14 @@ export default function StoreAdmin() {
                 </div>
 
                 <nav className="flex md:flex-col gap-2 p-2 md:p-4 overflow-x-auto md:overflow-visible no-scrollbar">
-                    <button onClick={() => setTab('dashboard')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'dashboard' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <button onClick={() => setTab('dashboard')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'dashboard' ? 'bg-pink-50 text-accent font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">📊</span> <span className="hidden lg:block">Painel</span>
                     </button>
-                    <button onClick={() => setTab('products')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'products' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
-                        <span className="text-xl">🍔</span> <span className="hidden lg:block">Produtos</span>
+                    <button onClick={() => setTab('products')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'products' ? 'bg-pink-50 text-accent font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
+                        <span className="text-xl">📦</span> <span className="hidden lg:block">Produtos</span>
                     </button>
 
-                    <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
+                    <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-pink-50 text-accent font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
                     </button>
                     <a href="https://wa.me/558183920320" target="_blank" rel="noopener noreferrer" className="p-3 rounded-xl transition-all flex items-center gap-3 hover:bg-green-50 text-[#25D366] hover:text-[#128C7E] mt-auto">
@@ -497,7 +509,7 @@ export default function StoreAdmin() {
             <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] p-4 md:p-8">
                 <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
                     {/* Header Banner - Same width as the content below */}
-                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl shrink-0" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl shrink-0" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                         <div className="absolute bottom-4 left-6 text-white z-10">
                             <h2 className="text-xl font-bold">{restaurant.name}</h2>
@@ -535,7 +547,7 @@ export default function StoreAdmin() {
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-300">
                                                 <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">Vendas Hoje</h3>
-                                                <p className="text-4xl font-bold text-[#EA1D2C] tracking-tight">
+                                                <p className="text-4xl font-bold text-accent tracking-tight">
                                                     {orders.reduce((acc, o) => acc + o.total, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                 </p>
                                             </div>
@@ -622,7 +634,7 @@ export default function StoreAdmin() {
                                                             {/* Compact Header */}
                                                             <div className="flex justify-between items-center mb-3">
                                                                 <div className="flex items-center gap-3">
-                                                                    <span className="text-xl font-black text-[#EA1D2C]">#{order.ticketNumber || '...'}</span>
+                                                                    <span className="text-xl font-black text-accent">#{order.ticketNumber || '...'}</span>
                                                                     <span className="text-xs text-gray-400">
                                                                         {(() => {
                                                                             try {
@@ -669,8 +681,8 @@ export default function StoreAdmin() {
 
                                                             {/* Observations - Compact */}
                                                             {order.observations && (
-                                                                <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
-                                                                    ⚠️ {order.observations}
+                                                                <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700">
+                                                                    ℹ️ {order.observations}
                                                                 </div>
                                                             )}
 
@@ -806,7 +818,7 @@ export default function StoreAdmin() {
                                         )}
                                         {tab === 'settings' && (
                                             <div className="py-8">
-                                                <RestaurantSettings
+                                                <StoreSettings
                                                     restaurant={restaurant}
                                                     onUpdate={(data: any) => {
                                                         if (data?.slug && data.slug !== slug) {
@@ -827,7 +839,7 @@ export default function StoreAdmin() {
 
                     {/* Footer Area - Outside the white card */}
                     <footer className="w-full text-center text-gray-500 text-xs py-8 mt-2">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">www.noviapp.com.br</a> • OlinShop
                     </footer>
                 </div >
 

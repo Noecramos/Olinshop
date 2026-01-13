@@ -24,12 +24,10 @@ const ICONS = {
 };
 
 const COLORS = [
-    { bg: 'bg-[#FFF4C3]', label: 'Amarelo' },
-    { bg: 'bg-[#FFE4E6]', label: 'Rosa' },
-    { bg: 'bg-[#D1FAE5]', label: 'Verde' },
-    { bg: 'bg-[#DBEAFE]', label: 'Azul' },
-    { bg: 'bg-[#F3E8FF]', label: 'Roxo' },
-    { bg: 'bg-[#FFEDD5]', label: 'Laranja' },
+    { bg: 'bg-[#FFD700]', label: 'Amarelo Ouro' },
+    { bg: 'bg-accent', label: 'Vermelho Master' },
+    { bg: 'bg-[#1D1D1F]', label: 'Space Black' },
+    { bg: 'bg-[#007AFF]', label: 'Azul iOS' },
     { bg: 'bg-white', label: 'Branco' },
 ];
 
@@ -43,6 +41,10 @@ export default function GlobalConfigForm() {
         headerBgColor: '',
         headerBackgroundType: 'color',
         headerBackgroundImage: '',
+        primaryColor: '#E91E8C',
+        secondaryColor: '#6B4CE6',
+        pageHeaderImage: '',
+        splashImage: '',
         featuredItems: [] as any[]
     });
     const [loading, setLoading] = useState(false);
@@ -50,7 +52,10 @@ export default function GlobalConfigForm() {
 
     useEffect(() => {
         fetch('/api/config')
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch config');
+                return res.json();
+            })
             .then(data => {
                 if (data && !data.error) {
                     let parsedItems = [];
@@ -146,9 +151,9 @@ export default function GlobalConfigForm() {
     return (
         <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Personalização do App</h2>
-                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
-                    Modo Editor
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-800">Customização do App</h2>
+                    <p className="text-sm text-gray-500">Altere o visual global do seu delivery</p>
                 </div>
             </div>
 
@@ -157,39 +162,76 @@ export default function GlobalConfigForm() {
                 <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
                     🚀 Logo & Splash Screen
                 </h3>
-                <div className="flex flex-col md:flex-row gap-8 items-start">
-                    <div className="w-full md:w-1/3">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Logo Principal</label>
-                        <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white relative">
-                            <input type="file" id="logo-upload" accept="image/*" onChange={(e) => handleUpload(e, 'headerImage')} className="hidden" />
-                            <label htmlFor="logo-upload" className="cursor-pointer block">
-                                {config.headerImage ? (
-                                    <div className="relative h-40 w-full flex items-center justify-center bg-gray-50 rounded-lg p-2">
-                                        <img src={config.headerImage} alt="Logo" className="max-h-full max-w-full object-contain" />
-                                        <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg font-bold text-sm">
-                                            Trocar Logo
+                <div className="flex flex-col gap-8">
+                    {/* Main Logo */}
+                    <div className="flex flex-col md:flex-row gap-8 items-start pb-8 border-b border-gray-100">
+                        <div className="w-full md:w-1/3">
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Logo Principal (Sistema)</label>
+                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white relative">
+                                <input type="file" id="logo-upload" accept="image/*" onChange={(e) => handleUpload(e, 'headerImage')} className="hidden" />
+                                <label htmlFor="logo-upload" className="cursor-pointer block">
+                                    {config.headerImage ? (
+                                        <div className="relative h-32 w-full flex items-center justify-center bg-gray-50 rounded-lg p-2">
+                                            <img src={config.headerImage} alt="Logo" className="max-h-full max-w-full object-contain" />
+                                            <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg font-bold text-sm">
+                                                Trocar
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <div className="py-10">
-                                        <div className="text-4xl mb-2">📸</div>
-                                        <p className="text-sm text-gray-500">Adicionar Logo</p>
-                                    </div>
-                                )}
-                            </label>
+                                    ) : (
+                                        <div className="py-8">
+                                            <div className="text-3xl mb-2">📸</div>
+                                            <p className="text-xs text-gray-500">Adicionar Logo</p>
+                                        </div>
+                                    )}
+                                </label>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-2/3">
+                            <label className="block text-sm font-bold text-gray-700 mb-2">URL da Logo</label>
+                            <input
+                                value={config.headerImage}
+                                onChange={e => setConfig({ ...config, headerImage: e.target.value })}
+                                className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                                placeholder="https://..."
+                            />
                         </div>
                     </div>
-                    <div className="w-full md:w-2/3">
-                        <div className="bg-yellow-50 p-4 rounded-xl text-xs text-yellow-800 mb-4">
-                            Esta logo aparecerá na tela de carregamento (Splash Screen) ao abrir o app.
+
+                    {/* Splash Screen */}
+                    <div className="flex flex-col md:flex-row gap-8 items-start">
+                        <div className="w-full md:w-1/3">
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Splash Screen (Abertura)</label>
+                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white relative">
+                                <input type="file" id="splash-upload" accept="image/*" onChange={(e) => handleUpload(e, 'splashImage')} className="hidden" />
+                                <label htmlFor="splash-upload" className="cursor-pointer block">
+                                    {config.splashImage || config.headerImage ? (
+                                        <div className="relative h-32 w-full flex items-center justify-center bg-gray-50 rounded-lg p-2">
+                                            <img src={config.splashImage || config.headerImage} alt="Splash" className="max-h-full max-w-full object-contain" />
+                                            <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg font-bold text-sm">
+                                                Trocar Splash
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="py-8">
+                                            <div className="text-3xl mb-2">🚀</div>
+                                            <p className="text-xs text-gray-500">Adicionar Splash</p>
+                                        </div>
+                                    )}
+                                </label>
+                            </div>
                         </div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">URL da Logo (Opcional)</label>
-                        <input
-                            value={config.headerImage}
-                            onChange={e => setConfig({ ...config, headerImage: e.target.value })}
-                            className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                            placeholder="https://..."
-                        />
+                        <div className="w-full md:w-2/3">
+                            <div className="bg-blue-50 p-4 rounded-xl text-xs text-blue-800 mb-4">
+                                Imagem exclusiva para a tela de carregamento. Se vazia, usará a Logo Principal.
+                            </div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">URL da Splash</label>
+                            <input
+                                value={config.splashImage || ''}
+                                onChange={e => setConfig({ ...config, splashImage: e.target.value })}
+                                className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                                placeholder="https://..."
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -197,7 +239,7 @@ export default function GlobalConfigForm() {
             {/* SEÇÃO 1: VISUAL DO HEADER */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
-                    🎨 Header & Identidade
+                    🎨 Header (Página Principal)
                 </h3>
 
                 <div className="space-y-8">
@@ -310,6 +352,97 @@ export default function GlobalConfigForm() {
                 </div>
             </div>
 
+            {/* SEÇÃO 3: CORES E ESTILO GLOBAL (NOVO) */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    🎨 Cores & Botões
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Primary Color */}
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Cor Principal (Botões e Destaques)</label>
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <input
+                                    type="color"
+                                    value={config.primaryColor || 'var(--accent)'}
+                                    onChange={e => setConfig({ ...config, primaryColor: e.target.value })}
+                                    className="h-12 w-12 rounded-lg cursor-pointer border-0 p-0 overflow-hidden shadow-sm"
+                                />
+                                <div className="absolute inset-0 rounded-lg border border-gray-200 pointer-events-none" />
+                            </div>
+                            <input
+                                value={config.primaryColor || 'var(--accent)'}
+                                onChange={e => setConfig({ ...config, primaryColor: e.target.value })}
+                                className="w-32 p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors font-mono text-sm uppercase"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Cor dos botões de ação e ícones principais.</p>
+                    </div>
+
+                    {/* Gradient Secondary */}
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Cor Secundária (Gradientes)</label>
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <input
+                                    type="color"
+                                    value={config.secondaryColor || '#6B4CE6'}
+                                    onChange={e => setConfig({ ...config, secondaryColor: e.target.value })}
+                                    className="h-12 w-12 rounded-lg cursor-pointer border-0 p-0 overflow-hidden shadow-sm"
+                                />
+                                <div className="absolute inset-0 rounded-lg border border-gray-200 pointer-events-none" />
+                            </div>
+                            <input
+                                value={config.secondaryColor || '#6B4CE6'}
+                                onChange={e => setConfig({ ...config, secondaryColor: e.target.value })}
+                                className="w-32 p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors font-mono text-sm uppercase"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Usado para criar o gradiente do Splash Screen.</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* SEÇÃO 4: HEADER PERSONALIZADO DAS PÁGINAS (NOVO) */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    🖼️ Header das Páginas (Login, Cadastro, Admin)
+                </h3>
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                    <div className="w-full md:w-1/3">
+                        <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white relative">
+                            <input type="file" id="page-header-upload" accept="image/*" onChange={(e) => handleUpload(e, 'pageHeaderImage')} className="hidden" />
+                            <label htmlFor="page-header-upload" className="cursor-pointer block">
+                                {config.pageHeaderImage || config.headerImage ? (
+                                    <div className="relative h-32 w-full flex items-center justify-center bg-gray-50 rounded-lg p-2">
+                                        <img src={config.pageHeaderImage || config.headerImage} alt="Header" className="max-h-full max-w-full object-contain" />
+                                        <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg font-bold text-sm">
+                                            Trocar Imagem
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="py-10">
+                                        <div className="text-4xl mb-2">🖼️</div>
+                                        <p className="text-sm text-gray-500">Adicionar Header</p>
+                                    </div>
+                                )}
+                            </label>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-2/3">
+                        <label className="block text-sm font-bold text-gray-700 mb-2">URL da Imagem do Headero</label>
+                        <input
+                            value={config.pageHeaderImage || ''}
+                            onChange={e => setConfig({ ...config, pageHeaderImage: e.target.value })}
+                            className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                            placeholder="https://... (Se vazio, usa a Logo Principal)"
+                        />
+                        <p className="text-xs text-gray-500 mt-2">Essa imagem aparecerá no topo das páginas de Login, Cadastro e Checkout.</p>
+                    </div>
+                </div>
+            </div>
+
             {/* SEÇÃO 3: ITENS POPULARES */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100 justify-between">
@@ -327,7 +460,7 @@ export default function GlobalConfigForm() {
                         <div key={item.id || index} className="border border-gray-200 rounded-2xl p-6 bg-gray-50 flex flex-col md:flex-row gap-6 relative group">
                             <button
                                 onClick={() => removeFeaturedItem(index)}
-                                className="absolute top-4 right-4 text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                className="absolute top-4 right-4 text-red-400 hover:text-accent p-2 rounded-full hover:bg-red-50 transition-colors"
                                 title="Remover item"
                             >
                                 🗑️
@@ -412,20 +545,13 @@ export default function GlobalConfigForm() {
             </div>
 
             {/* ACTION BAR */}
-            <div className="sticky bottom-4">
+            <div className="sticky bottom-6 z-50">
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-black transition-all flex items-center justify-center gap-2"
                 >
-                    {loading ? (
-                        <>Wait...</>
-                    ) : (
-                        <>
-                            <span>Salvar Alterações Globais</span>
-                            <span>→</span>
-                        </>
-                    )}
+                    {loading ? "Salvando..." : "Salvar Configurações"}
                 </button>
             </div>
         </div>

@@ -71,7 +71,7 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                 </div>
                 <button
                     type="submit"
-                    className="px-6 py-3 bg-[#EA1D2C] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all"
+                    className="px-6 py-3 bg-accent text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all"
                     disabled={loading}
                 >
                     {loading ? '...' : '+ Adicionar'}
@@ -89,7 +89,7 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                             title="Excluir categoria"
                             type="button"
                         >
-                            🗑️
+                            ???
                         </button>
                     </div>
                 ))}

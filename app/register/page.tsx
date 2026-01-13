@@ -151,7 +151,7 @@ export default function RegisterRestaurant() {
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-4xl">
                 {/* Header Banner */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
@@ -159,7 +159,7 @@ export default function RegisterRestaurant() {
                 <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
-                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
+                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinShop e expanda seu negócio.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -170,7 +170,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="name"
                                     name="name"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     placeholder="Ex: Olin Burgers"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
@@ -186,7 +186,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="responsibleName"
                                     name="responsibleName"
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     value={form.responsibleName}
                                     onChange={e => setForm({ ...form, responsibleName: e.target.value })}
                                     required
@@ -198,7 +198,7 @@ export default function RegisterRestaurant() {
                                     id="email"
                                     name="email"
                                     type="email"
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     value={form.email}
                                     onChange={e => setForm({ ...form, email: e.target.value })}
                                     required
@@ -212,7 +212,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="whatsapp"
                                     name="whatsapp"
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     placeholder="(81) 99999-9999"
                                     value={(() => {
                                         const digits = form.whatsapp.replace(/\D/g, '');
@@ -231,7 +231,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="pixKey"
                                     name="pixKey"
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     placeholder="CPF, CNPJ, Email, Telefone ou Aleatória"
                                     value={form.pixKey}
                                     onChange={e => setForm({ ...form, pixKey: e.target.value })}
@@ -245,7 +245,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="instagram"
                                     name="instagram"
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     placeholder="@loja"
                                     value={form.instagram}
                                     onChange={e => setForm({ ...form, instagram: e.target.value })}
@@ -264,7 +264,7 @@ export default function RegisterRestaurant() {
                                     <input
                                         id="zipCode"
                                         name="zipCode"
-                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                         placeholder="00000-000"
                                         value={form.zipCode}
                                         onChange={handleZipCodeChange}
@@ -290,7 +290,7 @@ export default function RegisterRestaurant() {
                                     <label htmlFor="number" className="block text-sm font-bold text-gray-700 mb-1">Número</label>
                                     <input
                                         id="number"
-                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                         placeholder="123"
                                         value={addressParts.number}
                                         onChange={e => setAddressParts(prev => ({ ...prev, number: e.target.value }))}
@@ -301,7 +301,7 @@ export default function RegisterRestaurant() {
                                     <label htmlFor="complement" className="block text-sm font-bold text-gray-700 mb-1">Complemento</label>
                                     <input
                                         id="complement"
-                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                        className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                         placeholder="Apto, Bloco..."
                                         value={addressParts.complement}
                                         onChange={e => setAddressParts(prev => ({ ...prev, complement: e.target.value }))}
@@ -348,7 +348,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="hours"
                                     name="hours"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     placeholder="Ex: Seg-Sex 18h às 23h"
                                     value={form.hours}
                                     onChange={e => setForm({ ...form, hours: e.target.value })}
@@ -360,7 +360,7 @@ export default function RegisterRestaurant() {
                                 <select
                                     id="type"
                                     name="type"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
                                     value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
                                 >
@@ -374,7 +374,7 @@ export default function RegisterRestaurant() {
                                 </select>
                                 {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
                                     <input
-                                        className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C] animate-fade-in"
+                                        className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-accent animate-fade-in"
                                         placeholder="Especifique o tipo (ex: Japonês)"
                                         value={form.type === 'Outro' ? '' : form.type}
                                         onChange={e => setForm({ ...form, type: e.target.value })}
@@ -406,7 +406,7 @@ export default function RegisterRestaurant() {
                         <button
                             type="submit"
                             disabled={loading || uploading}
-                            className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg mt-4 disabled:opacity-50 disabled:scale-100"
+                            className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg mt-4 disabled:opacity-50 disabled:scale-100"
                         >
                             {loading ? 'Enviando Cadastro...' : 'Enviar Cadastro'}
                         </button>
@@ -423,7 +423,7 @@ export default function RegisterRestaurant() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinShop
                 </footer>
             </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function RestaurantSettings({ restaurant, onUpdate }: { restaurant: any, onUpdate: (data?: any) => void }) {
+export default function StoreSettings({ restaurant, onUpdate }: { restaurant: any, onUpdate: (data?: any) => void }) {
     const [form, setForm] = useState(restaurant || {});
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -19,7 +19,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
         try {
             // Ensure ID is present
             if (!form.id) {
-                alert('Erro: ID do restaurante não encontrado.');
+                alert('Erro: ID da loja não encontrado.');
                 return;
             }
 
@@ -30,7 +30,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
             }
             const submitData = { ...form, whatsapp: finalWhatsapp };
 
-            const res = await fetch('/api/restaurants', {
+            const res = await fetch('/api/stores', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submitData)
@@ -91,7 +91,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                         const newStatus = !form.isOpen;
                         setForm((prev: any) => ({ ...prev, isOpen: newStatus }));
                         try {
-                            await fetch('/api/restaurants', {
+                            await fetch('/api/stores', {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ id: form.id, isOpen: newStatus })
@@ -141,17 +141,16 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                         />
                     </div>
                     <div>
-                        <label htmlFor="kitchenType" className="block text-sm font-bold text-gray-700 mb-1">Tipo de Cozinha</label>
+                        <label htmlFor="kitchenType" className="block text-sm font-bold text-gray-700 mb-1">Segmento / Tipo</label>
                         <select id="kitchenType" name="kitchenType" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                            value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
+                            value={['Lanchonete', 'Restaurante', 'Loja', 'Moda', 'Eletrônicos', 'Beleza', 'Outro'].includes(form.type) ? form.type : 'Outro'}
                             onChange={e => setForm({ ...form, type: e.target.value })}
                         >
-                            <option value="Lanchonete">Lanchonete</option>
-                            <option value="Restaurante">Restaurante</option>
-                            <option value="Hamburgueria">Hamburgueria</option>
-                            <option value="Pizzaria">Pizzaria</option>
-                            <option value="Comida">Comida Caseira</option>
-                            <option value="Bebidas">Bebidas</option>
+                            <option value="Loja">Loja (Geral)</option>
+                            <option value="Moda">Moda e Acessórios</option>
+                            <option value="Eletrônicos">Eletrônicos e Tech</option>
+                            <option value="Beleza">Beleza e Cosméticos</option>
+                            <option value="Restaurante">Restaurante / Comida</option>
                             <option value="Outro">Outro (Especificar)</option>
                         </select>
                         {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
@@ -300,7 +299,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                                                 if (data.uf) parts.push(data.uf);
 
                                                 const fullAddress = parts.join(', ');
-                                                setForm(prev => ({ ...prev, address: fullAddress }));
+                                                setForm((prev: any) => ({ ...prev, address: fullAddress }));
                                             }
                                         } catch (err) {
                                             console.error('CEP fetch error:', err);
@@ -405,7 +404,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             const fetchGeo = async (query: string) => {
                                 console.log('🔍 Searching geo for:', query);
                                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`, {
-                                    headers: { 'User-Agent': 'OlinDelivery/1.0' }
+                                    headers: { 'User-Agent': 'OlinShop/1.0' }
                                 });
                                 return await res.json();
                             };

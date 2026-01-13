@@ -9,8 +9,11 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: "#EA1D2C",
-                secondary: "#86868B",
+                primary: "var(--primary)",
+                accent: "var(--accent)",
+                "accent-hover": "var(--accent-hover)",
+                "accent-secondary": "var(--accent-secondary)",
+                secondary: "var(--text-secondary)",
             },
             borderRadius: {
                 DEFAULT: "12px",

@@ -24,6 +24,8 @@ export const viewport = {
   themeColor: "#1D1D1F",
 };
 
+import ThemeRegistry from "./components/ThemeRegistry";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +36,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
-            {children}
+            <ThemeRegistry>
+              {children}
+            </ThemeRegistry>
           </CartProvider>
         </AuthProvider>
       </body>

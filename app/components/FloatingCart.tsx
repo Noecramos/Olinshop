@@ -30,7 +30,7 @@ export default function FloatingCart({ count, total }: FloatingCartProps) {
         }}>
             <div className="container" style={{ padding: 0 }}>
                 <Link href="/checkout">
-                    <button className="btn btn-primary btn-full flex justify-between items-center" style={{ padding: "1rem", borderRadius: "8px", boxShadow: "0 4px 12px rgba(234, 29, 44, 0.4)" }}>
+                    <button className="btn btn-primary btn-full flex justify-between items-center" style={{ padding: "1rem", borderRadius: "12px", boxShadow: "0 8px 16px rgba(0, 122, 255, 0.25)" }}>
                         <div className="flex items-center gap-2">
                             <div style={{ background: "rgba(255,255,255,0.2)", borderRadius: "50%", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem" }}>
                                 {count}

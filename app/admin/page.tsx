@@ -10,7 +10,7 @@ export default function AdminPortal() {
         <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-6xl">
                 {/* Header Banner - Same width as cards */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                 </div>
 
@@ -18,7 +18,7 @@ export default function AdminPortal() {
                 <div className="bg-white rounded-b-3xl shadow-2xl p-8 md:p-10 animate-fade-in-up">
                     <div className="text-center mb-10">
                         <h1 className="font-bold text-gray-800 text-3xl md:text-4xl mb-2">Portal do Parceiro</h1>
-                        <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinDelivery</p>
+                        <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinShop</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-stretch">
@@ -36,7 +36,7 @@ export default function AdminPortal() {
                                         name="slug"
                                         type="text"
                                         placeholder="Ex: olin-burgers"
-                                        className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 outline-none focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 transition-all font-medium"
+                                        className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all font-medium"
                                         value={slug}
                                         onChange={e => setSlug(e.target.value)}
                                     />
@@ -45,7 +45,7 @@ export default function AdminPortal() {
                                     <Link href={`/admin/${slug}`} className="block">
                                         <button
                                             disabled={!slug}
-                                            className="w-full bg-gradient-to-r from-[#EA1D2C] to-[#C51623] hover:from-[#C51623] hover:to-[#A01419] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
+                                            className="w-full bg-gradient-to-r from-accent to-[#D01A7D] hover:from-[#D01A7D] hover:to-[#A01419] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
                                         >
                                             Acessar Painel →
                                         </button>
@@ -80,7 +80,7 @@ export default function AdminPortal() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors">www.noviapp.com.br</a> • OlindAki & OlinShop
                 </footer>
             </div>
         </div>

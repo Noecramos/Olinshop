@@ -3,7 +3,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export function StatusPieChart({ data }: { data: any[] }) {
-    const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#0088FE'];
+    const COLORS = ['var(--accent)', '#FFBB28', '#FF8042', '#0088FE'];
 
     if (!data || data.length === 0) {
         return <div className="text-center text-gray-400 py-10">Sem dados disponíveis</div>;

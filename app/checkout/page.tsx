@@ -107,7 +107,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                         <button
                             onClick={() => router.push(`/login?returnUrl=${encodeURIComponent('/checkout')}`)}
-                            className="w-full bg-[#EA1D2C] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-[#C51623] transition-all"
+                            className="w-full bg-accent text-white font-bold py-4 rounded-xl shadow-lg hover:bg-accent-hover transition-all"
                         >
                             Entrar / Cadastrar
                         </button>
@@ -232,7 +232,7 @@ export default function CheckoutPage() {
 
             const geoRes = await fetch(
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                { headers: { 'User-Agent': 'OlinShop/1.0' } }
             );
             const geoData = await geoRes.json();
 
@@ -420,7 +420,7 @@ export default function CheckoutPage() {
 
                         const geoRes = await fetch(
                             `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                            { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                            { headers: { 'User-Agent': 'OlinShop/1.0' } }
                         );
                         const geoData = await geoRes.json();
 
@@ -596,7 +596,7 @@ export default function CheckoutPage() {
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/zodpPs7.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
@@ -627,7 +627,7 @@ export default function CheckoutPage() {
                                         <div className="flex items-center gap-3 bg-white p-1 rounded-lg border shadow-sm">
                                             <button
                                                 onClick={() => removeOne(item.id)}
-                                                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-red-50 text-red-500 font-bold transition-colors"
+                                                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-red-50 text-accent font-bold transition-colors"
                                             >
                                                 -
                                             </button>
@@ -755,7 +755,7 @@ export default function CheckoutPage() {
                                 </button>
                                 <button
                                     onClick={() => setForm({ ...form, paymentMethod: 'card' })}
-                                    className={`p-3 rounded-xl text-sm font-medium transition-all ${form.paymentMethod === 'card' ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}
+                                    className={`p-3 rounded-xl text-sm font-medium transition-all ${form.paymentMethod === 'card' ? 'bg-accent text-white shadow-lg' : 'bg-gray-100 text-gray-600'}`}
                                 >
                                     Cartão
                                 </button>
@@ -833,7 +833,7 @@ export default function CheckoutPage() {
                             <button
                                 onClick={handleFinish}
                                 disabled={loading}
-                                className="w-full py-4 bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold rounded-xl shadow-lg transform active:scale-95 transition-all text-lg"
+                                className="w-full py-4 bg-accent hover:bg-accent-hover text-white font-bold rounded-xl shadow-lg transform active:scale-95 transition-all text-lg"
                             >
                                 {loading ? 'Enviando...' : 'Finalizar Pedido no WhatsApp'}
                             </button>
@@ -842,7 +842,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinShop
                 </footer>
             </div>
 

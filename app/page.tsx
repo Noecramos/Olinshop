@@ -8,13 +8,13 @@ import StarRating from "./components/StarRating";
 import { useAuth } from "./context/AuthContext";
 
 function MarketplaceContent() {
-  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [stores, setStores] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://i.imgur.com/Fyccvly.gif',
+    headerImage: 'https://i.imgur.com/zodpPs7.png',
     welcomeTitle: 'O que você\nbusca hoje?',
     welcomeSubtitle: 'Shopping no WhatsApp',
     footerText: '© 2025 OlinShop Premium retail',
@@ -69,9 +69,9 @@ function MarketplaceContent() {
   };
 
   useEffect(() => {
-    fetch('/api/restaurants')
+    fetch('/api/stores')
       .then(res => res.json())
-      .then(setRestaurants)
+      .then(setStores)
       .catch(console.error);
 
     fetch('/api/config')
@@ -84,9 +84,16 @@ function MarketplaceContent() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-[#1D1D1F] flex flex-col items-center justify-center z-[9999]">
-        <div className="w-72 h-32 flex items-center justify-center animate-bounce">
-          <Image src={config.headerImage || "https://i.imgur.com/yGLHWLL.png"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
+      <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-gradient-to-br from-purple-100 to-pink-100 p-4">
+        <div className="w-full max-w-md aspect-square relative">
+          <Image
+            src={config.splashImage || config.headerImage || "/olinshop-logo.png"}
+            alt="OlinShop"
+            fill
+            style={{ objectFit: 'contain' }}
+            priority
+            unoptimized
+          />
         </div>
       </div>
     );
@@ -94,10 +101,10 @@ function MarketplaceContent() {
 
 
 
-  // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
+  // Derive unique categories from stores, filtering out invalid data (emails, etc)
   const forcedCategories = ['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Bebidas'];
-  const dynamicCategories = Array.isArray(restaurants)
-    ? restaurants.map(r => r.type).filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30)
+  const dynamicCategories = Array.isArray(stores)
+    ? stores.map(r => r.type).filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30)
     : [];
 
   const categories = ['Todos', ...Array.from(new Set([...forcedCategories, ...dynamicCategories]))];
@@ -125,11 +132,11 @@ function MarketplaceContent() {
     return normalizedCat ? map[normalizedCat] : '📦';
   };
 
-  const filteredRestaurants = restaurants.filter(r => {
+  const filteredStores = Array.isArray(stores) ? stores.filter(r => {
     const matchesSearch = (r.name || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'Todos' || r.type === selectedCategory || (selectedCategory === 'Bebidas' && (r.type === 'Deposito Bebidas' || r.type === 'Depósito de Bebidas'));
     return matchesSearch && matchesCategory;
-  });
+  }) : [];
 
   const pastelColors = [
     'bg-[#FFF4C3]', // Yellow
@@ -147,10 +154,11 @@ function MarketplaceContent() {
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
         <div
-          className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
+          className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-no-repeat h-56"
           style={{
             backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || '#FFD700'),
             backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
+            backgroundSize: '100% 100%'
           }}
         >
           {/* User Profile / Login Button - Absolute Positioned */}
@@ -176,7 +184,7 @@ function MarketplaceContent() {
 
         {/* Greeting */}
         <div className="px-6 mb-8 mt-2">
-          <p className="text-yellow-600 font-bold text-base mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
+          <p className="text-accent font-bold text-base mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
           <h1 className="text-3xl font-bold text-gray-800 tracking-tight" style={{ whiteSpace: 'pre-line' }}>{config.welcomeTitle}</h1>
         </div>
 
@@ -184,7 +192,7 @@ function MarketplaceContent() {
         <div className="px-6 mb-10 relative">
           <svg className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input
-            id="searchRestaurants"
+            id="searchStores"
             name="search"
             type="text"
             placeholder="Buscar lojas..."
@@ -200,7 +208,7 @@ function MarketplaceContent() {
             <h2 className="font-bold text-lg text-gray-800">{config.popularTitle || 'Populares'}</h2>
             <span
               className="text-xs font-semibold text-yellow-500 cursor-pointer hover:underline"
-              onClick={() => document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('lojas')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver todos &gt;
             </span>
@@ -211,9 +219,9 @@ function MarketplaceContent() {
             {(config.featuredItems && config.featuredItems.length > 0
               ? (typeof config.featuredItems === 'string' ? safeJsonParse(config.featuredItems) : config.featuredItems)
               : [
-                { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFF4C3]', icon: '🍕', link: '/loja/olin-burgers' },
-                { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FFE4E6]', icon: '🍝', link: '/loja/olin-burgers' },
-                { id: 'p3', name: 'Burger Cheddar', price: 18.50, bg: 'bg-[#D1FAE5]', icon: '🍔', link: '/loja/olin-burgers' },
+                { id: 'p1', name: 'Sapatilha Chic', price: 89.90, bg: 'bg-[#FFF4C3]', icon: '🥿', link: '#' },
+                { id: 'p2', name: 'Relógio Lux', price: 299.00, bg: 'bg-[#FFE4E6]', icon: '⌚', link: '#' },
+                { id: 'p3', name: 'Fone Wireless', price: 189.50, bg: 'bg-[#D1FAE5]', icon: '🎧', link: '#' },
               ]
             ).map((item: any) => (
               <Link key={item.id} href={item.link || '#'}>
@@ -240,7 +248,7 @@ function MarketplaceContent() {
             <h2 className="font-bold text-lg text-gray-800">Categorias</h2>
             <span
               className="text-xs font-semibold text-yellow-500 cursor-pointer hover:underline"
-              onClick={() => document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('lojas')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver todas &gt;
             </span>
@@ -251,7 +259,7 @@ function MarketplaceContent() {
                 key={cat}
                 onClick={() => {
                   setSelectedCategory(cat);
-                  document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' });
+                  document.getElementById('lojas')?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className={`category-tab ${selectedCategory === cat ? 'active' : pastelColors[i % pastelColors.length]}`}
               >
@@ -261,22 +269,22 @@ function MarketplaceContent() {
           </div>
         </div>
 
-        {/* Main List (Restaurants) */}
-        <div className="px-6 space-y-4" id="restaurantes">
+        {/* Main List (Stores) */}
+        <div className="px-6 space-y-4" id="lojas">
           <h2 className="font-bold text-lg text-gray-800">Lojas & Parceiros {selectedCategory !== 'Todos' && <span className="text-gray-400 font-normal text-sm">({selectedCategory})</span>}</h2>
-          {filteredRestaurants.length === 0 ? (
+          {filteredStores.length === 0 ? (
             <div className="p-8 text-center text-gray-400 bg-gray-50 rounded-xl">
               Nenhuma loja encontrada para "{selectedCategory}".
             </div>
           ) : (
-            filteredRestaurants.map(rest => (
-              <Link key={rest.id} href={`/loja/${rest.slug}`}>
+            filteredStores.map(store => (
+              <Link key={store.id} href={`/loja/${store.slug}`}>
                 <div className="item-card-row group">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
-                    {rest.image ? (
+                    {store.image ? (
                       <Image
-                        src={rest.image}
-                        alt={rest.name}
+                        src={store.image}
+                        alt={store.name}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         style={{ objectFit: "cover" }}
@@ -286,12 +294,12 @@ function MarketplaceContent() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
+                    <h3 className="font-bold text-gray-800 text-base">{store.name}</h3>
                     <div className="flex flex-col items-start gap-1 mt-1">
-                      <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} readonly={true} />
+                      <StarRating restaurantId={store.id} initialSum={store.ratingSum} initialCount={store.ratingCount} readonly={true} />
                       <span className="text-xs text-gray-400 font-medium ml-1">
-                        {rest.type ? <span className="text-gray-500 mr-2">• {rest.type}</span> : ''}
-                        {rest.deliveryTime || '30-45m'}
+                        {store.type ? <span className="text-gray-500 mr-2">• {store.type}</span> : ''}
+                        {store.deliveryTime || '30-45m'}
                       </span>
                     </div>
                   </div>
