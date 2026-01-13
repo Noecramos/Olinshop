@@ -11,6 +11,7 @@ interface ProductModalProps {
 
 export default function ProductModal({ item, onClose, onConfirm }: ProductModalProps) {
     const [selectedVariants, setSelectedVariants] = useState<any>({});
+    const [quantity, setQuantity] = useState(1);
 
     const handleSelect = (variantName: string, option: string) => {
         setSelectedVariants((prev: any) => ({
@@ -23,6 +24,9 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
         if (!item.variants || item.variants.length === 0) return true;
         return item.variants.every((v: any) => selectedVariants[v.name]);
     };
+
+    const increaseQuantity = () => setQuantity(prev => prev + 1);
+    const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in" onClick={onClose}>
@@ -81,19 +85,39 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                             </div>
                         </div>
                     ))}
+
+                    {/* Quantity Selector */}
+                    <div className="pt-4 border-t border-gray-100">
+                        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-3">Quantidade</h3>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={decreaseQuantity}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
+                            >
+                                −
+                            </button>
+                            <span className="text-2xl font-bold text-gray-900 min-w-[3rem] text-center">{quantity}</span>
+                            <button
+                                onClick={increaseQuantity}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Footer Action */}
                 <div className="p-6 border-t border-gray-100 bg-gray-50/50">
                     <button
                         disabled={!isComplete()}
-                        onClick={() => onConfirm(selectedVariants)}
+                        onClick={() => onConfirm({ ...selectedVariants, quantity })}
                         className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95 ${isComplete()
                             ? 'bg-accent text-white hover:bg-accent-hover shadow-pink-200'
                             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}
                     >
-                        {isComplete() ? 'Adicionar ao Carrinho' : 'Selecione as opções'}
+                        {isComplete() ? `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho` : 'Selecione as opções'}
                     </button>
                 </div>
             </div>

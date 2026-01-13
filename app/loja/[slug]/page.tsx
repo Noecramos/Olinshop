@@ -51,10 +51,17 @@ export default function StoreFront() {
         setSelectedProduct(item);
     };
 
-    const handleConfirmVariants = (variants: Record<string, string>) => {
+    const handleConfirmVariants = (data: Record<string, string> & { quantity?: number }) => {
         if (!selectedProduct) return;
-        addToCart({ ...selectedProduct, selectedVariants: variants });
-        setToast(`${selectedProduct.name} adicionado!`);
+
+        const { quantity = 1, ...variants } = data;
+
+        // Add the item to cart 'quantity' times
+        for (let i = 0; i < quantity; i++) {
+            addToCart({ ...selectedProduct, selectedVariants: variants });
+        }
+
+        setToast(`${quantity} ${quantity > 1 ? 'itens' : 'item'} adicionado${quantity > 1 ? 's' : ''}!`);
         setSelectedProduct(null);
         setTimeout(() => setToast(null), 2000);
     };
