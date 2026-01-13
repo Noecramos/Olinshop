@@ -19,7 +19,7 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
             {/* Banner Section */}
             <div className="h-48 md:h-64 lg:h-72 w-full relative">
                 <div className="absolute inset-0 bg-center" style={{
-                    backgroundImage: `url('${banner || 'https://i.imgur.com/zodpPs7.png'}')`,
+                    backgroundImage: `url('${banner || 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/zodpPs7.png'}')`,
                     backgroundSize: 'cover'
                 }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -30,7 +30,7 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
                 {/* Logo */}
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white flex-shrink-0">
                     <Image
-                        src={image || "https://i.imgur.com/iWSJGep.png"}
+                        src={image || "https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/iWSJGep.png"}
                         alt={name || "Logo"}
                         width={160}
                         height={160}
