@@ -35,14 +35,13 @@ export async function POST(req: NextRequest) {
             destPhone = destPhone.substring(1);
         }
 
-        // If it looks like a BR number without country code (10 or 11 digits)
-        if (destPhone.length >= 10 && destPhone.length <= 11 && !destPhone.startsWith('55')) {
-            destPhone = '55' + destPhone;
+        // Brazilian "extra nine" correction if 12 digits and looks like AA 9 9...
+        if (destPhone.length === 12 && !destPhone.startsWith('55') && destPhone.substring(2, 4) === '99') {
+            destPhone = destPhone.substring(0, 2) + destPhone.substring(3);
         }
 
-        // Ensure some country code is present if not already (safeguard)
-        if (destPhone.length > 0 && !destPhone.startsWith('55') && destPhone.length <= 11) {
-            // Default to 55 for this app's main market
+        // Add 55 only if it's a domestic number (10-11 digits)
+        if (!destPhone.startsWith('55') && destPhone.length >= 10 && destPhone.length <= 11) {
             destPhone = '55' + destPhone;
         }
 

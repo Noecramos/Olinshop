@@ -411,7 +411,15 @@ export default function CheckoutPage() {
                 `_Enviado via OlinShop ${emojis.rocket}_`;
             let cleanPhone = restaurantPhone.replace(/\D/g, '');
             if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
-            const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+
+            // Correction for 12 digits AA 9 9... mistake
+            if (cleanPhone.length === 12 && !cleanPhone.startsWith('55') && cleanPhone.substring(2, 4) === '99') {
+                cleanPhone = cleanPhone.substring(0, 2) + cleanPhone.substring(3);
+            }
+
+            const finalPhone = (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11)
+                ? `55${cleanPhone}`
+                : cleanPhone;
             const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
 
             setWhatsappLink(link);

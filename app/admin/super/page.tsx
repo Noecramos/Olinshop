@@ -68,8 +68,14 @@ export default function SuperAdmin() {
                 if (phone) {
                     let cleanPhone = phone.replace(/\D/g, '');
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
-                    // Ensure country code 55 is present
-                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
+
+                    // Brazilian "extra nine" correction if 12 digits and looks like AA 9 9...
+                    if (cleanPhone.length === 12 && !cleanPhone.startsWith('55') && cleanPhone.substring(2, 4) === '99') {
+                        cleanPhone = cleanPhone.substring(0, 2) + cleanPhone.substring(3);
+                    }
+
+                    // Add 55 only if it's a domestic number (10-11 digits)
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
                         cleanPhone = '55' + cleanPhone;
                     }
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀\n\nAcesse seu painel administrativo:\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${restaurant.slug}\nSenha: ${finalPassword}\n\nBoas vendas!`;
@@ -102,8 +108,14 @@ export default function SuperAdmin() {
                 if (phone) {
                     let cleanPhone = phone.replace(/\D/g, '');
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
-                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
 
+                    if (cleanPhone.length === 12 && !cleanPhone.startsWith('55') && cleanPhone.substring(2, 4) === '99') {
+                        cleanPhone = cleanPhone.substring(0, 2) + cleanPhone.substring(3);
+                    }
+
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
+                        cleanPhone = '55' + cleanPhone;
+                    }
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua senha de acesso ao painel do OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o parceiro?`)) {
@@ -159,8 +171,14 @@ export default function SuperAdmin() {
                 if (phone) {
                     let cleanPhone = phone.replace(/\D/g, '');
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
-                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) cleanPhone = '55' + cleanPhone;
 
+                    if (cleanPhone.length === 12 && !cleanPhone.startsWith('55') && cleanPhone.substring(2, 4) === '99') {
+                        cleanPhone = cleanPhone.substring(0, 2) + cleanPhone.substring(3);
+                    }
+
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
+                        cleanPhone = '55' + cleanPhone;
+                    }
                     const message = `Olá, ${user.name}! \n\nSua senha de acesso ao OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o usuário?`)) {
