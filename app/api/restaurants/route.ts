@@ -105,16 +105,10 @@ export async function DELETE(req: Request) {
 
         if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
-        // Get slug for orders deletion
-        const { rows } = await sql`SELECT slug FROM restaurants WHERE id = ${id}`;
-        const slug = rows[0]?.slug;
-
         // Manual cleanup (in case referencing constraints lack ON DELETE CASCADE)
         await sql`DELETE FROM products WHERE restaurant_id = ${id}`;
         await sql`DELETE FROM categories WHERE restaurant_id = ${id}`;
-        if (slug) {
-            await sql`DELETE FROM orders WHERE restaurant_slug = ${slug}`;
-        }
+        await sql`DELETE FROM orders WHERE restaurant_id = ${id}`;
 
         // Delete restaurant
         await sql`DELETE FROM restaurants WHERE id = ${id}`;
