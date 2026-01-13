@@ -6,8 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
 } from 'recharts';
+import { StatusPieChart, SalesChart, TopProductsChart } from "@/app/components/admin/Charts";
 import ProductForm from "@/app/components/admin/ProductForm";
 import CategoryForm from "@/app/components/admin/CategoryForm";
 import StoreSettings from "@/app/components/admin/StoreSettings";
@@ -169,6 +170,46 @@ export default function StoreAdmin() {
     const historyOrders = orders.filter(o => ['sent', 'delivered', 'cancelled'].includes(o.status?.toLowerCase()));
     const displayedOrders = showHistory ? historyOrders : activeOrders;
 
+    // --- DATA PROCESSING FOR CHARTS --- (Reinstate Graphics)
+    const statusCounts: Record<string, number> = {};
+    orders.forEach(o => {
+        const s = o.status?.toLowerCase() === 'pending' ? 'Pendente' :
+            o.status?.toLowerCase() === 'preparing' ? 'Expedição' :
+                o.status?.toLowerCase() === 'sent' ? 'Enviado' : (o.status || 'Outro');
+        statusCounts[s] = (statusCounts[s] || 0) + 1;
+    });
+    const statusData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+
+    const salesByDay: Record<string, number> = {};
+    const last7Days = [...Array(7)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        return d.toISOString().split('T')[0];
+    }).reverse();
+
+    last7Days.forEach(day => salesByDay[day] = 0);
+    orders.forEach(o => {
+        const day = new Date(o.createdAt).toISOString().split('T')[0];
+        if (salesByDay[day] !== undefined) {
+            salesByDay[day] += Number(o.total) || 0;
+        }
+    });
+    const salesData = Object.entries(salesByDay).map(([date, vendas]) => ({
+        date: date.split('-').reverse().slice(0, 2).join('/'),
+        vendas
+    }));
+
+    const productCounts: Record<string, number> = {};
+    orders.forEach(o => {
+        (o.items || []).forEach((item: any) => {
+            productCounts[item.name] = (productCounts[item.name] || 0) + (Number(item.quantity) || 1);
+        });
+    });
+    const topProductsData = Object.entries(productCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
     const tabLabels: { [key: string]: string } = {
         dashboard: 'Início',
         products: 'Produtos',
@@ -252,27 +293,51 @@ export default function StoreAdmin() {
                 <div className="p-4 md:p-8">
                     {tab === 'dashboard' && (
                         <div className="space-y-8 animate-fade-in">
-                            {/* Summary Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Pedidos Ativos</p>
-                                    <h3 className="text-3xl font-black text-gray-900">{activeOrders.length}</h3>
+                            {/* Summary & Graphics Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* Sales Summary Card */}
+                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 flex flex-col justify-between">
+                                    <div>
+                                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Vendas Hoje</p>
+                                        <h3 className="text-4xl font-black text-gray-900">
+                                            {orders
+                                                .filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString())
+                                                .reduce((acc, o) => acc + (Number(o.total) || 0), 0)
+                                                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </h3>
+                                    </div>
+                                    <div className="mt-8 pt-8 border-t border-gray-50 flex justify-between items-end">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Total Geral</p>
+                                            <p className="font-black text-lg text-gray-700">
+                                                {orders.reduce((acc, o) => acc + (Number(o.total) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Ticket Médio</p>
+                                            <p className="font-black text-lg text-accent">
+                                                {(orders.reduce((acc, o) => acc + (Number(o.total) || 0), 0) / (orders.length || 1)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Vendas Hoje</p>
-                                    <h3 className="text-3xl font-black text-gray-900">
-                                        {orders
-                                            .filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString())
-                                            .reduce((acc, o) => acc + (Number(o.total) || 0), 0)
-                                            .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                    </h3>
+
+                                {/* Status Distribution (Pie) */}
+                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Status dos Pedidos</h4>
+                                    <StatusPieChart data={statusData} />
                                 </div>
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Ticket Médio</p>
-                                    <h3 className="text-3xl font-black text-gray-900">
-                                        {(orders.reduce((acc, o) => acc + (Number(o.total) || 0), 0) / (orders.length || 1))
-                                            .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                    </h3>
+
+                                {/* Top Products (Bar) */}
+                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Top 5 Produtos</h4>
+                                    <TopProductsChart data={topProductsData} />
+                                </div>
+
+                                {/* Sales Trend (Line) - Full Width */}
+                                <div className="lg:col-span-3 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Desempenho de Vendas (Últimos 7 dias)</h4>
+                                    <SalesChart data={salesData} />
                                 </div>
                             </div>
 
