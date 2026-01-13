@@ -245,8 +245,15 @@ export default function SuperAdmin() {
                                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Editar: {editingRestaurant.name}</h2>
                                 <StoreSettings
                                     restaurant={editingRestaurant}
-                                    onUpdate={() => {
-                                        fetchRestaurants();
+                                    onUpdate={async (updatedData) => {
+                                        // Update local state immediately with the new data
+                                        if (updatedData) {
+                                            setRestaurants(prev => prev.map(r =>
+                                                r.id === updatedData.id ? updatedData : r
+                                            ));
+                                        }
+                                        // Fetch fresh data from server to ensure consistency
+                                        await fetchRestaurants();
                                         setEditingRestaurant(null);
                                     }}
                                 />
