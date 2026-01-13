@@ -559,27 +559,33 @@ export default function CheckoutPage() {
                 package: '\uD83D\uDCE6' // 📦
             };
 
-            // Format Message Parts
+            // Format Currency Helper (Standardizing spaces for WhatsApp)
+            const formatCurrency = (val: number) =>
+                val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(/\u00A0/g, ' ');
+
             const itemsList = cart.map((i: any) => {
                 const itemTotal = i.price * i.quantity;
-                return `${emojis.package} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                return `${emojis.package} *${i.quantity}x ${i.name}* - ${formatCurrency(itemTotal)}`;
             }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? `${emojis.pix} PIX` :
                 (form.paymentMethod === 'card' ? `${emojis.card} Cartão` :
                     `${emojis.money} Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const message = `*${restData.name.toUpperCase()}*\n` +
-                `${emojis.ticket} *PEDIDO #${ticketNumber}*\n\n` +
-                `${emojis.user} *Cliente:* ${form.name}\n` +
-                `${emojis.phone} *Telefone:* ${form.phone}\n` +
-                `${emojis.map} *Endereço:* ${form.address}\n` +
-                `${emojis.post} *CEP:* ${form.zipCode}\n\n` +
+            const storeName = restData.name.trim().toUpperCase();
+
+            const message =
+                `*${emojis.package} ${storeName}*\n` +
+                `${emojis.ticket} *PEDIDO:* #${ticketNumber}\n\n` +
+                `${emojis.user} *Cliente:* ${form.name.trim()}\n` +
+                `${emojis.phone} *Telefone:* ${form.phone.trim()}\n` +
+                `${emojis.map} *Endereço:* ${form.address.trim()}\n` +
+                `${emojis.post} *CEP:* ${form.zipCode.trim()}\n\n` +
                 `${emojis.cart} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
-                `${emojis.money} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${emojis.truck} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                `${emojis.total} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
-                (form.observations ? `${emojis.note} *Observações:* ${form.observations}\n\n` : '') +
+                `${emojis.money} *Subtotal:* ${formatCurrency(subtotal)}\n` +
+                `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` +
+                `${emojis.total} *TOTAL:* ${formatCurrency(total)}\n\n` +
+                (form.observations ? `${emojis.note} *Observações:* ${form.observations.trim()}\n\n` : '') +
                 `${paymentInfo}\n\n` +
                 `_Enviado via OlinShop ${emojis.rocket}_`;
 
