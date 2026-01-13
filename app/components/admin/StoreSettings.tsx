@@ -133,6 +133,33 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="col-span-1 md:col-span-2">
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Link da Loja (Slug)</label>
+                        <div className="flex gap-2">
+                            <div className="flex-1 relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs md:text-sm">olinshop.../</span>
+                                <input
+                                    className="w-full pl-24 md:pl-28 p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100 font-mono text-sm font-bold text-gray-800"
+                                    value={form.slug || ''}
+                                    onChange={e => setForm({ ...form, slug: e.target.value })}
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (confirm('Gerar novo link aleatório? O link anterior deixará de funcionar!')) {
+                                        const randomSlug = Math.random().toString(36).substring(2, 10);
+                                        setForm({ ...form, slug: randomSlug });
+                                    }
+                                }}
+                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold whitespace-nowrap"
+                                title="Gerar Link Aleatório"
+                            >
+                                🎲 Gerar
+                            </button>
+                        </div>
+                        <p className="text-xs text-amber-600 mt-1">⚠️ Alterar isso quebrará links e QR Codes existentes!</p>
+                    </div>
                     <div>
                         <label htmlFor="restaurantName" className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
                         <input id="restaurantName" name="restaurantName" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"

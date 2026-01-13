@@ -135,7 +135,7 @@ export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
         const {
-            id, name, email, whatsapp, instagram, zipCode, address, hours, type,
+            id, name, slug, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
             popularTitle, welcomeSubtitle, resetPassword, isOpen
@@ -161,6 +161,7 @@ export async function PUT(req: NextRequest) {
         const { rows } = await sql`
             UPDATE restaurants SET
                 name = COALESCE(${name}, name),
+                slug = COALESCE(${slug}, slug),
                 email = COALESCE(${email}, email),
                 whatsapp = COALESCE(${whatsapp}, whatsapp),
                 instagram = COALESCE(${instagram}, instagram),

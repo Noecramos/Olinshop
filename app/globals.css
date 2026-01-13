@@ -240,8 +240,9 @@ h4 {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 1 / 1;
-  /* Square cards */
+  /* aspect-ratio: 1 / 1; Removed to allow content to flow */
+  height: 100%;
+  /* Fill grid cell */
   width: 100%;
 }
 
@@ -256,8 +257,10 @@ h4 {
 .product-image-wrapper {
   position: relative;
   width: 100%;
-  flex: 0 0 60%;
-  /* Image takes 60% of card height */
+  aspect-ratio: 1 / 1;
+  /* Keep image square */
+  flex: none;
+  /* Do not flex, fixed height based on width */
   overflow: hidden;
   background: #f8f8f8;
 }
