@@ -246,14 +246,30 @@ export default function SuperAdmin() {
                                 <StoreSettings
                                     restaurant={editingRestaurant}
                                     onUpdate={async (updatedData) => {
+                                        console.log('🔄 Update callback received:', updatedData);
+
                                         // Update local state immediately with the new data
                                         if (updatedData) {
-                                            setRestaurants(prev => prev.map(r =>
-                                                r.id === updatedData.id ? updatedData : r
-                                            ));
+                                            console.log('✅ Updating local state with new slug:', updatedData.slug);
+                                            setRestaurants(prev => {
+                                                const updated = prev.map(r =>
+                                                    r.id === updatedData.id ? updatedData : r
+                                                );
+                                                console.log('📋 Updated restaurants list:', updated);
+                                                return updated;
+                                            });
+
+                                            // Show success message with new slug
+                                            if (updatedData.slug !== editingRestaurant.slug) {
+                                                alert(`✅ Slug atualizado com sucesso!\n\nNovo slug: ${updatedData.slug}\n\nO link da loja agora é:\nolinshop.vercel.app/loja/${updatedData.slug}`);
+                                            }
                                         }
+
                                         // Fetch fresh data from server to ensure consistency
+                                        console.log('🔄 Fetching fresh data from server...');
                                         await fetchRestaurants();
+                                        console.log('✅ Data refreshed');
+
                                         setEditingRestaurant(null);
                                     }}
                                 />
