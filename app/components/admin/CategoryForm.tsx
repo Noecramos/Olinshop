@@ -63,7 +63,7 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                         id="categoryDescription"
                         name="categoryName"
                         className="w-full p-3 bg-white rounded-xl border-2 border-gray-100 focus:border-red-500 outline-none transition-all"
-                        placeholder="Ex: Pizzas Premium"
+                        placeholder="Ex: Roupas Femininas"
                         value={name}
                         onChange={e => setName(e.target.value)}
                         required

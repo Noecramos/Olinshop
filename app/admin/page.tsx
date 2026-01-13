@@ -35,7 +35,7 @@ export default function AdminPortal() {
                                         id="admin-slug"
                                         name="slug"
                                         type="text"
-                                        placeholder="Ex: olin-burgers"
+                                        placeholder="Ex: fashion-store"
                                         className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all font-medium"
                                         value={slug}
                                         onChange={e => setSlug(e.target.value)}
