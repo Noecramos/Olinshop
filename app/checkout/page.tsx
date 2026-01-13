@@ -560,7 +560,7 @@ export default function CheckoutPage() {
                 (form.paymentMethod === 'card' ? 'Cartão' :
                     `Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const message = `🎫 *PEDIDO #${ticketNumber}*\n\n` +
+            const message = ` *${restData.name.toUpperCase()}*\\n` + `🎫 *PEDIDO #${ticketNumber}*\n\n` +
                 `👤 *Cliente:* ${form.name}\n` +
                 `📱 *Telefone:* ${form.phone}\n` +
                 `📍 *Endereço:* ${form.address}\n` +
@@ -881,3 +881,4 @@ export default function CheckoutPage() {
         </div>
     );
 }
+
