@@ -235,7 +235,8 @@ export default function StoreAdmin() {
                         { id: 'dashboard', label: 'Início', icon: '📊' },
                         { id: 'products', label: 'Produtos', icon: '📦' },
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
-                        { id: 'support', label: 'Suporte', icon: '💬', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' }
+                        { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
+                        { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
                     ].map(item => (
                         item.link ? (
                             <a
@@ -244,15 +245,14 @@ export default function StoreAdmin() {
                                 target="_blank"
                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-gray-500 hover:bg-green-50 hover:text-green-600 transition-all"
                             >
-                                <span className="text-xl">{item.icon}</span>
+                                <span className={`text-xl ${item.id === 'support' ? 'text-green-500' : ''}`}>{item.icon}</span>
                                 <span>{item.label}</span>
                             </a>
                         ) : (
                             <button
                                 key={item.id}
-                                onClick={() => setTab(item.id)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50'
-                                    }`}
+                                onClick={() => item.action ? item.action() : setTab(item.id)}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${item.id === 'logout' ? 'text-red-500 hover:bg-red-50' : (tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50')}`}
                             >
                                 <span className="text-xl">{item.icon}</span>
                                 <span>{item.label}</span>
@@ -260,18 +260,6 @@ export default function StoreAdmin() {
                         )
                     ))}
                 </nav>
-
-                <div className="p-4 mt-auto">
-                    <button
-                        onClick={() => {
-                            localStorage.removeItem(`admin_session_${slug}`);
-                            window.location.reload();
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-2xl transition-all"
-                    >
-                        <span>🚪</span> Sair
-                    </button>
-                </div>
             </aside>
 
             {/* Mobile Bottom Bar */}
