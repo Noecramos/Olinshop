@@ -16,7 +16,11 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         description: "",
         price: "",
         categoryId: "",
-        image: ""
+        image: "",
+        weight: "0.5",
+        height: "15",
+        width: "15",
+        length: "15"
     });
     const [variants, setVariants] = useState<any[]>([]); // [{ name: "Tamanho", options: ["P", "M", "G"] }]
 
@@ -75,7 +79,17 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         const selectedCat = categories.find(c => c.id === form.categoryId);
         const categoryName = selectedCat ? selectedCat.name : "Geral";
 
-        const body: any = { ...form, restaurantId, price: parseFloat(form.price), category: categoryName, variants };
+        const body: any = {
+            ...form,
+            restaurantId,
+            price: parseFloat(form.price),
+            category: categoryName,
+            variants,
+            weight: parseFloat(form.weight) || 0.5,
+            height: parseFloat(form.height) || 15,
+            width: parseFloat(form.width) || 15,
+            length: parseFloat(form.length) || 15
+        };
         if (editingId) body.id = editingId;
 
         try {
@@ -86,7 +100,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
             if (res.ok) {
                 // Reset
-                setForm({ ...form, name: "", description: "", price: "", image: "" });
+                setForm({ ...form, name: "", description: "", price: "", image: "", weight: "0.5", height: "15", width: "15", length: "15" });
                 setVariants([]);
                 setEditingId(null);
                 fetchData(); // Refresh list
@@ -108,9 +122,13 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         setForm({
             name: prod.name,
             description: prod.description || "",
-            price: prod.price,
+            price: prod.price.toString(),
             categoryId: catId,
-            image: prod.image || ""
+            image: prod.image || "",
+            weight: prod.weight?.toString() || "0.5",
+            height: prod.height?.toString() || "15",
+            width: prod.width?.toString() || "15",
+            length: prod.length?.toString() || "15"
         });
         setVariants(prod.variants || []);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -118,7 +136,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
     const handleCancel = () => {
         setEditingId(null);
-        setForm({ ...form, name: "", description: "", price: "", image: "" });
+        setForm({ name: "", description: "", price: "", categoryId: categories[0]?.id || "", image: "", weight: "0.5", height: "15", width: "15", length: "15" });
         setVariants([]);
     };
 
@@ -216,10 +234,53 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                 name="productDescription"
                                 className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all"
                                 placeholder="Detalhes, especificações, etc."
-                                rows={3}
+                                rows={2}
                                 value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
                             />
+                        </div>
+
+                        {/* Logistics Section */}
+                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-3">
+                            <h4 className="text-[10px] font-black text-blue-800 uppercase tracking-widest">Logística (Correios)</h4>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Peso (kg)</label>
+                                    <input
+                                        type="number" step="0.01"
+                                        className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
+                                        value={form.weight}
+                                        onChange={e => setForm({ ...form, weight: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Alt. (cm)</label>
+                                    <input
+                                        type="number"
+                                        className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
+                                        value={form.height}
+                                        onChange={e => setForm({ ...form, height: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Larg. (cm)</label>
+                                    <input
+                                        type="number"
+                                        className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
+                                        value={form.width}
+                                        onChange={e => setForm({ ...form, width: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Comp. (cm)</label>
+                                    <input
+                                        type="number"
+                                        className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
+                                        value={form.length}
+                                        onChange={e => setForm({ ...form, length: e.target.value })}
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         {/* Variants Section */}
@@ -317,7 +378,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                         </div>
                                     )}
                                     <div className="mt-2 flex justify-between items-center">
-                                        <span className="font-bold text-green-700">R$ {Number(prod.price).toFixed(2)}</span>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-green-700 leading-none">R$ {Number(prod.price).toFixed(2)}</span>
+                                            <span className="text-[9px] text-gray-400 mt-1 font-bold">{prod.weight}kg • {prod.length}x{prod.width}x{prod.height}cm</span>
+                                        </div>
                                         <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full text-gray-600 font-medium">{prod.category}</span>
                                     </div>
                                 </div>

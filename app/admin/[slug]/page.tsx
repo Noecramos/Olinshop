@@ -447,6 +447,18 @@ export default function StoreAdmin() {
                                                                 {Number(order.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                             </h3>
                                                             <p className="text-[10px] font-bold text-accent uppercase">{order.paymentMethod}</p>
+                                                            {order.shippingMethod && (
+                                                                <div className="mt-2 text-right">
+                                                                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black uppercase ring-1 ring-blue-100">
+                                                                        📦 {order.shippingMethod}
+                                                                    </span>
+                                                                    {order.items && (
+                                                                        <p className="text-[9px] text-gray-400 mt-1 font-bold italic">
+                                                                            Peso Est.: {order.items.reduce((acc: number, item: any) => acc + ((parseFloat(item.weight) || 0.5) * item.quantity), 0).toFixed(2)} kg
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         <div className="flex gap-2 mt-6">

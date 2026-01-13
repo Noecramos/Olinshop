@@ -11,9 +11,9 @@ export async function GET(req: NextRequest) {
         }
 
         const { rows } = await sql`
-            SELECT 
                 id, restaurant_id as "restaurantId", name, price, category, 
-                image, description, variants, created_at as "createdAt"
+                image, description, variants, weight, height, width, length,
+                created_at as "createdAt"
             FROM products 
             WHERE restaurant_id = ${restaurantId} 
             ORDER BY category, name
@@ -30,16 +30,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { restaurantId, name, price, category, image, description, variants } = body;
+        const { restaurantId, name, price, category, image, description, variants, weight, height, width, length } = body;
 
         if (!restaurantId || !name || !price) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         const { rows } = await sql`
-            INSERT INTO products (restaurant_id, name, price, category, image, description, variants)
-            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${JSON.stringify(variants)})
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants
+            INSERT INTO products (restaurant_id, name, price, category, image, description, variants, weight, height, width, length)
+            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${JSON.stringify(variants)}, ${weight || 0.5}, ${height || 15}, ${width || 15}, ${length || 15})
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length
         `;
 
         return NextResponse.json(rows[0]);
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
-        const { id, name, price, category, image, description, variants } = body;
+        const { id, name, price, category, image, description, variants, weight, height, width, length } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -63,9 +63,11 @@ export async function PUT(req: NextRequest) {
             UPDATE products 
             SET name = ${name}, price = ${price}, category = ${category}, 
                 image = ${image}, description = ${description}, 
-                variants = ${JSON.stringify(variants)}, updated_at = NOW()
+                variants = ${JSON.stringify(variants)}, 
+                weight = ${weight}, height = ${height}, width = ${width}, length = ${length},
+                updated_at = NOW()
             WHERE id = ${id}
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length
         `;
 
         return NextResponse.json(rows[0]);

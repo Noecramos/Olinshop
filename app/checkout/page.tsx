@@ -22,6 +22,8 @@ export default function CheckoutPage() {
     const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
     const [isCepOutOfRange, setIsCepOutOfRange] = useState(false);
     const [isGuest, setIsGuest] = useState(false);
+    const [shippingOptions, setShippingOptions] = useState<any[]>([]);
+    const [selectedShipping, setSelectedShipping] = useState<any>(null);
 
     const [form, setForm] = useState({
         name: "",
@@ -270,6 +272,32 @@ export default function CheckoutPage() {
 
             setDeliveryFee(freightFee);
             setIsCepOutOfRange(false);
+
+            // 4. REAL CORREIOS CALCULATION (If outside Radius or as an option)
+            if (restaurant.zipCode) {
+                try {
+                    const shipRes = await fetch('/api/shipping/calculate', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            originZip: restaurant.zipCode,
+                            destinationZip: cepClean,
+                            products: cart
+                        })
+                    });
+                    const shipData = await shipRes.json();
+                    if (shipData.success && shipData.options.length > 0) {
+                        setShippingOptions(shipData.options);
+                        // Automatically select PAC if available as default
+                        const pac = shipData.options.find((o: any) => o.name === 'PAC');
+                        if (pac) {
+                            setSelectedShipping(pac);
+                            setDeliveryFee(pac.price);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch real Correios data", e);
+                }
+            }
         } catch (error) {
             console.error('Freight calc error:', error);
             setDeliveryFee(30.00); // Fail-safe
@@ -317,6 +345,7 @@ export default function CheckoutPage() {
                 observations: form.observations,
                 status: 'pending',
                 serviceType: form.serviceType,
+                shippingMethod: selectedShipping ? selectedShipping.name : (form.serviceType === 'delivery' ? 'Entrega Local' : null)
             };
 
             const res = await fetch('/api/orders', {
@@ -362,7 +391,8 @@ export default function CheckoutPage() {
                 `${emojis.user} *Cliente:* ${form.name.trim()}\n` +
                 `${emojis.phone} *Telefone:* ${form.phone.trim()}\n` +
                 (isDelivery ? `${emojis.map} *Endereço:* ${form.address.trim()}\n` : '') +
-                (isDelivery ? `${emojis.post} *CEP:* ${form.zipCode.trim()}\n\n` : '\n') +
+                (isDelivery ? `${emojis.post} *CEP:* ${form.zipCode.trim()}\n` : '') +
+                (isDelivery && selectedShipping ? `${emojis.truck} *Envio:* ${selectedShipping.name}\n\n` : (isDelivery ? '\n' : '\n')) +
                 `${emojis.cart} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
                 `${emojis.money} *Subtotal:* ${formatCurrency(subtotal)}\n` +
                 (isDelivery ? `${emojis.truck} *Taxa de Entrega:* ${formatCurrency(deliveryFee)}\n` : '') +
@@ -535,8 +565,37 @@ export default function CheckoutPage() {
                                 onChange={e => setForm({ ...form, observations: e.target.value })}
                             />
 
+                            {/* Correios Shipping Options */}
+                            {shippingOptions.length > 0 && form.serviceType === 'delivery' && (
+                                <div className="mt-4 space-y-3 animate-fade-in">
+                                    <h3 className="text-sm font-semibold text-gray-500 uppercase flex items-center gap-2">
+                                        <span>📦</span> Opções de Envio (Correios)
+                                    </h3>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        {shippingOptions.map((opt, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => {
+                                                    setSelectedShipping(opt);
+                                                    setDeliveryFee(opt.price);
+                                                }}
+                                                className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${selectedShipping?.code === opt.code ? 'bg-blue-50 border-blue-200 ring-2 ring-blue-100 shadow-sm' : 'bg-white border-gray-100 hover:bg-gray-50'}`}
+                                            >
+                                                <div className="text-left">
+                                                    <div className="font-bold text-gray-900">{opt.name}</div>
+                                                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Prazo: {opt.deadline} dias úteis</div>
+                                                </div>
+                                                <div className="font-black text-blue-600">
+                                                    {opt.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Display Delivery Fee Tiers */}
-                            {restaurant?.deliveryFeeTiers && Array.isArray(restaurant.deliveryFeeTiers) && restaurant.deliveryFeeTiers.some((t: any) => t.maxDistance && t.fee) && (
+                            {restaurant?.deliveryFeeTiers && Array.isArray(restaurant.deliveryFeeTiers) && restaurant.deliveryFeeTiers.some((t: any) => t.maxDistance && t.fee) && shippingOptions.length === 0 && (
                                 <div className="mt-4 p-4 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl">
                                     <div className="flex items-center gap-2 mb-3">
                                         <span className="text-lg">🚚</span>
