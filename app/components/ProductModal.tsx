@@ -25,10 +25,10 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in">
-            <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
-                {/* Header with Image */}
-                <div className="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-3xl overflow-hidden">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in" onClick={onClose}>
+            <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                {/* Header with Larger Image */}
+                <div className="relative h-64 md:h-72 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-3xl overflow-hidden">
                     <button
                         onClick={onClose}
                         className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all active:scale-95"
@@ -46,8 +46,8 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                 <div className="p-6 border-b border-gray-100">
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">{item.name}</h2>
-                        <p className="text-gray-500 mt-1">{item.description}</p>
-                        <p className="text-xl font-black text-gray-900 mt-2">
+                        <p className="text-gray-600 mt-2 leading-relaxed">{item.description}</p>
+                        <p className="text-2xl font-black text-gray-900 mt-4">
                             {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </p>
                     </div>

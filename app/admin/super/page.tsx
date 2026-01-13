@@ -93,12 +93,23 @@ export default function SuperAdmin() {
         if (!confirm('Tem certeza que deseja excluir este restaurante? Essa ação não pode ser desfeita.')) return;
 
         try {
-            await fetch(`/api/restaurants?id=${id}`, {
+            const res = await fetch(`/api/restaurants?id=${id}`, {
                 method: 'DELETE',
             });
-            fetchRestaurants();
-        } catch (e) {
-            alert('Erro ao excluir');
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Erro ao excluir restaurante');
+            }
+
+            const data = await res.json();
+            if (data.success) {
+                alert('Restaurante excluído com sucesso!');
+                fetchRestaurants();
+            }
+        } catch (e: any) {
+            console.error('Delete error:', e);
+            alert(e.message || 'Erro ao excluir restaurante');
         }
     };
 

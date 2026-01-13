@@ -47,13 +47,8 @@ export default function StoreFront() {
     const categories = Array.from(new Set(activeProducts.map((item: any) => item.category))).filter((c: any) => c && c.trim() !== "");
 
     const handleAdd = (item: any) => {
-        if (item.variants && item.variants.length > 0) {
-            setSelectedProduct(item);
-        } else {
-            addToCart({ ...item, selectedVariants: {} });
-            setToast(`${item.name} adicionado!`);
-            setTimeout(() => setToast(null), 2000);
-        }
+        // Always show modal for better UX - shows larger image, full description, and variants
+        setSelectedProduct(item);
     };
 
     const handleConfirmVariants = (variants: Record<string, string>) => {
