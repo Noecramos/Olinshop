@@ -234,17 +234,30 @@ export default function StoreAdmin() {
                     {[
                         { id: 'dashboard', label: 'Início', icon: '📊' },
                         { id: 'products', label: 'Produtos', icon: '📦' },
-                        { id: 'settings', label: 'Ajustes', icon: '⚙️' }
+                        { id: 'settings', label: 'Ajustes', icon: '⚙️' },
+                        { id: 'support', label: 'Suporte', icon: '💬', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' }
                     ].map(item => (
-                        <button
-                            key={item.id}
-                            onClick={() => setTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50'
-                                }`}
-                        >
-                            <span className="text-xl">{item.icon}</span>
-                            <span>{item.label}</span>
-                        </button>
+                        item.link ? (
+                            <a
+                                key={item.id}
+                                href={item.link}
+                                target="_blank"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-gray-500 hover:bg-green-50 hover:text-green-600 transition-all"
+                            >
+                                <span className="text-xl">{item.icon}</span>
+                                <span>{item.label}</span>
+                            </a>
+                        ) : (
+                            <button
+                                key={item.id}
+                                onClick={() => setTab(item.id)}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <span className="text-xl">{item.icon}</span>
+                                <span>{item.label}</span>
+                            </button>
+                        )
                     ))}
                 </nav>
 
@@ -266,16 +279,30 @@ export default function StoreAdmin() {
                 {[
                     { id: 'dashboard', label: 'Início', icon: '📊' },
                     { id: 'products', label: 'Produtos', icon: '📦' },
-                    { id: 'settings', label: 'Ajustes', icon: '⚙️' }
+                    { id: 'settings', label: 'Ajustes', icon: '⚙️' },
+                    { id: 'support', label: 'Suporte', icon: '💬', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
+                    { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
                 ].map(item => (
-                    <button
-                        key={item.id}
-                        onClick={() => setTab(item.id)}
-                        className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${tab === item.id ? 'text-accent' : 'text-gray-400'}`}
-                    >
-                        <span className="text-2xl">{item.icon}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
-                    </button>
+                    item.link ? (
+                        <a
+                            key={item.id}
+                            href={item.link}
+                            target="_blank"
+                            className="flex flex-col items-center gap-1 p-2 text-gray-400"
+                        >
+                            <span className="text-2xl">{item.icon}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                        </a>
+                    ) : (
+                        <button
+                            key={item.id}
+                            onClick={() => item.action ? item.action() : setTab(item.id)}
+                            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${tab === item.id ? 'text-accent' : 'text-gray-400'}`}
+                        >
+                            <span className="text-2xl">{item.icon}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                        </button>
+                    )
                 ))}
             </nav>
 
