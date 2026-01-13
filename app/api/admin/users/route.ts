@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest) {
             const newPassword = Math.floor(100000 + Math.random() * 900000).toString();
             const hashedPassword = await hashPassword(newPassword);
             await sql`UPDATE users SET password = ${hashedPassword} WHERE id = ${id}`;
-            return NextResponse.json({ success: true, newPassword });
+            return NextResponse.json({ success: true, password: newPassword });
         }
 
         return NextResponse.json({ error: "Ação não informada" }, { status: 400 });
