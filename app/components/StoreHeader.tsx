@@ -17,9 +17,9 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
     return (
         <div className="relative mb-8">
             {/* Banner Section */}
-            <div className="h-48 md:h-64 lg:h-72 w-full relative">
+            <div className="h-48 md:h-64 lg:h-72 w-full relative bg-gradient-to-br from-purple-100 to-pink-100">
                 <div className="absolute inset-0 bg-center" style={{
-                    backgroundImage: `url('${banner || 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/all-page-header.png'}')`,
+                    backgroundImage: `url('${banner || 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olinshop-header-1768432141609.png'}')`,
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat'
                 }} />
