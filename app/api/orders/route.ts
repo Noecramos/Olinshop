@@ -103,7 +103,11 @@ export async function GET(req: NextRequest) {
             createdAt: order.createdAt,
             serviceType: order.serviceType,
             tableNumber: order.tableNumber,
-            shippingMethod: order.shippingMethod
+            shippingMethod: order.shippingMethod,
+            // Add restaurant info for cross-restaurant listings
+            restaurantName: order.restaurantName,
+            restaurantSlug: order.restaurantSlug,
+            restaurantImage: order.restaurantImage
         }));
 
         return NextResponse.json(orders);
