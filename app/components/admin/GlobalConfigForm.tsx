@@ -149,7 +149,7 @@ export default function GlobalConfigForm() {
     };
 
     return (
-        <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+        <div className="space-y-8 animate-fade-in max-w-4xl mx-auto p-8 bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] rounded-3xl">
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-800">Customização do App</h2>
