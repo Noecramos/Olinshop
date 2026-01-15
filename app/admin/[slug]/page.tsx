@@ -231,7 +231,7 @@ export default function StoreAdmin() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0F1419] flex">
+        <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex">
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
                 <div className="p-6 border-b border-gray-50">
