@@ -16,7 +16,7 @@ export default function RegisterShop() {
         zipCode: "",
         address: "",
         hours: "",
-        type: "Lanchonete",
+        type: "Moda & Acessórios",
         image: "", // Logo URL
         pixKey: "",
     });
@@ -361,10 +361,10 @@ export default function RegisterShop() {
                                     id="type"
                                     name="type"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    value={['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type) ? form.type : 'Outro'}
+                                    value={['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type) ? form.type : 'Outro'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
                                 >
-                                    <option value="Moda">Moda e Acessórios</option>
+                                    <option value="Moda & Acessórios">Moda & Acessórios</option>
                                     <option value="Eletrônicos">Eletrônicos e Tech</option>
                                     <option value="Beleza">Beleza e Cosméticos</option>
                                     <option value="Casa">Casa e Decoração</option>
@@ -373,7 +373,7 @@ export default function RegisterShop() {
                                     <option value="Alimentos">Alimentos e Bebidas</option>
                                     <option value="Outro">Outro (Especificar)</option>
                                 </select>
-                                {(!['Moda', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type)) && (
+                                {(!['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type)) && (
                                     <input
                                         className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-accent animate-fade-in"
                                         placeholder="Especifique o tipo (ex: Vestuário)"
