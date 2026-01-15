@@ -272,10 +272,14 @@ function MarketplaceContent() {
             ).map((item: any) => (
               <Link key={item.id} href={item.link || '#'}>
                 <div className={`${item.bg || 'bg-white'} w-[240px] h-[110px] p-4 rounded-3xl flex items-center justify-between gap-3 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1 flex-shrink-0 border border-black/5`}>
-                  <div className="text-4xl drop-shadow-sm">{item.icon}</div>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+                  ) : (
+                    <div className="text-4xl drop-shadow-sm">{item.icon}</div>
+                  )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
-                    <p className="text-gray-900 font-bold mt-1">
+                    <h3 className="font-bold text-sm truncate" style={{ color: item.textColor || '#1F2937' }}>{item.name}</h3>
+                    <p className="font-bold mt-1" style={{ color: item.textColor || '#111827' }}>
                       {typeof item.price === 'number' ? `R$ ${item.price.toFixed(2)}` : item.price}
                     </p>
                   </div>

@@ -98,7 +98,9 @@ export default function GlobalConfigForm() {
             name: 'Novo Item',
             price: 0,
             icon: '🍔',
+            image: '',
             bg: 'bg-[#FFF4C3]',
+            textColor: '#1F2937',
             link: ''
         };
         setConfig(prev => ({
@@ -467,10 +469,14 @@ export default function GlobalConfigForm() {
                             </button>
                             <div className="flex-shrink-0 flex items-center justify-center pt-2 md:pt-0">
                                 <div className={`${item.bg} w-[200px] h-[90px] p-4 rounded-3xl flex items-center justify-between gap-3 shadow-md border border-black/5 transform scale-90 md:scale-100 origin-left`}>
-                                    <div className="text-3xl drop-shadow-sm">{item.icon}</div>
+                                    {item.image ? (
+                                        <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-lg" />
+                                    ) : (
+                                        <div className="text-3xl drop-shadow-sm">{item.icon}</div>
+                                    )}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-gray-800 text-xs truncate">{item.name || 'Nome do Item'}</h3>
-                                        <p className="text-gray-900 font-bold text-sm mt-0.5">R$ {Number(item.price).toFixed(2)}</p>
+                                        <h3 className="font-bold text-xs truncate" style={{ color: item.textColor || '#1F2937' }}>{item.name || 'Nome do Item'}</h3>
+                                        <p className="font-bold text-sm mt-0.5" style={{ color: item.textColor || '#111827' }}>R$ {Number(item.price).toFixed(2)}</p>
                                     </div>
                                     <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-gray-400">
                                         &gt;
@@ -509,7 +515,7 @@ export default function GlobalConfigForm() {
                             </div>
                             <div className="flex-shrink-0 w-full md:w-48 space-y-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1">Ícone</label>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Ícone ou Imagem</label>
                                     <select
                                         value={item.icon}
                                         onChange={e => updateFeaturedItem(index, 'icon', e.target.value)}
@@ -519,6 +525,45 @@ export default function GlobalConfigForm() {
                                             <option key={icon} value={icon}>{icon} {label}</option>
                                         ))}
                                     </select>
+                                    <div className="mt-2">
+                                        <input
+                                            type="file"
+                                            id={`image-upload-${index}`}
+                                            accept="image/*"
+                                            onChange={async (e) => {
+                                                if (!e.target.files?.[0]) return;
+                                                setUploading(true);
+                                                try {
+                                                    const formData = new FormData();
+                                                    formData.append('file', e.target.files[0]);
+                                                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                                                    const data = await res.json();
+                                                    if (data.success) {
+                                                        updateFeaturedItem(index, 'image', data.url);
+                                                    }
+                                                } catch (err) {
+                                                    alert('Erro ao fazer upload');
+                                                } finally {
+                                                    setUploading(false);
+                                                }
+                                            }}
+                                            className="hidden"
+                                        />
+                                        <label
+                                            htmlFor={`image-upload-${index}`}
+                                            className="cursor-pointer block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-3 rounded-lg transition-colors"
+                                        >
+                                            {uploading ? 'Enviando...' : (item.image ? '✔️ Trocar Imagem' : '📷 Upload Imagem')}
+                                        </label>
+                                        {item.image && (
+                                            <button
+                                                onClick={() => updateFeaturedItem(index, 'image', '')}
+                                                className="w-full mt-1 text-xs text-red-500 hover:text-red-700 font-medium"
+                                            >
+                                                Remover Imagem
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-1">Cor de Fundo</label>
@@ -531,6 +576,24 @@ export default function GlobalConfigForm() {
                                                 title={c.label}
                                             />
                                         ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Cor do Texto</label>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="color"
+                                            value={item.textColor || '#1F2937'}
+                                            onChange={e => updateFeaturedItem(index, 'textColor', e.target.value)}
+                                            className="h-8 w-12 rounded cursor-pointer border border-gray-200"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={item.textColor || '#1F2937'}
+                                            onChange={e => updateFeaturedItem(index, 'textColor', e.target.value)}
+                                            className="flex-1 p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-xs font-mono uppercase"
+                                            placeholder="#1F2937"
+                                        />
                                     </div>
                                 </div>
                             </div>
