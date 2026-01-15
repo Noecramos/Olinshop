@@ -166,12 +166,13 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 <div className="relative group">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">olinshop.com/</span>
                                     <input
-                                        className="w-full pl-32 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-gray-800"
+                                        className="w-full pl-32 p-4 bg-gray-100 rounded-2xl outline-none border border-gray-200 font-bold text-gray-600 cursor-not-allowed"
                                         value={form.slug || ''}
-                                        onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
+                                        readOnly
                                         placeholder="nome-da-sua-loja"
                                     />
                                 </div>
+                                <p className="text-xs text-gray-400 mt-2 ml-1 font-medium">🔒 Apenas o administrador master pode alterar este link</p>
                             </div>
 
                             <div>
