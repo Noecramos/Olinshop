@@ -38,14 +38,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const currentRestaurantId = items[0].restaurantId;
             const newRestaurantId = product.restaurantId;
 
-            if (currentRestaurantId && newRestaurantId && currentRestaurantId !== newRestaurantId) {
-                // If we are already in a state of conflict (somehow), we should just prompt once
-                // This check runs before any state update
-                if (window.confirm("Seu carrinho contém itens de outra loja. Deseja limpar o carrinho para adicionar este item?")) {
-                    setItems([{ ...product, quantity: qty }]);
-                    setDeliveryFee(0);
+            console.log('🛒 AddToCart Check:', { current: currentRestaurantId, new: newRestaurantId, product });
+
+            // If the item has a restaurant ID, we must validate against the cart
+            if (newRestaurantId) {
+                // Mismatched if IDs are different (e.g. 'A' vs 'B') OR key missing in cart ('A' vs undefined)
+                if (currentRestaurantId !== newRestaurantId) {
+                    if (window.confirm("Seu carrinho contém itens de outra loja. Deseja limpar o carrinho para adicionar este item?")) {
+                        setItems([{ ...product, quantity: qty }]);
+                        setDeliveryFee(0);
+                    }
+                    return;
                 }
-                return;
             }
         }
 
