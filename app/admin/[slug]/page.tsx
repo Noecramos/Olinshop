@@ -231,7 +231,7 @@ export default function StoreAdmin() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8F9FB] flex">
+        <div className="min-h-screen bg-[#0F1419] flex">
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
                 <div className="p-6 border-b border-gray-50">
@@ -309,17 +309,17 @@ export default function StoreAdmin() {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-                <header className="bg-white border-b border-gray-100 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+                <header className="bg-[#1A1F26] border-b border-gray-800 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-10">
                     <div>
-                        <h2 className="text-lg font-black text-gray-900">{tabLabels[tab] || tab}</h2>
-                        <p className="text-[10px] md:text-xs text-green-500 font-bold flex items-center gap-1">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
+                        <h2 className="text-lg font-black text-white">{tabLabels[tab] || tab}</h2>
+                        <p className="text-[10px] md:text-xs text-green-400 font-bold flex items-center gap-1">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Sistema Online
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Loja</p>
-                            <p className="text-sm font-black text-gray-900 leading-none">{restaurant?.name}</p>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1">Loja</p>
+                            <p className="text-sm font-black text-white leading-none">{restaurant?.name}</p>
                         </div>
                         <Link href={`/loja/${slug}`} target="_blank" className="text-[10px] md:text-xs font-bold text-gray-400 hover:text-accent transition-colors">
                             Ver loja ↗
@@ -327,37 +327,37 @@ export default function StoreAdmin() {
                     </div>
                 </header>
 
-                <div className="p-4 md:p-8">
+                <div className="p-4 md:p-8 max-w-7xl mx-auto">
                     {tab === 'dashboard' && (
                         <div className="space-y-8 animate-fade-in">
                             {/* Dashboard Header with Shop Name */}
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Bem-vindo, {restaurant?.name}! 👋</h3>
-                                <p className="text-gray-500 font-bold text-sm mt-1">Aqui está o resumo da sua loja para hoje.</p>
+                            <div className="mb-8 bg-gradient-to-r from-[#1A1F26] to-[#252B35] p-8 rounded-[32px] border border-gray-800">
+                                <h3 className="text-2xl font-black text-white tracking-tight">Bem-vindo, {restaurant?.name}! 👋</h3>
+                                <p className="text-gray-400 font-bold text-sm mt-1">Aqui está o resumo da sua loja para hoje.</p>
                             </div>
 
                             {/* Summary & Graphics Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Sales Summary Card */}
-                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 flex flex-col justify-between">
+                                <div className="bg-[#1A1F26] p-8 rounded-[32px] shadow-xl border border-gray-800 flex flex-col justify-between">
                                     <div>
-                                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Vendas Hoje</p>
-                                        <h3 className="text-4xl font-black text-gray-900">
+                                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Vendas Hoje</p>
+                                        <h3 className="text-4xl font-black text-white">
                                             {orders
                                                 .filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString())
                                                 .reduce((acc, o) => acc + (Number(o.total) || 0), 0)
                                                 .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </h3>
                                     </div>
-                                    <div className="mt-8 pt-8 border-t border-gray-50 flex justify-between items-end">
+                                    <div className="mt-8 pt-8 border-t border-gray-800 flex justify-between items-end">
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Total Geral</p>
-                                            <p className="font-black text-lg text-gray-700">
+                                            <p className="text-[10px] font-bold text-gray-500 uppercase mb-1">Total Geral</p>
+                                            <p className="font-black text-lg text-gray-300">
                                                 {orders.reduce((acc, o) => acc + (Number(o.total) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Ticket Médio</p>
+                                            <p className="text-[10px] font-bold text-gray-500 uppercase mb-1">Ticket Médio</p>
                                             <p className="font-black text-lg text-accent">
                                                 {(orders.reduce((acc, o) => acc + (Number(o.total) || 0), 0) / (orders.length || 1)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                             </p>
@@ -366,30 +366,30 @@ export default function StoreAdmin() {
                                 </div>
 
                                 {/* Status Distribution (Pie) */}
-                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
-                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Status dos Pedidos</h4>
+                                <div className="bg-[#1A1F26] p-8 rounded-[32px] shadow-xl border border-gray-800">
+                                    <h4 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-6">Status dos Pedidos</h4>
                                     <StatusPieChart data={statusData} />
                                 </div>
 
                                 {/* Top Products (Bar) */}
-                                <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
-                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Top 5 Produtos</h4>
+                                <div className="bg-[#1A1F26] p-8 rounded-[32px] shadow-xl border border-gray-800">
+                                    <h4 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-6">Top 5 Produtos</h4>
                                     <TopProductsChart data={topProductsData} />
                                 </div>
 
                                 {/* Sales Trend (Line) - Full Width */}
-                                <div className="lg:col-span-3 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
-                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Desempenho de Vendas (Últimos 7 dias)</h4>
+                                <div className="lg:col-span-3 bg-[#1A1F26] p-8 rounded-[32px] shadow-xl border border-gray-800">
+                                    <h4 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-6">Desempenho de Vendas (Últimos 7 dias)</h4>
                                     <SalesChart data={salesData} />
                                 </div>
                             </div>
 
                             {/* Orders List */}
-                            <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-8 border-b border-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="bg-[#1A1F26] rounded-[40px] shadow-xl border border-gray-800 overflow-hidden">
+                                <div className="p-8 border-b border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div>
-                                        <h3 className="text-xl font-black text-gray-900">Gestão de Pedidos</h3>
-                                        <p className="text-xs text-gray-400 font-bold">Gerencie suas vendas em tempo real</p>
+                                        <h3 className="text-xl font-black text-white">Gestão de Pedidos</h3>
+                                        <p className="text-xs text-gray-500 font-bold">Gerencie suas vendas em tempo real</p>
                                     </div>
                                     <div className="flex gap-2">
                                         <button
@@ -413,18 +413,18 @@ export default function StoreAdmin() {
                                     </div>
                                 </div>
 
-                                <div className="divide-y divide-gray-50">
+                                <div className="divide-y divide-gray-800">
                                     {displayedOrders.length === 0 ? (
-                                        <div className="p-20 text-center text-gray-300 font-bold italic">
+                                        <div className="p-20 text-center text-gray-600 font-bold italic">
                                             Nenhum pedido encontrado.
                                         </div>
                                     ) : (
                                         displayedOrders.map(order => (
-                                            <div key={order.id} className="p-8 hover:bg-gray-50/50 transition-colors">
+                                            <div key={order.id} className="p-8 hover:bg-[#252B35]/50 transition-colors">
                                                 <div className="flex flex-col lg:flex-row justify-between gap-8">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-3 mb-4">
-                                                            <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg text-xs font-black">#{order.ticketNumber}</span>
+                                                            <span className="px-3 py-1 bg-gray-800 text-white rounded-lg text-xs font-black">#{order.ticketNumber}</span>
                                                             <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                                                 order.status?.toLowerCase() === 'preparing' ? 'bg-blue-100 text-blue-700' :
                                                                     'bg-green-100 text-green-700'
@@ -442,17 +442,17 @@ export default function StoreAdmin() {
                                                         </div>
 
                                                         <div className="mb-4">
-                                                            <h4 className="font-black text-gray-900 text-lg leading-none mb-1">{order.customer?.name}</h4>
-                                                            {order.customer?.cpf && <p className="text-xs text-blue-600 font-bold mb-1">CPF: {order.customer.cpf}</p>}
-                                                            {order.serviceType === 'delivery' && <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>}
-                                                            <p className="text-xs text-gray-400 mt-1">📞 {order.customer?.phone}</p>
+                                                            <h4 className="font-black text-white text-lg leading-none mb-1">{order.customer?.name}</h4>
+                                                            {order.customer?.cpf && <p className="text-xs text-blue-400 font-bold mb-1">CPF: {order.customer.cpf}</p>}
+                                                            {order.serviceType === 'delivery' && <p className="text-sm text-gray-400 font-medium">{order.customer?.address}</p>}
+                                                            <p className="text-xs text-gray-500 mt-1">📞 {order.customer?.phone}</p>
                                                         </div>
 
                                                         <div className="space-y-2">
                                                             {(order.items || []).map((item: any, i: number) => (
                                                                 <div key={i} className="flex items-center gap-3 text-sm">
-                                                                    <span className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-md text-[10px] font-black">{item.quantity}x</span>
-                                                                    <span className="font-bold text-gray-700">{item.name}</span>
+                                                                    <span className="w-6 h-6 flex items-center justify-center bg-gray-800 rounded-md text-[10px] font-black text-white">{item.quantity}x</span>
+                                                                    <span className="font-bold text-gray-300">{item.name}</span>
                                                                     {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
                                                                         <span className="text-[10px] text-gray-400">
                                                                             ({Object.values(item.selectedVariants).join(', ')})
@@ -471,8 +471,8 @@ export default function StoreAdmin() {
 
                                                     <div className="lg:w-64 flex flex-col justify-between items-end">
                                                         <div className="text-right">
-                                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total do Pedido</p>
-                                                            <h3 className="text-2xl font-black text-gray-900">
+                                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total do Pedido</p>
+                                                            <h3 className="text-2xl font-black text-white">
                                                                 {Number(order.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                             </h3>
                                                             <p className="text-[10px] font-bold text-accent uppercase">{order.paymentMethod}</p>
@@ -530,13 +530,13 @@ export default function StoreAdmin() {
 
                     {tab === 'products' && (
                         <div className="space-y-12 animate-fade-in">
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
+                            <div className="bg-[#1A1F26] p-8 rounded-[40px] shadow-xl border border-gray-800">
+                                <h3 className="text-xl font-black text-white mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
                                 <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
                             </div>
 
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
+                            <div className="bg-[#1A1F26] p-8 rounded-[40px] shadow-xl border border-gray-800">
+                                <h3 className="text-xl font-black text-white mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
                                 <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
                             </div>
                         </div>
@@ -544,7 +544,7 @@ export default function StoreAdmin() {
 
                     {tab === 'settings' && (
                         <div className="animate-fade-in">
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                            <div className="bg-[#1A1F26] p-8 rounded-[40px] shadow-xl border border-gray-800">
                                 <StoreSettings
                                     restaurant={restaurant}
                                     onUpdate={(data: any) => {
