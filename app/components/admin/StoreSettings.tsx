@@ -164,12 +164,12 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             <div className="md:col-span-2">
                                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Link Exclusivo (URL)</label>
                                 <div className="relative group">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">olinshop.com/</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">https://olinshop.vercel.app/loja/</span>
                                     <input
-                                        className="w-full pl-32 p-4 bg-gray-100 rounded-2xl outline-none border border-gray-200 font-bold text-gray-600 cursor-not-allowed"
+                                        className="w-full pl-64 p-4 bg-gray-100 rounded-2xl outline-none border border-gray-200 font-bold text-gray-600 cursor-not-allowed"
                                         value={form.slug || ''}
                                         readOnly
-                                        placeholder="nome-da-sua-loja"
+                                        placeholder="multicapas_pe"
                                     />
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2 ml-1 font-medium">🔒 Apenas o administrador master pode alterar este link</p>
