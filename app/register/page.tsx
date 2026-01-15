@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 export default function RegisterShop() {
     const router = useRouter();
 
+    const [config, setConfig] = useState({ footerText: '' });
+
     const [form, setForm] = useState({
         name: "",
         slug: "",
@@ -33,6 +35,14 @@ export default function RegisterShop() {
 
     const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Fetch global config
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.ok ? res.json() : {})
+            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .catch(() => { });
+    }, []);
 
     // Update form.address whenever parts change
     useEffect(() => {
@@ -423,7 +433,7 @@ export default function RegisterShop() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinShop
+                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
                 </footer>
             </div>
         </div>

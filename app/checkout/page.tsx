@@ -24,6 +24,7 @@ export default function CheckoutPage() {
     const [isGuest, setIsGuest] = useState(false);
     const [shippingOptions, setShippingOptions] = useState<any[]>([]);
     const [selectedShipping, setSelectedShipping] = useState<any>(null);
+    const [config, setConfig] = useState({ footerText: '' });
 
     const [form, setForm] = useState({
         name: "",
@@ -60,6 +61,14 @@ export default function CheckoutPage() {
             }
         }
     }, [cart, setDeliveryFee]);
+
+    // Fetch global config
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.ok ? res.json() : {})
+            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .catch(() => { });
+    }, []);
 
     // Pre-fill form with user data
     useEffect(() => {
@@ -774,7 +783,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinShop
+                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
                 </footer>
             </div>
 

@@ -11,6 +11,7 @@ export default function SuperAdmin() {
     const [users, setUsers] = useState<any[]>([]);
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
     const [tab, setTab] = useState<'restaurants' | 'users' | 'config'>('restaurants');
+    const [config, setConfig] = useState({ footerText: '' });
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -26,6 +27,14 @@ export default function SuperAdmin() {
             fetchUsers();
         }
     }, [auth]);
+
+    // Fetch global config
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.ok ? res.json() : {})
+            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .catch(() => { });
+    }, []);
 
     const fetchRestaurants = async () => {
         try {
@@ -301,7 +310,7 @@ export default function SuperAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors">www.noviapp.com.br</a>
+                        {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br'}
                     </footer>
                 </div>
             </div>
@@ -503,7 +512,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinShop
+                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
                 </footer>
             </div>
         </div>

@@ -5,6 +5,14 @@ import { useEffect, useState } from "react";
 
 export default function AdminPortal() {
     const [slug, setSlug] = useState("");
+    const [config, setConfig] = useState({ footerText: '' });
+
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.ok ? res.json() : {})
+            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .catch(() => { });
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
@@ -80,7 +88,7 @@ export default function AdminPortal() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors">www.noviapp.com.br</a> • OlindAki & OlinShop
+                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
                 </footer>
             </div>
         </div>
