@@ -13,7 +13,15 @@ export async function GET(req: Request) {
         // We will implement standard REST methods.
 
         if (id) {
-            const { rows } = await sql`SELECT * FROM restaurants WHERE id = ${id}`;
+            const { rows } = await sql`
+                SELECT *, 
+                pix_key as "pixKey", 
+                zip_code as "zipCode", 
+                responsible_name as "responsibleName",
+                delivery_radius as "deliveryRadius",
+                delivery_fee_tiers as "deliveryFeeTiers"
+                FROM restaurants WHERE id = ${id}
+            `;
             return NextResponse.json(rows[0] || {});
         }
 
