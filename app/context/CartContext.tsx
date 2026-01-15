@@ -31,6 +31,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [deliveryFee, setDeliveryFee] = useState<number>(0);
 
     const addToCart = (product: Omit<CartItem, 'quantity'>) => {
+        // Check for Restaurant Conflict
+        if (items.length > 0) {
+            const currentRestaurantId = items[0].restaurantId;
+            const newRestaurantId = product.restaurantId;
+
+            if (currentRestaurantId && newRestaurantId && currentRestaurantId !== newRestaurantId) {
+                if (window.confirm("Seu carrinho contém itens de outra loja. Deseja limpar o carrinho para adicionar este item?")) {
+                    setItems([{ ...product, quantity: 1 }]);
+                    setDeliveryFee(0);
+                }
+                return;
+            }
+        }
+
         setItems(prev => {
             // Find existing with same ID AND same variants
             const existingIndex = prev.findIndex(i =>
