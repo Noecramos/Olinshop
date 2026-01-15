@@ -26,6 +26,7 @@ export default function StoreAdmin() {
     const [showHistory, setShowHistory] = useState(false);
     const [catRefresh, setCatRefresh] = useState(0);
     const [loading, setLoading] = useState<string | null>(null);
+    const [config, setConfig] = useState({ footerText: '' });
 
     const fetchRestaurant = useCallback(async () => {
         if (!slug) return;
@@ -568,6 +569,11 @@ export default function StoreAdmin() {
                         </div>
                     )}
                 </div>
+
+                {/* Footer */}
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100">
+                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
+                </footer>
             </main>
         </div>
     );
