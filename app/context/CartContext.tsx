@@ -13,7 +13,7 @@ type CartItem = {
 
 type CartContextType = {
     items: CartItem[];
-    addToCart: (item: Omit<CartItem, 'quantity'>) => void;
+    addToCart: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
     removeFromCart: (index: number) => void;
     removeOne: (index: number) => void;
     clearCart: () => void;
@@ -30,15 +30,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [deliveryFee, setDeliveryFee] = useState<number>(0);
 
-    const addToCart = (product: Omit<CartItem, 'quantity'>) => {
+    const addToCart = (product: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
+        const qty = product.quantity || 1;
+
         // Check for Restaurant Conflict
         if (items.length > 0) {
             const currentRestaurantId = items[0].restaurantId;
             const newRestaurantId = product.restaurantId;
 
             if (currentRestaurantId && newRestaurantId && currentRestaurantId !== newRestaurantId) {
+                // If we are already in a state of conflict (somehow), we should just prompt once
+                // This check runs before any state update
                 if (window.confirm("Seu carrinho contém itens de outra loja. Deseja limpar o carrinho para adicionar este item?")) {
-                    setItems([{ ...product, quantity: 1 }]);
+                    setItems([{ ...product, quantity: qty }]);
                     setDeliveryFee(0);
                 }
                 return;
@@ -54,10 +58,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
             if (existingIndex > -1) {
                 const newItems = [...prev];
-                newItems[existingIndex] = { ...newItems[existingIndex], quantity: newItems[existingIndex].quantity + 1 };
+                newItems[existingIndex] = { ...newItems[existingIndex], quantity: newItems[existingIndex].quantity + qty };
                 return newItems;
             }
-            return [...prev, { ...product, quantity: 1 }];
+            return [...prev, { ...product, quantity: qty }];
         });
     };
 

@@ -63,10 +63,8 @@ export default function StoreFront() {
 
         const { quantity = 1, ...variants } = data;
 
-        // Add the item to cart 'quantity' times
-        for (let i = 0; i < quantity; i++) {
-            addToCart({ ...selectedProduct, selectedVariants: variants });
-        }
+        // Add item to cart with quantity
+        addToCart({ ...selectedProduct, selectedVariants: variants, quantity });
 
         setToast(`${quantity} ${quantity > 1 ? 'itens' : 'item'} adicionado${quantity > 1 ? 's' : ''}!`);
         setSelectedProduct(null);
