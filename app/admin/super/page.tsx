@@ -309,7 +309,7 @@ export default function SuperAdmin() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center py-10 px-4">
+        <div className="min-h-screen bg-[#0F1419] flex flex-col items-center py-10 px-4">
             <div className="w-full max-w-7xl">
                 {/* Header Banner - Same width as card */}
                 <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl" style={{ backgroundImage: "url('https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/all-page-header.png')" }}>
@@ -373,24 +373,24 @@ export default function SuperAdmin() {
                 )}
 
                 {/* Main Card Content */}
-                <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up min-h-[500px]">
+                <div className="bg-[#1A1F26] rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up min-h-[500px] border border-gray-800">
 
-                    <div className="flex gap-6 mb-8 border-b border-gray-100 pb-px">
+                    <div className="flex gap-6 mb-8 border-b border-gray-800 pb-px">
                         <button
                             onClick={() => setTab('restaurants')}
-                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'restaurants' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'restaurants' ? 'text-white border-b-2 border-accent' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Lojas
                         </button>
                         <button
                             onClick={() => setTab('users')}
-                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'users' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'users' ? 'text-white border-b-2 border-accent' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Usuários
                         </button>
                         <button
                             onClick={() => setTab('config')}
-                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'config' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'config' ? 'text-white border-b-2 border-accent' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Customização do App
                         </button>
@@ -398,20 +398,20 @@ export default function SuperAdmin() {
 
                     {tab === 'restaurants' ? (
                         // Existing Restaurants Table...
-                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
+                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-800 shadow-lg animate-fade-in">
                             <table className="w-full text-left">
-                                <thead className="bg-gray-50 border-b border-gray-100">
+                                <thead className="bg-[#252B35] border-b border-gray-800">
                                     <tr>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Loja</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Slug (Login)</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Senha</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider text-center">Status</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-gray-800">
                                     {restaurants.map((r: any) => (
-                                        <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <tr key={r.id} className="hover:bg-[#252B35]/50 transition-colors group">
                                             <td className="p-6">
                                                 <div className="flex items-center gap-4">
                                                     {r.image ? (
@@ -426,16 +426,16 @@ export default function SuperAdmin() {
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <div className="font-bold text-gray-900 group-hover:text-accent transition-colors">{r.name}</div>
-                                                        <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
+                                                        <div className="font-bold text-white group-hover:text-accent transition-colors">{r.name}</div>
+                                                        <div className="text-xs text-gray-400 font-medium">{r.responsibleName}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-6">
-                                                <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug}</code>
+                                                <code className="bg-blue-900/30 px-3 py-1 rounded-lg text-xs font-bold text-blue-400">{r.slug}</code>
                                             </td>
                                             <td className="p-6">
-                                                <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
+                                                <code className="bg-gray-800 px-3 py-1 rounded-lg text-xs font-bold text-gray-300">{r.password}</code>
                                             </td>
                                             <td className="p-6 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
@@ -456,31 +456,31 @@ export default function SuperAdmin() {
                             </table>
                         </div>
                     ) : tab === 'users' ? (
-                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
+                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-800 shadow-lg animate-fade-in">
                             <table className="w-full text-left">
-                                <thead className="bg-gray-50 border-b border-gray-100">
+                                <thead className="bg-[#252B35] border-b border-gray-800">
                                     <tr>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Cliente</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Contato</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Localização</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Cliente</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Contato</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider">Localização</th>
+                                        <th className="p-6 font-bold text-gray-400 text-xs uppercase tracking-wider text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-gray-800">
                                     {users.map((u: any) => (
-                                        <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <tr key={u.id} className="hover:bg-[#252B35]/50 transition-colors group">
                                             <td className="p-6">
-                                                <div className="font-bold text-gray-900">{u.name}</div>
-                                                <div className="text-xs text-gray-500">{u.email}</div>
+                                                <div className="font-bold text-white">{u.name}</div>
+                                                <div className="text-xs text-gray-400">{u.email}</div>
                                                 <div className="text-[10px] text-accent font-bold uppercase mt-1">CPF: {u.cpf || '---'}</div>
                                             </td>
-                                            <td className="p-6 font-medium text-gray-600 text-sm">
+                                            <td className="p-6 font-medium text-gray-300 text-sm">
                                                 <div>📞 {u.phone}</div>
-                                                <div className="text-xs text-green-600">📱 {u.whatsapp || '---'}</div>
+                                                <div className="text-xs text-green-400">📱 {u.whatsapp || '---'}</div>
                                             </td>
                                             <td className="p-6">
-                                                <div className="text-xs text-gray-600 max-w-xs truncate">{u.address}</div>
-                                                <div className="text-[10px] text-gray-400 font-bold">{u.zipCode}</div>
+                                                <div className="text-xs text-gray-300 max-w-xs truncate">{u.address}</div>
+                                                <div className="text-[10px] text-gray-500 font-bold">{u.zipCode}</div>
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-3">
@@ -491,7 +491,7 @@ export default function SuperAdmin() {
                                         </tr>
                                     ))}
                                     {users.length === 0 && (
-                                        <tr><td colSpan={4} className="p-20 text-center text-gray-400">Nenhum usuário cadastrado.</td></tr>
+                                        <tr><td colSpan={4} className="p-20 text-center text-gray-600">Nenhum usuário cadastrado.</td></tr>
                                     )}
                                 </tbody>
                             </table>
@@ -502,7 +502,7 @@ export default function SuperAdmin() {
                 </div>
 
                 {/* Footer outside the card */}
-                <footer className="footer text-center text-gray-500 text-xs py-10 mt-2">
+                <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
                     © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-accent transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinShop
                 </footer>
             </div>
