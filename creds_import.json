@@ -1,0 +1,23 @@
+[
+    {
+        "id": "gemini-auto-1",
+        "name": "Gemini Auto Config",
+        "type": "googleGeminiApi",
+        "data": {
+            "apiKey": "AIzaSyDxmoCXt87HDkmrjOJHm5wFqTK_9GOLMuU"
+        }
+    },
+    {
+        "id": "postgres-auto-1",
+        "name": "Postgres (Vercel)",
+        "type": "postgres",
+        "data": {
+            "host": "ep-steep-mountain-ahs14gfe-pooler.c-3.us-east-1.aws.neon.tech",
+            "database": "neondb",
+            "user": "neondb_owner",
+            "password": "npg_5AnqXwszBSt9",
+            "port": 5432,
+            "ssl": "allow-unauthorized"
+        }
+    }
+]

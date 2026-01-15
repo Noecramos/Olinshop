@@ -26,12 +26,9 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const restaurantId = searchParams.get('restaurantId');
         const clearHistory = searchParams.get('clearHistory');
+        const customerEmail = searchParams.get('customerEmail');
 
-        if (!restaurantId || !isValidUUID(restaurantId)) {
-            return NextResponse.json({ error: "Restaurant ID required and must be a valid UUID" }, { status: 400 });
-        }
-
-        if (clearHistory === 'true') {
+        if (clearHistory === 'true' && restaurantId && isValidUUID(restaurantId)) {
             await sql`
                 DELETE FROM orders 
                 WHERE restaurant_id = ${restaurantId} 
@@ -40,21 +37,48 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ success: true });
         }
 
-        const { rows } = await sql`
-            SELECT 
-                id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
-                customer_name as "customerName", customer_phone as "customerPhone", 
-                customer_address as "customerAddress", customer_zip_code as "customerZipCode",
-                items, subtotal, delivery_fee as "deliveryFee", total, 
-                payment_method as "paymentMethod", change_for as "changeFor", observations,
-                status, created_at as "createdAt", service_type as "serviceType", 
-                table_number as "tableNumber", shipping_method as "shippingMethod",
-                customer_cpf as "customerCpf"
-            FROM orders 
-            WHERE restaurant_id = ${restaurantId} 
-            ORDER BY created_at DESC 
-            LIMIT 100
-        `;
+        let query;
+        if (customerEmail) {
+            // Fetch orders for a specific customer across all stores
+            query = sql`
+                SELECT 
+                    o.id, o.restaurant_id as "restaurantId", o.ticket_number as "ticketNumber",
+                    o.customer_name as "customerName", o.customer_phone as "customerPhone", 
+                    o.customer_address as "customerAddress", o.customer_zip_code as "customerZipCode",
+                    o.items, o.subtotal, o.delivery_fee as "deliveryFee", o.total, 
+                    o.payment_method as "paymentMethod", o.change_for as "changeFor", o.observations,
+                    o.status, o.created_at as "createdAt", o.customer_email as "customerEmail",
+                    o.service_type as "serviceType", o.table_number as "tableNumber", 
+                    o.shipping_method as "shippingMethod", o.customer_cpf as "customerCpf",
+                    r.name as "restaurantName", r.slug as "restaurantSlug", r.image as "restaurantImage"
+                FROM orders o
+                JOIN stores r ON o.restaurant_id = r.id
+                WHERE o.customer_email = ${customerEmail}
+                ORDER BY o.created_at DESC 
+                LIMIT 20
+            `;
+        } else {
+            if (!restaurantId || !isValidUUID(restaurantId)) {
+                return NextResponse.json({ error: "Restaurant ID required" }, { status: 400 });
+            }
+            query = sql`
+                SELECT 
+                    id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
+                    customer_name as "customerName", customer_phone as "customerPhone", 
+                    customer_address as "customerAddress", customer_zip_code as "customerZipCode",
+                    items, subtotal, delivery_fee as "deliveryFee", total, 
+                    payment_method as "paymentMethod", change_for as "changeFor", observations,
+                    status, created_at as "createdAt", service_type as "serviceType", 
+                    table_number as "tableNumber", shipping_method as "shippingMethod",
+                    customer_cpf as "customerCpf", customer_email as "customerEmail"
+                FROM orders 
+                WHERE restaurant_id = ${restaurantId} 
+                ORDER BY created_at DESC 
+                LIMIT 100
+            `;
+        }
+
+        const { rows } = await query;
 
         // Transform to nested structure expected by frontend
         const orders = rows.map(order => ({
@@ -96,7 +120,7 @@ export async function POST(req: NextRequest) {
         const {
             restaurantId, customerName, customerPhone, customerAddress, customerZipCode,
             items, subtotal, deliveryFee, total, paymentMethod, changeFor, observations,
-            serviceType, tableNumber, shippingMethod, customerCpf
+            serviceType, tableNumber, shippingMethod, customerCpf, customerEmail
         } = body;
 
         // Validations
@@ -120,12 +144,14 @@ export async function POST(req: NextRequest) {
                 restaurant_id, ticket_number, customer_name, customer_phone, 
                 customer_address, customer_zip_code, items, subtotal, 
                 delivery_fee, total, payment_method, change_for, observations, 
-                status, service_type, table_number, shipping_method, customer_cpf
+                status, service_type, table_number, shipping_method, customer_cpf,
+                customer_email
             ) VALUES (
                 ${restaurantId}, ${ticketNumber}, ${customerName}, ${customerPhone},
                 ${customerAddress}, ${customerZipCode}, ${JSON.stringify(items)}, 
                 ${nSubtotal}, ${nDeliveryFee}, ${nTotal}, ${paymentMethod}, 
-                ${nChangeFor}, ${observations}, 'pending', ${serviceType}, ${tableNumber}, ${shippingMethod}, ${customerCpf}
+                ${nChangeFor}, ${observations}, 'pending', ${serviceType}, ${tableNumber}, ${shippingMethod}, ${customerCpf},
+                ${customerEmail}
             ) RETURNING 
                 id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
                 customer_name as "customerName", customer_phone as "customerPhone",
@@ -134,7 +160,7 @@ export async function POST(req: NextRequest) {
                 payment_method as "paymentMethod", change_for as "changeFor",
                 observations, status, created_at as "createdAt",
                 service_type as "serviceType", table_number as "tableNumber",
-                customer_cpf as "customerCpf"
+                customer_cpf as "customerCpf", customer_email as "customerEmail"
         `;
 
         const order = rows[0];
@@ -145,7 +171,8 @@ export async function POST(req: NextRequest) {
                 name: order.customerName,
                 phone: order.customerPhone,
                 address: order.customerAddress,
-                zipCode: order.customerZipCode
+                zipCode: order.customerZipCode,
+                email: order.customerEmail
             },
             items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
             subtotal: Number(order.subtotal),

@@ -1,0 +1,148 @@
+{
+    "name": "Agente Olinshop (Versão WAHA)",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "whatsapp",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "webhook-trigger",
+            "name": "Webhook WhatsApp",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                820,
+                380
+            ],
+            "webhookId": "whatsapp"
+        },
+        {
+            "parameters": {
+                "modelId": "models/gemini-1.5-flash",
+                "options": {
+                    "systemInstruction": "Você é um assistente de suporte inteligente para o Olinshop e Olindelivery.\n\nSeu objetivo é ajudar clientes com dúvidas sobre pedidos e assinaturas.\n\nFERRAMENTAS DISPONÍVEIS:\n- consult_database: Use isso para verificar pagamentos e status de assinatura. O usuário pode perguntar \"minha assinatura está ativa?\" ou \"qual status do meu último pagamento?\". Sempre use o email ou nome fornecido para buscar.\n\nSe não souber a resposta, diga que vai encaminhar para um humano."
+                }
+            },
+            "id": "gemini-agent",
+            "name": "Google Gemini Chat",
+            "type": "n8n-nodes-base.googleGeminiChat",
+            "typeVersion": 1,
+            "position": [
+                1040,
+                380
+            ],
+            "credentials": {
+                "googleGeminiApi": {
+                    "id": "CREDENTIAL_ID_PLACEHOLDER",
+                    "name": "Google Gemini Credential"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM public.subscriptions WHERE user_email ILIKE $1 OR user_name ILIKE $1 LIMIT 5;",
+                "additionalFields": {
+                    "queryParams": "={{ $json.query }}"
+                }
+            },
+            "id": "postgres-tool",
+            "name": "Consultar Banco",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.4,
+            "position": [
+                1380,
+                500
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "POSTGRES_CREDENTIAL_ID_PLACEHOLDER",
+                    "name": "Vercel Postgres"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "name": "consult_database",
+                "description": "Consulta o banco de dados para verificar status de assinatura e pagamentos. Input: email ou nome do cliente.",
+                "toJson": true
+            },
+            "id": "tool-definition",
+            "name": "Definição da Ferramenta",
+            "type": "n8n-nodes-base.tool",
+            "typeVersion": 1,
+            "position": [
+                1380,
+                380
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/sendText",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "session",
+                            "value": "default"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ $json.output }}"
+                        },
+                        {
+                            "name": "chatId",
+                            "value": "={{ $('Webhook WhatsApp').item.json.body.payload.from }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "waha-send",
+            "name": "Enviar WhatsApp (WAHA)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1260,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook WhatsApp": {
+            "main": [
+                [
+                    {
+                        "node": "Google Gemini Chat",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Definição da Ferramenta": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "Google Gemini Chat",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini Chat": {
+            "main": [
+                [
+                    {
+                        "node": "Enviar WhatsApp (WAHA)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

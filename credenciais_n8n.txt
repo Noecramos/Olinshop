@@ -1,0 +1,28 @@
+=========== CREDENCIAIS PARA COPIAR NO N8N ===========
+
+1. GOOGLE GEMINI CHAT
+   - Abra o nó "Google Gemini Chat"
+   - Crie uma "New Credential"
+   - Cole a API Key abaixo:
+   AIzaSyDxmoCXt87HDkmrjOJHm5wFqTK_9GOLMuU
+
+-------------------------------------------------------
+
+2. VERCEL POSTGRES (Node: "Consultar Banco")
+   - Abra o nó "Consultar Banco"
+   - Crie uma "New Credential" (Type: Postgres)
+   - Preencha os campos:
+     Host: ep-steep-mountain-ahs14gfe-pooler.c-3.us-east-1.aws.neon.tech
+     Database: neondb
+     User: neondb_owner
+     Password: npg_5AnqXwszBSt9
+     Port: 5432
+     SSL: Ative a opção (SSL/TLS) ou selecione "Allow Unauthorized" se necessário.
+
+-------------------------------------------------------
+
+3. LINK WHATSAPP
+   - O WAHA já está configurado.
+   - Certifique-se de ter escaneado o QR Code em http://65.108.154.16/dashboard
+
+=======================================================

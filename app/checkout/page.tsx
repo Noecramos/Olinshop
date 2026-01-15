@@ -345,6 +345,7 @@ export default function CheckoutPage() {
                 customerCpf: form.cpf,
                 customerAddress: form.address,
                 customerZipCode: form.zipCode,
+                customerEmail: user?.email || '',
                 items: cart,
                 subtotal,
                 deliveryFee,
