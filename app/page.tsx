@@ -89,7 +89,7 @@ function MarketplaceContent() {
       .then(setStores)
       .catch(console.error);
 
-    fetch('/api/config')
+    fetch(`/api/config?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         if (data && !data.error) setConfig((prev: any) => ({ ...prev, ...data }));
