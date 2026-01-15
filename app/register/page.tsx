@@ -361,7 +361,7 @@ export default function RegisterShop() {
                                     id="type"
                                     name="type"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    value={['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type) ? form.type : 'Outro'}
+                                    value={['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros'].includes(form.type) ? form.type : 'Outro'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
                                 >
                                     <option value="Moda & Acessórios">Moda & Acessórios</option>
@@ -370,10 +370,9 @@ export default function RegisterShop() {
                                     <option value="Casa">Casa e Decoração</option>
                                     <option value="Esportes">Esportes e Fitness</option>
                                     <option value="Livros">Livros e Papelaria</option>
-                                    <option value="Alimentos">Alimentos e Bebidas</option>
                                     <option value="Outro">Outro (Especificar)</option>
                                 </select>
-                                {(!['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros', 'Alimentos'].includes(form.type)) && (
+                                {(!['Moda & Acessórios', 'Eletrônicos', 'Beleza', 'Casa', 'Esportes', 'Livros'].includes(form.type)) && (
                                     <input
                                         className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-accent animate-fade-in"
                                         placeholder="Especifique o tipo (ex: Vestuário)"
