@@ -6,15 +6,18 @@ import { hashPassword, setSession } from "@/lib/auth";
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
+        console.log("Registration request body:", { ...body, password: "[REDACTED]" });
         const { name, email, password, phone, whatsapp, zipCode, address, cpf } = body;
 
         if (!name || !email || !password) {
+            console.log("Registration failed: Missing required fields");
             return NextResponse.json({ error: "Nome, email e senha são obrigatórios" }, { status: 400 });
         }
 
         // Check if user exists
         const { rows: existing } = await sql`SELECT id FROM users WHERE email = ${email}`;
         if (existing.length > 0) {
+            console.log(`Registration failed: Email ${email} already exists`);
             return NextResponse.json({ error: "Email já cadastrado" }, { status: 400 });
         }
 
