@@ -73,6 +73,13 @@ export default function StoreAdmin() {
         }
     }, [auth, restaurant, fetchOrders]);
 
+    useEffect(() => {
+        fetch('/api/config')
+            .then(res => res.ok ? res.json() : {})
+            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .catch(() => { });
+    }, []);
+
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         if (password === restaurant?.password || password === 'master123') {
