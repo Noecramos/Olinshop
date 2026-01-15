@@ -163,27 +163,14 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="md:col-span-2">
                                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Link Exclusivo (URL)</label>
-                                <div className="flex gap-3">
-                                    <div className="flex-1 relative group">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">olinshop.com/</span>
-                                        <input
-                                            className="w-full pl-32 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-gray-800"
-                                            value={form.slug || ''}
-                                            onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
-                                            placeholder="nome-da-sua-loja"
-                                        />
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (!form.name) return alert('Defina o nome da loja primeiro');
-                                            const slug = form.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-                                            setForm({ ...form, slug });
-                                        }}
-                                        className="px-6 bg-gray-100 hover:bg-gray-200 text-gray-600 font-black text-xs uppercase rounded-2xl transition-all"
-                                    >
-                                        Sugerir
-                                    </button>
+                                <div className="relative group">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">olinshop.com/</span>
+                                    <input
+                                        className="w-full pl-32 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-gray-800"
+                                        value={form.slug || ''}
+                                        onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
+                                        placeholder="nome-da-sua-loja"
+                                    />
                                 </div>
                             </div>
 
