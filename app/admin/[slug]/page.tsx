@@ -76,7 +76,7 @@ export default function StoreAdmin() {
     useEffect(() => {
         fetch('/api/config')
             .then(res => res.ok ? res.json() : {})
-            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .then((data: any) => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
             .catch(() => { });
     }, []);
 
@@ -147,6 +147,46 @@ export default function StoreAdmin() {
         `);
         win.document.close();
         win.print();
+    };
+
+    const deleteOrder = async (orderId: string) => {
+        if (!confirm('Tem certeza que deseja excluir este pedido permanentemente?')) return;
+        setLoading(orderId);
+        try {
+            const res = await fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' });
+            if (res.ok) {
+                await fetchOrders();
+            } else {
+                alert('Erro ao excluir pedido');
+            }
+        } catch (e) {
+            alert('Erro ao excluir pedido');
+        } finally {
+            setLoading(null);
+        }
+    };
+
+    const editOrder = async (order: any) => {
+        const newObs = prompt('Editar observações:', order.observations || '');
+        if (newObs === null) return;
+
+        setLoading(order.id);
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: order.id, observations: newObs })
+            });
+            if (res.ok) {
+                await fetchOrders();
+            } else {
+                alert('Erro ao editar pedido');
+            }
+        } catch (e) {
+            alert('Erro ao editar pedido');
+        } finally {
+            setLoading(null);
+        }
     };
 
     if (!restaurant) return <div className="h-screen flex items-center justify-center">Carregando...</div>;
@@ -513,6 +553,20 @@ export default function StoreAdmin() {
                                                                 className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
                                                             >
                                                                 🖨️
+                                                            </button>
+                                                            <button
+                                                                onClick={() => editOrder(order)}
+                                                                className="p-3 bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-100 transition-colors"
+                                                                title="Editar Observações"
+                                                            >
+                                                                ✏️
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deleteOrder(order.id)}
+                                                                className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
+                                                                title="Excluir Pedido"
+                                                            >
+                                                                🗑️
                                                             </button>
 
                                                             {order.status?.toLowerCase() === 'pending' && (

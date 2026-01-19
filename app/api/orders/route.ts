@@ -197,27 +197,91 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
-        const { id, status } = body;
+        const { id, status, observations, customerAddress, customerPhone } = body;
 
-        if (!id || !status) {
-            return NextResponse.json({ error: "ID and status required" }, { status: 400 });
+        if (!id) {
+            return NextResponse.json({ error: "ID required" }, { status: 400 });
         }
 
-        const { rows } = await sql`
+        const updates = [];
+        const values = [];
+
+        if (status) {
+            updates.push(`status = $${values.length + 1}`);
+            values.push(status);
+        }
+        if (observations !== undefined) {
+            updates.push(`observations = $${values.length + 1}`);
+            values.push(observations);
+        }
+        if (customerAddress !== undefined) {
+            updates.push(`customer_address = $${values.length + 1}`);
+            values.push(customerAddress);
+        }
+        if (customerPhone !== undefined) {
+            updates.push(`customer_phone = $${values.length + 1}`);
+            values.push(customerPhone);
+        }
+
+        if (updates.length === 0) {
+            return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+        }
+
+        // Add ID as the last parameter
+        values.push(id);
+
+        // Construct the query dynamically
+        // Note: @vercel/postgres sql template literal doesn't support dynamic columns easily with parameter interpolation in this specific way without careful handling.
+        // However, we can use the main `sql` tag for safety if we construct firmly.
+        // But since I need to be safe, I'll stick to fixed queries or a smarter dynamic approach if possible.
+        // Given the limited fields, I'll use a standard update.
+
+        const result = await sql`
             UPDATE orders 
-            SET status = ${status}, updated_at = NOW() 
-            WHERE id = ${id} 
-            RETURNING id, status, updated_at as "updatedAt"
+            SET 
+                status = COALESCE(${status || null}, status),
+                observations = COALESCE(${observations === undefined ? null : observations}, observations),
+                customer_address = COALESCE(${customerAddress === undefined ? null : customerAddress}, customer_address),
+                customer_phone = COALESCE(${customerPhone === undefined ? null : customerPhone}, customer_phone),
+                updated_at = NOW()
+            WHERE id = ${id}
+            RETURNING id, status, observations, customer_address as "customerAddress", customer_phone as "customerPhone", updated_at as "updatedAt"
         `;
 
-        if (rows.length === 0) {
+        if (result.rowCount === 0) {
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
 
-        return NextResponse.json(rows[0]);
+        return NextResponse.json(result.rows[0]);
 
     } catch (error) {
         console.error("Database Error:", error);
         return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: "ID required" }, { status: 400 });
+        }
+
+        const result = await sql`
+            DELETE FROM orders 
+            WHERE id = ${id}
+        `;
+
+        if (result.rowCount === 0) {
+            return NextResponse.json({ error: "Order not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true });
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to delete order" }, { status: 500 });
     }
 }
