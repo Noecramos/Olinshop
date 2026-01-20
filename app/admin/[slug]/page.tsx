@@ -503,13 +503,7 @@ export default function StoreAdmin() {
                                         <p className="text-xs text-gray-400 font-bold">Gerencie suas vendas em tempo real</p>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button
-                                            onClick={() => window.print()}
-                                            className="px-4 py-2 bg-gray-900 text-white rounded-xl text-xs font-black uppercase hover:bg-black transition-colors hidden sm:block shadow-sm"
-                                            title="Imprimir Pedidos da Tela"
-                                        >
-                                            🖨️ Pedidos
-                                        </button>
+
                                         <button
                                             onClick={() => setShowHistory(false)}
                                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${!showHistory ? 'bg-accent text-white' : 'bg-gray-100 text-gray-500'}`}
@@ -611,9 +605,10 @@ export default function StoreAdmin() {
                                                         <div className="flex gap-2 mt-6">
                                                             <button
                                                                 onClick={() => printOrder(order)}
-                                                                className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
+                                                                className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 font-bold text-xs uppercase"
+                                                                title="Imprimir Cupom do Pedido"
                                                             >
-                                                                🖨️
+                                                                <span className="text-base">🖨️</span> Pedido
                                                             </button>
                                                             <button
                                                                 onClick={() => editOrder(order)}
