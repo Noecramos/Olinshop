@@ -349,8 +349,8 @@ export default function StoreAdmin() {
                         { id: 'products', label: 'Produtos', icon: '📦' },
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
                         { id: 'raspadinha', label: 'Raspadinha', icon: '🎲' },
-                        { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
                         { id: 'close_shop', label: 'Fecho de Loja', icon: '🔐', action: printDailySummary },
+                        { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
                         { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
                     ].map(item => (
                         item.link ? (
@@ -382,10 +382,10 @@ export default function StoreAdmin() {
                 {[
                     { id: 'dashboard', label: 'Início', icon: '📊' },
                     { id: 'products', label: 'Produtos', icon: '📦' },
-                    { id: 'settings', label: 'Ajustes', icon: '⚙️' },
-                    { id: 'support', label: 'Suporte', icon: '💬', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
-                    { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
-                ].map(item => (
+                    { id: 'raspadinha', label: 'Sorte', icon: '🎲' },
+                    { id: 'close_shop', label: 'Fecho', icon: '🔐', action: printDailySummary },
+                    { id: 'settings', label: 'Ajustes', icon: '⚙️' }
+                ].map((item: any) => (
                     item.link ? (
                         <a
                             key={item.id}
@@ -503,6 +503,13 @@ export default function StoreAdmin() {
                                         <p className="text-xs text-gray-400 font-bold">Gerencie suas vendas em tempo real</p>
                                     </div>
                                     <div className="flex gap-2">
+                                        <button
+                                            onClick={printDailySummary}
+                                            className="px-4 py-2 bg-blue-100 text-blue-700 rounded-xl text-xs font-black uppercase hover:bg-blue-200 transition-colors hidden sm:block"
+                                            title="Imprimir Fecho do Dia"
+                                        >
+                                            🖨️ Fecho
+                                        </button>
                                         <button
                                             onClick={() => setShowHistory(false)}
                                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${!showHistory ? 'bg-accent text-white' : 'bg-gray-100 text-gray-500'}`}
