@@ -12,6 +12,7 @@ import { StatusPieChart, SalesChart, TopProductsChart } from "@/app/components/a
 import ProductForm from "@/app/components/admin/ProductForm";
 import CategoryForm from "@/app/components/admin/CategoryForm";
 import StoreSettings from "@/app/components/admin/StoreSettings";
+import RaspadinhaValidator from "../../components/admin/RaspadinhaValidator";
 
 export default function StoreAdmin() {
     const params = useParams();
@@ -275,7 +276,59 @@ export default function StoreAdmin() {
     const tabLabels: { [key: string]: string } = {
         dashboard: 'Início',
         products: 'Produtos',
-        settings: 'Ajustes'
+        settings: 'Ajustes',
+        raspadinha: 'Validador'
+    };
+
+    const printDailySummary = () => {
+        const today = new Date().toDateString();
+        const dailyOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
+        const totalSales = dailyOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+        const methodTotals: Record<string, number> = {};
+
+        dailyOrders.forEach(o => {
+            const method = o.paymentMethod || 'Outros';
+            methodTotals[method] = (methodTotals[method] || 0) + (Number(o.total) || 0);
+        });
+
+        const win = window.open('', '_blank');
+        if (!win) return;
+
+        const paymentsHtml = Object.entries(methodTotals).map(([method, amount]) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>${method.toUpperCase()}</span>
+                <span>${amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+            </div>
+        `).join('');
+
+        win.document.write(`
+            <html>
+                <body style="font-family: monospace; width: 300px; padding: 20px;">
+                    <h2 style="text-align: center; margin-bottom: 5px;">${restaurant?.name.toUpperCase()}</h2>
+                    <h3 style="text-align: center; margin-top: 0; border-bottom: 1px dashed black; padding-bottom: 10px;">FECHO DE LOJA</h3>
+                    
+                    <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Hora:</strong> ${new Date().toLocaleTimeString('pt-BR')}</p>
+                    <p><strong>Total Pedidos:</strong> ${dailyOrders.length}</p>
+                    
+                    <hr style="border-top: 1px dashed black;">
+                    
+                    <h4 style="margin-bottom: 10px;">VENDAS POR PAGAMENTO</h4>
+                    ${paymentsHtml}
+                    
+                    <hr style="border-top: 1px dashed black;">
+                    
+                    <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; margin-top: 10px;">
+                        <span>TOTAL GERAL:</span>
+                        <span>${totalSales.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </div>
+
+                    <p style="text-align: center; margin-top: 30px; font-size: 10px;">Sistema OlinShop • 2025</p>
+                </body>
+            </html>
+        `);
+        win.document.close();
+        win.print();
     };
 
     return (
@@ -288,7 +341,6 @@ export default function StoreAdmin() {
                         <span className="w-2 h-2 bg-accent rounded-full"></span>
                         <span className="truncate">{restaurant?.name}</span>
                     </div>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2 opacity-60">Painel Administrativo</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
@@ -296,7 +348,9 @@ export default function StoreAdmin() {
                         { id: 'dashboard', label: 'Início', icon: '📊' },
                         { id: 'products', label: 'Produtos', icon: '📦' },
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
+                        { id: 'raspadinha', label: 'Raspadinha', icon: '🎲' },
                         { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
+                        { id: 'close_shop', label: 'Fecho de Loja', icon: '🔐', action: printDailySummary },
                         { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
                     ].map(item => (
                         item.link ? (
@@ -313,7 +367,7 @@ export default function StoreAdmin() {
                             <button
                                 key={item.id}
                                 onClick={() => item.action ? item.action() : setTab(item.id)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${item.id === 'logout' ? 'text-red-500 hover:bg-red-50' : (tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50')}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${item.id === 'logout' ? 'text-red-500 hover:bg-red-50' : item.id === 'close_shop' ? 'text-blue-600 hover:bg-blue-50' : (tab === item.id ? 'bg-accent text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50')}`}
                             >
                                 <span className="text-xl">{item.icon}</span>
                                 <span>{item.label}</span>
@@ -610,6 +664,12 @@ export default function StoreAdmin() {
                                 <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
                                 <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
                             </div>
+                        </div>
+                    )}
+
+                    {tab === 'raspadinha' && (
+                        <div className="animate-fade-in flex justify-center py-10">
+                            <RaspadinhaValidator />
                         </div>
                     )}
 

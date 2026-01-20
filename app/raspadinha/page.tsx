@@ -118,6 +118,10 @@ export default function RaspadinhaPage() {
             canvas.height = parent.offsetHeight;
         }
 
+        // Reset any inline styles from previous game
+        canvas.style.opacity = '1';
+        canvas.style.display = 'block';
+
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
         gradient.addColorStop(0, '#9E9E9E');
         gradient.addColorStop(0.5, '#F5F5F5');

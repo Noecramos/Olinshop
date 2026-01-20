@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import StoreSettings from "../../components/admin/StoreSettings";
 import GlobalConfigForm from "../../components/admin/GlobalConfigForm";
 
+import RaspadinhaValidator from "../../components/admin/RaspadinhaValidator";
+
 export default function SuperAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
-    const [tab, setTab] = useState<'restaurants' | 'users' | 'config'>('restaurants');
+    const [tab, setTab] = useState<'restaurants' | 'users' | 'config' | 'raspadinha'>('restaurants');
     const [config, setConfig] = useState({ footerText: '' });
 
     // Check localStorage for existing session
@@ -403,6 +405,12 @@ export default function SuperAdmin() {
                         >
                             Customização do App
                         </button>
+                        <button
+                            onClick={() => setTab('raspadinha')}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'raspadinha' ? 'text-amber-600 border-b-2 border-amber-600' : 'text-gray-400 hover:text-amber-600'}`}
+                        >
+                            🎲 Raspadinha
+                        </button>
                     </div>
 
                     {tab === 'restaurants' ? (
@@ -489,7 +497,7 @@ export default function SuperAdmin() {
                                             </td>
                                             <td className="p-6">
                                                 <div className="text-xs text-gray-600 max-w-xs truncate">{u.address}</div>
-                                                <div className="text-[10px] text-gray-400 font-bold">{u.zipCode}</div>
+                                                <div className="text-xs text-gray-400 font-bold">{u.zipCode}</div>
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-3">
@@ -505,8 +513,12 @@ export default function SuperAdmin() {
                                 </tbody>
                             </table>
                         </div>
-                    ) : (
+                    ) : tab === 'config' ? (
                         <GlobalConfigForm />
+                    ) : (
+                        <div className="flex justify-center py-10 animate-fade-in">
+                            <RaspadinhaValidator />
+                        </div>
                     )}
                 </div>
 
