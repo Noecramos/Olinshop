@@ -8,8 +8,11 @@ export async function POST(req: Request) {
         const activeCode = rows[0]?.value;
         const MASTER_CODE = '9999';
 
-        if (code === activeCode || code === MASTER_CODE) {
-            if (code !== MASTER_CODE) {
+        const inputCode = String(code).trim();
+        const dbCode = String(activeCode).trim();
+
+        if (inputCode === dbCode || inputCode === MASTER_CODE) {
+            if (inputCode !== MASTER_CODE) {
                 const newCode = Math.floor(1000 + Math.random() * 9000).toString();
                 await sql`
                     UPDATE global_settings 
@@ -17,7 +20,7 @@ export async function POST(req: Request) {
                     WHERE key = 'raspadinha_code'
                 `;
             }
-            return NextResponse.json({ success: true });
+            return NextResponse.json({ success: true, rotated: inputCode !== MASTER_CODE });
         } else {
             return NextResponse.json({ success: false }, { status: 400 });
         }
