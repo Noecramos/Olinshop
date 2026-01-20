@@ -1,0 +1,66 @@
+═══════════════════════════════════════════════════════════════════
+                    WHERE TO FIND THE QR CODE
+═══════════════════════════════════════════════════════════════════
+
+I just opened the WAHA Dashboard in your browser!
+
+URL: http://localhost:3000/dashboard
+
+
+📍 STEP-BY-STEP TO FIND QR CODE:
+
+Step 1: Look at the LEFT SIDEBAR
+   ├─ You should see "Sessions" section
+   └─ Click on "default" session
+
+Step 2: Look at the MAIN AREA (center/right side)
+   ├─ You should see a LARGE QR CODE displayed
+   └─ Status might say: "SCAN_QR_CODE" or "STARTING"
+
+Step 3: If you DON'T see a QR code:
+   ├─ Look for a button that says:
+   │  • "Show QR" or
+   │  • "Get QR Code" or
+   │  • "Scan QR"
+   └─ Click that button
+
+
+🔄 IF STILL NO QR CODE:
+
+   Option 1: Restart the Session
+   ├─ Click "Restart Session" button
+   └─ Wait a few seconds for QR to appear
+
+   Option 2: Delete and Recreate
+   ├─ Click "Delete Session" or trash icon
+   ├─ Click "+ Add Session" or "+ Create Session"
+   ├─ Name: default
+   ├─ Engine: WEBJS
+   └─ Click "Create" - QR should appear
+
+
+📱 WHAT THE QR CODE LOOKS LIKE:
+
+   • Black and white square pattern
+   • Usually 300x300 pixels or larger
+   • In the center of the screen
+   • May have text below: "Scan with WhatsApp"
+
+
+✅ WHEN YOU FIND IT:
+
+   1. Keep the browser window open
+   2. Grab your phone (WhatsApp Business: +55 81 8392-0320)
+   3. Open WhatsApp Business
+   4. Settings → Linked Devices
+   5. Link a Device
+   6. Point camera at the QR code on your screen
+   7. Wait for "WORKING" status
+
+
+═══════════════════════════════════════════════════════════════════
+
+💡 TIP: The QR code should appear immediately after creating a session.
+        If it doesn't, the session might need to be restarted!
+
+═══════════════════════════════════════════════════════════════════

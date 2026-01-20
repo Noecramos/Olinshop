@@ -1,0 +1,69 @@
+═══════════════════════════════════════════════════════════════════
+              ✅ LATEST WAHA CREDENTIALS - FINAL
+═══════════════════════════════════════════════════════════════════
+
+🌐 URL: http://localhost:3000/dashboard
+
+👤 USERNAME: admin
+
+🔑 PASSWORD: 901e2f0478744deca51df47ed060ccff
+
+
+═══════════════════════════════════════════════════════════════════
+                    COMPLETE SETUP STEPS
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: LOGIN TO WAHA
+   ├─ Go to: http://localhost:3000/dashboard
+   ├─ Username: admin
+   └─ Password: 901e2f0478744deca51df47ed060ccff
+
+
+STEP 2: CREATE SESSION
+   ├─ Click "+ Add Session"
+   ├─ Session Name: default
+   ├─ Engine: NOWEB  ← MUST use NOWEB (not WEBJS!)
+   └─ Click "Create"
+
+
+STEP 3: SCAN QR CODE
+   ├─ QR code appears automatically
+   ├─ Open WhatsApp Business on phone (+55 81 8392-0320)
+   ├─ Settings → Linked Devices → Link a Device
+   ├─ Scan the QR code
+   └─ Wait for "WORKING" status
+
+
+STEP 4: VERIFY
+   ├─ Session status shows "WORKING" (green)
+   ├─ Webhook is already configured
+   └─ Ready for n8n setup!
+
+
+═══════════════════════════════════════════════════════════════════
+                        WHAT'S FIXED
+═══════════════════════════════════════════════════════════════════
+
+✅ Server connection error FIXED (switched to NOWEB engine)
+✅ NOWEB engine configured (doesn't need Chrome)
+✅ WAHA running and ready
+✅ Latest password provided
+✅ Webhook pre-configured: http://n8n:5678/webhook/whatsapp
+
+
+═══════════════════════════════════════════════════════════════════
+                    AFTER WAHA SETUP
+═══════════════════════════════════════════════════════════════════
+
+Once WhatsApp shows "WORKING" status, we'll move to:
+
+→ Import n8n workflow
+→ Activate AI agent
+→ Test the complete system!
+
+
+═══════════════════════════════════════════════════════════════════
+
+CURRENT PASSWORD: 901e2f0478744deca51df47ed060ccff
+
+═══════════════════════════════════════════════════════════════════

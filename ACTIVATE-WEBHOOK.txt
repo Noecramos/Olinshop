@@ -1,0 +1,83 @@
+═══════════════════════════════════════════════════════════════════
+        HOW TO ACTIVATE THE WEBHOOK IN N8N
+═══════════════════════════════════════════════════════════════════
+
+You're seeing "Waiting for test URL" because the workflow needs to be
+activated first!
+
+═══════════════════════════════════════════════════════════════════
+                    SOLUTION - 3 STEPS
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: SAVE THE WORKFLOW
+   ├─ In n8n, click the "Save" button (top right)
+   └─ Give it a name if asked (e.g., "WhatsApp AI Agent")
+
+
+STEP 2: ACTIVATE THE WORKFLOW
+   ├─ Look for the toggle switch in the top right
+   ├─ Click it to turn it ON
+   └─ It should turn GREEN
+
+
+STEP 3: THE WEBHOOK IS NOW READY!
+   ├─ The "Waiting for test URL" message will disappear
+   ├─ The webhook URL will be: http://localhost:5678/webhook/whatsapp
+   └─ You can now test it!
+
+
+═══════════════════════════════════════════════════════════════════
+                    TEST THE WEBHOOK
+═══════════════════════════════════════════════════════════════════
+
+Option 1: MANUAL TEST (Recommended)
+   
+   Run this script:
+   .\test-webhook.ps1
+   
+   This will send a test message to the webhook
+
+
+Option 2: TEST WITH WHATSAPP
+
+   1. Make sure WAHA webhook is configured:
+      URL: http://n8n:5678/webhook/whatsapp
+      
+   2. Send a WhatsApp message to: +55 81 8392-0320
+      Message: "teste"
+      
+   3. Check n8n Executions (left sidebar)
+
+
+═══════════════════════════════════════════════════════════════════
+                    WEBHOOK URL
+═══════════════════════════════════════════════════════════════════
+
+Production URL (use this in WAHA):
+   http://n8n:5678/webhook/whatsapp
+
+Alternative (if above doesn't work):
+   http://localhost:5678/webhook/whatsapp
+
+
+═══════════════════════════════════════════════════════════════════
+                    TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+If "Waiting for test URL" doesn't go away:
+
+1. Make sure workflow is SAVED
+2. Make sure toggle is GREEN (active)
+3. Refresh the n8n page
+4. Try clicking the webhook node and check settings
+
+
+═══════════════════════════════════════════════════════════════════
+
+QUICK ACTIONS:
+
+1. Save workflow (click "Save" button)
+2. Activate workflow (toggle to GREEN)
+3. Run: .\test-webhook.ps1
+
+═══════════════════════════════════════════════════════════════════

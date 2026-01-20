@@ -1,0 +1,90 @@
+═══════════════════════════════════════════════════════════════════
+          ✅ SERVER CONNECTION FIXED - NOWEB ENGINE
+═══════════════════════════════════════════════════════════════════
+
+PROBLEM SOLVED!
+
+The "server connection failed" error was because WEBJS engine requires
+Chrome/Chromium. I've switched to NOWEB engine which works without it!
+
+
+═══════════════════════════════════════════════════════════════════
+                    CURRENT LOGIN CREDENTIALS
+═══════════════════════════════════════════════════════════════════
+
+URL:      http://localhost:3000/dashboard
+
+Username: admin
+Password: 59100d817a5f43c1a4efc3f0c3b555ab
+
+
+═══════════════════════════════════════════════════════════════════
+              CREATE SESSION MANUALLY (4 STEPS)
+═══════════════════════════════════════════════════════════════════
+
+Step 1: LOGIN
+   ├─ Go to: http://localhost:3000/dashboard
+   ├─ Username: admin
+   └─ Password: 59100d817a5f43c1a4efc3f0c3b555ab
+
+
+Step 2: CREATE SESSION
+   ├─ Click "+ Add Session" button
+   ├─ Session Name: default
+   ├─ Engine: NOWEB  ← IMPORTANT: Use NOWEB, not WEBJS!
+   └─ Click "Create"
+
+
+Step 3: QR CODE APPEARS
+   ├─ QR code will display automatically
+   └─ Keep the browser window open
+
+
+Step 4: SCAN WITH PHONE
+   ├─ Open WhatsApp Business (+55 81 8392-0320)
+   ├─ Settings → Linked Devices
+   ├─ Link a Device
+   ├─ Scan the QR code from your screen
+   └─ Wait for "WORKING" status
+
+
+═══════════════════════════════════════════════════════════════════
+                    IMPORTANT: USE NOWEB ENGINE!
+═══════════════════════════════════════════════════════════════════
+
+When creating the session, make sure to select:
+
+   Engine: NOWEB
+
+NOT "WEBJS" - that's what was causing the server connection error!
+
+NOWEB is more reliable and doesn't require Chrome.
+
+
+═══════════════════════════════════════════════════════════════════
+                        WHAT WAS FIXED
+═══════════════════════════════════════════════════════════════════
+
+Before: WAHA_DEFAULT_ENGINE=WEBJS  ← Needs Chrome (error!)
+After:  WAHA_DEFAULT_ENGINE=NOWEB  ← Works without Chrome ✓
+
+WAHA has been restarted with the new configuration.
+
+
+═══════════════════════════════════════════════════════════════════
+                    AFTER QR CODE SCAN
+═══════════════════════════════════════════════════════════════════
+
+Once you scan the QR code and see "WORKING" status:
+
+✅ WAHA is fully configured
+✅ WhatsApp is connected
+✅ Webhook is already configured (http://n8n:5678/webhook/whatsapp)
+✅ Ready for n8n setup (next step!)
+
+
+═══════════════════════════════════════════════════════════════════
+
+Dashboard is open - login and create the session with NOWEB engine!
+
+═══════════════════════════════════════════════════════════════════

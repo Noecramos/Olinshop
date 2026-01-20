@@ -1,0 +1,138 @@
+{
+    "name": "WhatsApp AI Agent - Simple",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "whatsapp",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "webhook-whatsapp",
+            "name": "Webhook WhatsApp",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "whatsapp"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract message from WAHA webhook\nconst wahaData = $input.item.json.body;\nconst message = wahaData?.payload?.body || wahaData?.message?.body || 'Olá';\nconst from = wahaData?.payload?.from || wahaData?.message?.from || 'unknown';\n\nreturn {\n  message: message,\n  from: from,\n  chatId: from\n};"
+            },
+            "id": "extract-message",
+            "name": "Extract Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDxmoCXt87HDkmrjOJHm5wFqTK_9GOLMuU",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Você é um assistente de suporte para Olinshop e Olindelivery. Responda de forma amigável e profissional.\\n\\nMensagem do cliente: {{ $json.message }}\"\n    }]\n  }]\n}",
+                "options": {}
+            },
+            "id": "gemini-api",
+            "name": "Google Gemini API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract AI response\nconst response = $input.item.json;\nconst aiText = response?.candidates?.[0]?.content?.parts?.[0]?.text || 'Desculpe, não consegui processar sua mensagem.';\n\nreturn {\n  aiResponse: aiText,\n  chatId: $('Extract Message').item.json.chatId\n};"
+            },
+            "id": "extract-response",
+            "name": "Extract AI Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/sendText",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"session\": \"default\",\n  \"chatId\": \"{{ $json.chatId }}\",\n  \"text\": \"{{ $json.aiResponse }}\"\n}",
+                "options": {}
+            },
+            "id": "send-whatsapp",
+            "name": "Send WhatsApp Response",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1120,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook WhatsApp": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Message": {
+            "main": [
+                [
+                    {
+                        "node": "Google Gemini API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini API": {
+            "main": [
+                [
+                    {
+                        "node": "Extract AI Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract AI Response": {
+            "main": [
+                [
+                    {
+                        "node": "Send WhatsApp Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 0,
+    "updatedAt": "2026-01-20T14:57:00.000Z",
+    "versionId": "1"
+}

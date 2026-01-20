@@ -1,0 +1,106 @@
+═══════════════════════════════════════════════════════════════════
+          HOW TO CREATE "DEFAULT" SESSION MANUALLY
+═══════════════════════════════════════════════════════════════════
+
+Since there's no "default" session, let's create one manually!
+
+The WAHA Dashboard and API docs should be open in your browser.
+
+
+📋 STEP-BY-STEP INSTRUCTIONS:
+
+Step 1: FIND THE ADD BUTTON
+   ├─ In the WAHA Dashboard (http://localhost:3000/dashboard)
+   ├─ Look for a button that says:
+   │  • "+ Add Session" or
+   │  • "+ New Session" or
+   │  • "+ Create Session" or
+   │  • Just a "+" button
+   └─ Click that button
+
+
+Step 2: FILL IN THE FORM
+   ├─ A form/dialog will appear
+   ├─ Fill in these fields:
+   │
+   │  Session Name:  default
+   │  ─────────────  ───────
+   │  (Type exactly: default)
+   │
+   │  Engine:  WEBJS
+   │  ───────  ─────
+   │  (Select from dropdown: WEBJS)
+   │  (Alternative: NOWEB if WEBJS not available)
+   │
+   └─ Leave other fields as default
+
+
+Step 3: CREATE THE SESSION
+   ├─ Click the button:
+   │  • "Create" or
+   │  • "Start" or
+   │  • "Add Session"
+   └─ Wait 2-3 seconds
+
+
+Step 4: QR CODE APPEARS!
+   ├─ The QR code should appear automatically
+   ├─ It will be a large black & white square
+   └─ Ready to scan!
+
+
+═══════════════════════════════════════════════════════════════════
+
+🔍 WHERE TO LOOK FOR THE "+ ADD" BUTTON:
+
+   Location 1: Top right corner of the dashboard
+   Location 2: In the "Sessions" section/panel
+   Location 3: In the sidebar menu
+   Location 4: Floating action button (FAB) - usually bottom right
+
+
+═══════════════════════════════════════════════════════════════════
+
+📱 AFTER QR CODE APPEARS:
+
+   1. Keep browser window open
+   2. Grab your phone (WhatsApp Business: +55 81 8392-0320)
+   3. Open WhatsApp Business
+   4. Settings → Linked Devices
+   5. Link a Device
+   6. Scan the QR code
+   7. Wait for "WORKING" status
+
+
+═══════════════════════════════════════════════════════════════════
+
+⚙️ CONFIGURATION TO ENTER:
+
+   Session Name:  default
+   Engine:        WEBJS
+   
+   (That's it! Just these two fields)
+
+
+═══════════════════════════════════════════════════════════════════
+
+💡 TIPS:
+
+   • The session name MUST be "default" (lowercase)
+   • WEBJS is the recommended engine
+   • QR code appears immediately after creating session
+   • QR code expires after 60 seconds - scan quickly!
+
+
+═══════════════════════════════════════════════════════════════════
+
+🔄 IF YOU DON'T SEE "+ ADD SESSION" BUTTON:
+
+   Try these:
+   1. Refresh the page (F5)
+   2. Try the API interface: http://localhost:3000/api
+   3. Look in different sections of the dashboard
+   4. Check if you're logged in (top right corner)
+
+
+═══════════════════════════════════════════════════════════════════

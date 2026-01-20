@@ -1,0 +1,48 @@
+═══════════════════════════════════════════════════════════════════
+                    WAHA WEBHOOK CONFIGURATION
+═══════════════════════════════════════════════════════════════════
+
+📋 COPY THIS WEBHOOK URL:
+
+   http://n8n:5678/webhook/whatsapp
+
+
+🔧 CONFIGURATION DETAILS:
+
+   Session Name:     default
+   Webhook URL:      http://n8n:5678/webhook/whatsapp
+   
+   Events to Enable:
+   ✅ message
+   ✅ message.any
+   ✅ session.status (optional)
+
+
+📝 ALTERNATIVE WEBHOOK URL (if first one doesn't work):
+
+   http://localhost:5678/webhook/whatsapp
+
+
+🎯 WHERE TO CONFIGURE IN WAHA:
+
+   1. Click on "default" session
+   2. Look for "Webhooks" or "Settings" tab
+   3. Paste the webhook URL
+   4. Enable the events (checkboxes)
+   5. Click "Save"
+
+
+✅ VERIFICATION:
+
+   After saving, you should see:
+   - Webhook URL saved
+   - Events enabled
+   - No error messages
+
+
+═══════════════════════════════════════════════════════════════════
+
+💡 TIP: The webhook URL uses "n8n" (not "localhost") because both 
+        services are in the same Docker network!
+
+═══════════════════════════════════════════════════════════════════

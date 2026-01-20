@@ -1,0 +1,54 @@
+{
+    "name": "WhatsApp Echo Bot - Ultra Simple",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "whatsapp",
+                "options": {}
+            },
+            "id": "webhook",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                300,
+                300
+            ],
+            "webhookId": "whatsapp"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/sendText",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"session\":\"default\",\"chatId\":\"{{ $json.body.payload.from }}\",\"text\":\"Olá! Recebi sua mensagem: {{ $json.body.payload.body }}\"}",
+                "options": {}
+            },
+            "id": "send",
+            "name": "Send Response",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                500,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Send Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "1"
+}

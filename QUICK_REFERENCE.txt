@@ -1,0 +1,103 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                   DOCKER + n8n + WAHA - QUICK REFERENCE              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+📱 WHATSAPP NUMBER
+   +55 81 8392-0320
+
+🌐 ACCESS URLS
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ n8n Dashboard:      http://localhost:5678                       │
+   │ WAHA Dashboard:     http://localhost:3000/dashboard             │
+   │ WAHA API Docs:      http://localhost:3000/api                   │
+   └─────────────────────────────────────────────────────────────────┘
+
+🔑 CREDENTIALS
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ n8n:    Username: admin    Password: admin                      │
+   │ WAHA:   Username: admin    Password: admin                      │
+   └─────────────────────────────────────────────────────────────────┘
+
+🔗 WEBHOOK URL (para configurar no WAHA)
+   http://n8n:5678/webhook/whatsapp
+   OU
+   http://localhost:5678/webhook/whatsapp
+
+📋 PRÓXIMOS PASSOS
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ 1. Acesse WAHA Dashboard (http://localhost:3000/dashboard)     │
+   │ 2. Faça login com admin/admin                                   │
+   │ 3. Crie ou inicie sessão "default"                              │
+   │ 4. Escaneie QR Code com WhatsApp Business                       │
+   │ 5. Configure webhook para n8n                                   │
+   │ 6. Teste enviando mensagem para +55 81 8392-0320               │
+   └─────────────────────────────────────────────────────────────────┘
+
+🛠️ COMANDOS ÚTEIS
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ Ver status:         docker-compose ps                           │
+   │ Ver logs:           docker-compose logs -f                      │
+   │ Reiniciar tudo:     docker-compose restart                      │
+   │ Parar tudo:         docker-compose down                         │
+   │ Iniciar tudo:       docker-compose up -d                        │
+   │ Ver logs n8n:       docker-compose logs -f n8n                  │
+   │ Ver logs WAHA:      docker-compose logs -f waha                 │
+   └─────────────────────────────────────────────────────────────────┘
+
+🔍 TROUBLESHOOTING
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ WAHA não mostra QR:                                             │
+   │   → docker-compose restart waha                                 │
+   │                                                                  │
+   │ n8n não recebe mensagens:                                       │
+   │   → Verificar se workflow está ativo (toggle verde)             │
+   │   → Verificar webhook configurado no WAHA                       │
+   │                                                                  │
+   │ Containers não rodando:                                         │
+   │   → docker-compose down                                         │
+   │   → docker-compose up -d                                        │
+   └─────────────────────────────────────────────────────────────────┘
+
+📊 ARQUITETURA
+   WhatsApp (+55 81 8392-0320)
+        ↓
+   WAHA (localhost:3000)
+        ↓ webhook
+   n8n (localhost:5678)
+        ├─ Google Gemini AI
+        ├─ PostgreSQL Database
+        └─ Response Handler
+        ↓
+   WAHA → WhatsApp
+
+📁 ARQUIVOS IMPORTANTES
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ docker-compose.yml           - Configuração Docker              │
+   │ .env.local_docker            - Variáveis de ambiente            │
+   │ workflow_import.json         - Workflow n8n para importar       │
+   │ DOCKER_N8N_WAHA_SETUP.md     - Guia completo passo a passo     │
+   │ check-docker-setup.ps1       - Script de verificação           │
+   │ open-services.ps1            - Script de acesso rápido         │
+   └─────────────────────────────────────────────────────────────────┘
+
+✅ CHECKLIST
+   [ ] Serviços rodando (docker-compose ps)
+   [ ] WAHA acessível (http://localhost:3000)
+   [ ] n8n acessível (http://localhost:5678)
+   [ ] WhatsApp conectado no WAHA
+   [ ] Webhook configurado no WAHA
+   [ ] Workflow importado no n8n
+   [ ] Workflow ativado no n8n
+   [ ] Teste de mensagem enviado
+   [ ] Resposta automática funcionando
+
+🎯 TESTE RÁPIDO
+   1. Envie mensagem para: +55 81 8392-0320
+   2. Mensagem: "Olá, preciso de ajuda"
+   3. Verifique execução no n8n: http://localhost:5678 → Executions
+   4. Aguarde resposta automática no WhatsApp
+
+═══════════════════════════════════════════════════════════════════════
+Última atualização: 20/01/2026 08:40
+Status: Serviços rodando, aguardando configuração WhatsApp
+═══════════════════════════════════════════════════════════════════════

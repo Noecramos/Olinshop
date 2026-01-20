@@ -1,0 +1,73 @@
+═══════════════════════════════════════════════════════════════════
+              ⚠️  WORKFLOW NOT ACTIVATED YET!
+═══════════════════════════════════════════════════════════════════
+
+I just called the test URL and confirmed:
+
+✅ n8n is running
+✅ Workflow is imported
+❌ Workflow is NOT ACTIVATED (toggle is OFF)
+
+
+═══════════════════════════════════════════════════════════════════
+              YOU NEED TO DO 2 THINGS IN N8N:
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: CLICK "SAVE"
+   └─ Look for the "Save" button in the top right
+   └─ Click it
+
+STEP 2: TOGGLE TO GREEN
+   └─ Look for the toggle switch (also top right)
+   └─ Click it to turn it GREEN (active)
+
+
+═══════════════════════════════════════════════════════════════════
+              THEN I'LL TEST IT AGAIN
+═══════════════════════════════════════════════════════════════════
+
+After you activate it, run this command:
+
+   .\call-test-url.ps1
+
+This will test the webhook and show you if it works!
+
+
+═══════════════════════════════════════════════════════════════════
+              WHERE TO FIND THE BUTTONS
+═══════════════════════════════════════════════════════════════════
+
+In n8n (http://localhost:5678):
+
+   Top Right Corner:
+   ┌─────────────────────────────────┐
+   │  [Save]  [ ○ Inactive ]  [⋮]   │  ← You see this
+   └─────────────────────────────────┘
+
+   After clicking:
+   ┌─────────────────────────────────┐
+   │  [Save]  [ ● Active ]  [⋮]      │  ← Should look like this
+   └─────────────────────────────────┘
+                  ↑
+              (GREEN toggle)
+
+
+═══════════════════════════════════════════════════════════════════
+              WHAT HAPPENS AFTER ACTIVATION
+═══════════════════════════════════════════════════════════════════
+
+Once activated:
+✅ "Waiting for test URL" message disappears
+✅ Webhook URL becomes active
+✅ Ready to receive messages
+✅ My test script will work
+
+
+═══════════════════════════════════════════════════════════════════
+
+QUICK STEPS:
+1. Click "Save"
+2. Click toggle (make it GREEN)
+3. Run: .\call-test-url.ps1
+
+═══════════════════════════════════════════════════════════════════
