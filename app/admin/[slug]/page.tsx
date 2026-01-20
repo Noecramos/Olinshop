@@ -504,11 +504,11 @@ export default function StoreAdmin() {
                                     </div>
                                     <div className="flex gap-2">
                                         <button
-                                            onClick={printDailySummary}
-                                            className="px-4 py-2 bg-blue-100 text-blue-700 rounded-xl text-xs font-black uppercase hover:bg-blue-200 transition-colors hidden sm:block"
-                                            title="Imprimir Fecho do Dia"
+                                            onClick={() => window.print()}
+                                            className="px-4 py-2 bg-gray-900 text-white rounded-xl text-xs font-black uppercase hover:bg-black transition-colors hidden sm:block shadow-sm"
+                                            title="Imprimir Pedidos da Tela"
                                         >
-                                            🖨️ Fecho
+                                            🖨️ Pedidos
                                         </button>
                                         <button
                                             onClick={() => setShowHistory(false)}
