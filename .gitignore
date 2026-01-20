@@ -44,3 +44,8 @@ next-env.d.ts
 # check_*.js
 # update_*.js
 # migrate_*.js
+
+# Local Data Folders
+postgres_data/
+n8n_data/
+waha_data/
