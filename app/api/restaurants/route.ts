@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         console.log('Registration request body:', JSON.stringify(body, null, 2));
 
-        const { name, slug, responsibleName, email, whatsapp, address, zipCode, image, hours, type, instagram, pixKey } = body;
+        let { name, slug, responsibleName, email, whatsapp, address, zipCode, image, hours, type, instagram, pixKey } = body;
 
         // Detailed validation with specific error messages
         if (!name) {
@@ -56,11 +56,31 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Slug é obrigatório' }, { status: 400 });
         }
 
-        // Check for duplicate slug
-        const existing = await sql`SELECT id FROM restaurants WHERE slug = ${slug}`;
-        if (existing.rows.length > 0) {
-            console.error('Validation failed: slug already exists:', slug);
-            return NextResponse.json({ error: 'Este link (slug) já está em uso.' }, { status: 409 });
+        // Check for duplicate slug and auto-generate unique one if needed
+        let finalSlug = slug;
+        let slugExists = await sql`SELECT id FROM restaurants WHERE slug = ${finalSlug}`;
+
+        if (slugExists.rows.length > 0) {
+            console.log('Slug already exists, generating unique slug...');
+            let counter = 1;
+            let uniqueSlugFound = false;
+
+            while (!uniqueSlugFound && counter < 100) {
+                finalSlug = `${slug}-${counter}`;
+                slugExists = await sql`SELECT id FROM restaurants WHERE slug = ${finalSlug}`;
+
+                if (slugExists.rows.length === 0) {
+                    uniqueSlugFound = true;
+                    console.log('Generated unique slug:', finalSlug);
+                } else {
+                    counter++;
+                }
+            }
+
+            if (!uniqueSlugFound) {
+                console.error('Could not generate unique slug after 100 attempts');
+                return NextResponse.json({ error: 'Não foi possível gerar um link único. Tente outro nome.' }, { status: 409 });
+            }
         }
 
         // Insert with proper null handling
@@ -69,7 +89,7 @@ export async function POST(req: Request) {
                 name, slug, responsible_name, email, whatsapp, address, zip_code, image, hours, type, instagram, pix_key, approved, created_at
             ) VALUES (
                 ${name}, 
-                ${slug}, 
+                ${finalSlug}, 
                 ${responsibleName || null}, 
                 ${email || null}, 
                 ${whatsapp || null}, 
@@ -85,8 +105,12 @@ export async function POST(req: Request) {
             )
         `;
 
-        console.log('Restaurant registered successfully:', slug);
-        return NextResponse.json({ success: true, message: 'Cadastro realizado com sucesso!' });
+        console.log('Restaurant registered successfully with slug:', finalSlug);
+        return NextResponse.json({
+            success: true,
+            message: 'Cadastro realizado com sucesso!',
+            slug: finalSlug
+        });
 
     } catch (error: any) {
         console.error('Registration Error:', error);
