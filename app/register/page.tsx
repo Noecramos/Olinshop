@@ -135,23 +135,33 @@ export default function RegisterShop() {
 
             const submitData = { ...form, slug: finalSlug, whatsapp: finalWhatsapp };
 
-            const res = await fetch('/api/restaurants', { // API endpoint name kept for compatibility
+            console.log('Submitting registration data:', submitData);
+
+            const res = await fetch('/api/restaurants', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submitData)
             });
 
+            const responseData = await res.json();
+            console.log('Registration response:', responseData);
+
             if (res.ok) {
                 alert('Cadastro enviado com sucesso! Aguarde a aprovação do administrador.');
                 router.push('/admin');
             } else {
-                const errorData = await res.json();
-                console.error('Registration error:', errorData);
-                alert('Erro ao cadastrar. Verifique os dados.');
+                console.error('Registration error:', responseData);
+                const errorMessage = responseData.error || 'Erro ao cadastrar. Verifique os dados.';
+                alert(`Erro: ${errorMessage}`);
+
+                // Show additional details in development
+                if (responseData.details) {
+                    console.error('Error details:', responseData.details);
+                }
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Registration error:', error);
-            alert('Erro ao conectar.');
+            alert(`Erro ao conectar com o servidor: ${error.message}`);
         } finally {
             setLoading(false);
         }

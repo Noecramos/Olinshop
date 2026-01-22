@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Olindaki – Ecossistema Completo para Lojistas de Olinda | Marketplace + E-commerce + Delivery</title>
+    <meta name="description"
+        content="Cadastre sua loja no Olindaki gratuitamente! Marketplace local + E-commerce OlinShop + Delivery Olindelivery. Raspadinha exclusiva para fidelizar clientes. Conecte-se com Olinda-PE!">
+    <meta name="keywords"
+        content="marketplace Olinda, delivery Olinda, e-commerce Olinda, cadastro loja grátis, vendas online Olinda, raspadinha desconto, fidelização clientes">
+    <meta name="author" content="Olindaki">
+    <link rel="canonical" href="https://olindaki.com">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Olindaki – Ecossistema Completo para Lojistas de Olinda">
+    <meta property="og:description"
+        content="Marketplace + E-commerce + Delivery. Ferramentas completas para seu negócio em Olinda-PE. Cadastro gratuito!">
+    <meta property="og:image" content="https://i.imgur.com/94xN3y0.png">
+    <meta property="og:url" content="https://olindaki.com">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://i.imgur.com/94xN3y0.png" type="image/png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        /* Apple-inspired Typography */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Hero Parallax Background */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(252, 211, 77, 0.95) 0%, rgba(220, 38, 38, 0.9) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231F2937" width="1200" height="600"/><path fill="%23FCD34D" opacity="0.1" d="M0,300 Q300,100 600,300 T1200,300 L1200,600 L0,600 Z"/></svg>');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Character Float Animation - More Dynamic */
+        @keyframes character-float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+
+            50% {
+                transform: translateY(-25px) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(-15px) rotate(-2deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .character-float {
+            animation: character-float 4s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .character-float:hover {
+            animation-play-state: paused;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Logo Float Animation */
+        @keyframes logo-float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .logo-float {
+            animation: logo-float 3s ease-in-out infinite;
+        }
+
+        /* 3D Card Hover Effect */
+        .card-3d {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .card-3d:hover {
+            transform: translateY(-12px) rotateX(5deg) rotateY(5deg) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tool Card Hover */
+        .tool-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            border-color: #FCD34D;
+            box-shadow: 0 20px 40px rgba(252, 211, 77, 0.3);
+        }
+
+        /* Gradient CTA Button */
+        .cta-button {
+            background: linear-gradient(135deg, #FCD34D 0%, #DC2626 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.5);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Form Focus Effects */
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .form-input:focus {
+            border-color: #FCD34D;
+            box-shadow: 0 0 0 4px rgba(252, 211, 77, 0.1);
+            outline: none;
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade In on Scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* WhatsApp Pulse */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .whatsapp-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Scratch Card Animation */
+        @keyframes scratch-shine {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .scratch-card {
+            background: linear-gradient(90deg,
+                    #DC2626 0%,
+                    #FCD34D 25%,
+                    #DC2626 50%,
+                    #FCD34D 75%,
+                    #DC2626 100%);
+            background-size: 200% 100%;
+            animation: scratch-shine 3s linear infinite;
+        }
+    </style>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Olindaki",
+        "description": "Ecossistema completo de marketplace, e-commerce e delivery para lojistas de Olinda-PE",
+        "url": "https://olindaki.com",
+        "telephone": "+55-81-8392-0320",
+        "email": "sac@olindaki.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Olinda",
+            "addressRegion": "PE",
+            "addressCountry": "BR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-8.0089",
+            "longitude": "-34.8553"
+        },
+        "priceRange": "Grátis",
+        "areaServed": {
+            "@type": "City",
+            "name": "Olinda"
+        }
+    }
+    </script>
+</head>
+
+<body class="bg-white text-gray-900">
+
+
+    <!-- Hero Section -->
+    <section class="hero-section flex items-center justify-center relative">
+        <div class="container mx-auto px-6 py-20 relative z-10">
+            <div class="text-center text-white max-w-5xl mx-auto">
+
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <img src="https://i.imgur.com/94xN3y0.png" alt="Logo Olindaki - Ecossistema Completo para Olinda"
+                        class="w-48 h-48 lg:w-64 lg:h-64 object-contain logo-float" loading="eager">
+                </div>
+
+                <!-- Heading -->
+                <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                    Conecte seu Negócio<br>
+                    com <span class="text-yellow-300">Olinda</span>
+                </h1>
+
+                <p class="text-2xl lg:text-3xl mb-4 text-gray-100 font-light">
+                    Um <strong>ecossistema completo</strong> para lojistas
+                </p>
+
+                <p class="text-xl lg:text-2xl mb-10 text-yellow-200">
+                    Marketplace + E-commerce + Delivery + Raspadinha<br>
+                    <span class="text-lg">Mensalidade acessível para impulsionar seu negócio</span>
+                </p>
+
+                <!-- CTA Button -->
+                <a href="#cadastro"
+                    class="cta-button inline-block px-12 py-6 text-white text-2xl font-bold rounded-full">
+                    Cadastrar Minha Loja Grátis
+                </a>
+
+                <!-- WhatsApp Link -->
+                <div class="mt-8">
+                    <a href="https://api.whatsapp.com/send?phone=558183920320&text=Olá!%20Quero%20conhecer%20o%20ecossistema%20Olindaki!"
+                        target="_blank"
+                        class="inline-flex items-center gap-3 text-white hover:text-yellow-300 transition-colors text-lg">
+                        <svg class="w-8 h-8 whatsapp-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                        </svg>
+                        <span>Fale conosco pelo WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Introduction -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="fade-in text-center mb-16">
+                <h2 class="text-4xl lg:text-6xl font-bold mb-8 text-gray-900">
+                    Um Mundo de Oportunidades<br>
+                    para <span class="text-yellow-500">Seu Negócio</span>
+                </h2>
+
+                <p class="text-xl lg:text-2xl text-gray-700 leading-relaxed max-w-4xl mx-auto">
+                    O <strong>Olindaki</strong> é muito mais que um marketplace. É um <strong>ecossistema
+                        completo</strong>
+                    de ferramentas digitais criado especialmente para conectar comerciantes de
+                    <strong>Olinda-PE</strong>
+                    com milhares de clientes locais. Escolha as ferramentas que seu negócio precisa e comece a vender
+                    mais hoje!
+                </p>
+            </div>
+
+            <!-- Ecosystem Tools Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-16 fade-in">
+
+                <!-- Olindaki Marketplace -->
+                <div class="tool-card bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-3xl p-8 shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <img src="https://i.imgur.com/94xN3y0.png" alt="Olindaki Marketplace"
+                            class="w-24 h-24 object-contain">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900 text-center">Olindaki<br>Marketplace</h3>
+                    <p class="text-gray-700 leading-relaxed text-center mb-4">
+                        Vitrine digital para <strong>todos os tipos de negócio</strong>. Cadastre produtos, receba
+                        pedidos
+                        e gerencie tudo em um só lugar.
+                    </p>
+                    <div class="bg-yellow-200 rounded-xl p-3 text-center">
+                        <p class="text-sm font-bold text-gray-900">✅ Incluído para TODOS</p>
+                    </div>
+                </div>
+
+                <!-- OlinShop E-commerce -->
+                <div class="tool-card bg-gradient-to-br from-purple-50 to-pink-100 rounded-3xl p-8 shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <img src="https://i.imgur.com/XLYoVUv.png" alt="OlinShop E-commerce"
+                            class="w-24 h-24 object-contain">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900 text-center">OlinShop<br>E-commerce</h3>
+                    <p class="text-gray-700 leading-relaxed text-center mb-4">
+                        Loja virtual completa para <strong>varejo e serviços</strong>. Ideal para lojas de roupas,
+                        eletrônicos,
+                        farmácias e muito mais.
+                    </p>
+                    <div class="bg-purple-200 rounded-xl p-3 text-center">
+                        <p class="text-sm font-bold text-gray-900">🛍️ Opcional para Lojas</p>
+                    </div>
+                </div>
+
+                <!-- Olindelivery -->
+                <div class="tool-card bg-gradient-to-br from-blue-50 to-cyan-100 rounded-3xl p-8 shadow-lg">
+                    <div class="flex justify-center mb-6">
+                        <img src="https://i.imgur.com/yGLHWLL.png" alt="Logo Olindelivery"
+                            class="w-32 h-32 object-contain">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900 text-center">Olindelivery<br>Delivery</h3>
+                    <p class="text-gray-700 leading-relaxed text-center mb-4">
+                        Sistema de delivery completo para <strong>restaurantes e food service</strong>. Gestão de
+                        pedidos,
+                        entregas e cardápio digital.
+                    </p>
+                    <div class="bg-blue-200 rounded-xl p-3 text-center">
+                        <p class="text-sm font-bold text-gray-900">🍔 Opcional para Restaurantes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Raspadinha Section -->
+    <section class="py-20 bg-gradient-to-br from-red-600 to-yellow-500 text-white">
+        <div class="container mx-auto px-6 max-w-5xl">
+            <div class="fade-in text-center">
+                <div class="inline-block scratch-card px-8 py-3 rounded-full mb-6 text-2xl font-bold">
+                    🎁 EXCLUSIVIDADE MUNDIAL
+                </div>
+
+                <h2 class="text-4xl lg:text-6xl font-bold mb-8">
+                    Raspadinha de Descontos
+                </h2>
+
+                <p class="text-xl lg:text-2xl mb-8 leading-relaxed">
+                    Somos o <strong>ÚNICO marketplace do mundo</strong> com sistema de raspadinha integrado!
+                    Seus clientes ganham <strong>descontos na hora</strong>, aumentando o ticket médio e
+                    fidelizando automaticamente.
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-6 mt-12">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                        <div class="text-5xl mb-3">📈</div>
+                        <h4 class="text-xl font-bold mb-2">Aumenta Vendas</h4>
+                        <p class="text-white/90">Clientes compram mais para ganhar descontos na Raspadinha</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                        <div class="text-5xl mb-3">💝</div>
+                        <h4 class="text-xl font-bold mb-2">Fideliza Clientes</h4>
+                        <p class="text-white/90">A Raspadinha que traz clientes de volta</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                        <div class="text-5xl mb-3">🎯</div>
+                        <h4 class="text-xl font-bold mb-2">Diferencial Único</h4>
+                        <p class="text-white/90">Nenhum outro marketplace tem isso</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Options -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="fade-in text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6 text-gray-900">
+                    Escolha o Plano Ideal para Seu Negócio
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Flexibilidade total! Comece com o Marketplace e adicione ferramentas conforme cresce
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 fade-in">
+
+                <!-- Option 1: Marketplace Only -->
+                <div class="card-3d bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-200">
+                    <div class="text-center mb-6">
+                        <div class="inline-block bg-yellow-100 rounded-full p-4 mb-4">
+                            <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-900">Só Marketplace</h3>
+                        <p class="text-4xl font-bold text-yellow-600 mb-2">R$ 100</p>
+                        <p class="text-gray-600">/mês pré-pago</p>
+                    </div>
+
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Vitrine digital completa</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Pedidos via WhatsApp</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Raspadinha incluída</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Redes Sociais</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Como chegar (geolocalização)</span>
+                        </li>
+                    </ul>
+
+                    <p class="text-sm text-gray-500 text-center">
+                        Ideal para: Qualquer tipo de negócio
+                    </p>
+                </div>
+
+                <!-- Option 2: Marketplace + E-commerce -->
+                <div
+                    class="card-3d bg-gradient-to-br from-purple-50 to-white rounded-3xl p-8 shadow-xl border-2 border-purple-300">
+                    <div class="text-center mb-6">
+                        <div class="inline-block bg-purple-100 rounded-full p-4 mb-4">
+                            <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-900">Marketplace + OlinShop</h3>
+                        <p class="text-4xl font-bold text-purple-600 mb-2">R$ 350</p>
+                        <p class="text-gray-600">/mês pré-pago</p>
+                    </div>
+
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Tudo do Marketplace</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Loja virtual própria</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Catálogo ilimitado</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Checkout integrado</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Pedidos com impressão de ticket</span>
+                        </li>
+                    </ul>
+
+                    <p class="text-sm text-gray-500 text-center">
+                        Ideal para: Lojas, varejo, serviços
+                    </p>
+                </div>
+
+                <!-- Option 3: Marketplace + Delivery -->
+                <div
+                    class="card-3d bg-gradient-to-br from-blue-50 to-white rounded-3xl p-8 shadow-xl border-2 border-blue-300">
+                    <div class="text-center mb-6">
+                        <div class="inline-block bg-blue-100 rounded-full p-4 mb-4">
+                            <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-900">Marketplace + Olindelivery</h3>
+                        <p class="text-4xl font-bold text-blue-600 mb-2">R$ 350</p>
+                        <p class="text-gray-600">/mês pré-pago</p>
+                    </div>
+
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Tudo do Marketplace</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Sistema de delivery</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Cardápio digital</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Gestão de entregas</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 text-xl">✓</span>
+                            <span class="text-gray-700">Pedidos com impressão de ticket</span>
+                        </li>
+                    </ul>
+
+                    <p class="text-sm text-gray-500 text-center">
+                        Ideal para: Restaurantes, food service
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-20 text-center fade-in">
+                <p class="text-xl text-gray-700 mb-4">
+                    💡 <strong>Dica:</strong> Você pode combinar todas as ferramentas! Marketplace + OlinShop +
+                    Olindelivery
+                </p>
+                <p class="text-lg text-gray-600 mb-4">
+                    Pagamento pré-pago mensal. Nossa equipe ajuda você a escolher a melhor configuração
+                </p>
+                <div
+                    class="inline-block bg-gradient-to-r from-yellow-400 to-red-500 text-white px-8 py-4 rounded-2xl shadow-lg">
+                    <p class="text-xl font-bold mb-1">🎉 PROMOÇÃO DE LANÇAMENTO</p>
+                    <p class="text-lg">Taxa de adesão de R$ 50 <strong>ISENTA</strong> até 28/02/2026!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <h2 class="text-4xl lg:text-5xl font-bold text-center mb-16 text-gray-900 fade-in">
+                Por que escolher o Olindaki?
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <!-- Benefit 1 -->
+                <div class="card-3d bg-white rounded-3xl p-8 shadow-lg fade-in">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Preços Transparentes</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Planos a partir de R$ 100/mês (pré-pago). Taxa de adesão única de R$ 50 <strong>ISENTA até
+                            fevereiro</strong>. Sem cobranças escondidas.
+                    </p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="card-3d bg-white rounded-3xl p-8 shadow-lg fade-in" style="transition-delay: 0.1s;">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-700 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Foco em Olinda</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Conecte-se com clientes locais. Visibilidade garantida no município de Olinda-PE.
+                    </p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="card-3d bg-white rounded-3xl p-8 shadow-lg fade-in" style="transition-delay: 0.2s;">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Suporte Local</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Equipe em Olinda pronta para ajudar. Atendimento rápido via WhatsApp.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Franchise Opportunity Section -->
+    <section
+        class="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-yellow-400 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-400 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="container mx-auto px-6 max-w-6xl relative z-10">
+            <div class="text-center mb-16 fade-in">
+                <div
+                    class="inline-block bg-yellow-400 text-purple-900 px-6 py-2 rounded-full font-bold text-sm mb-6 animate-pulse">
+                    🚀 OPORTUNIDADE EXCLUSIVA
+                </div>
+                <h2 class="text-4xl lg:text-6xl font-bold mb-6">
+                    Seja um <span class="text-yellow-300">Franqueado</span><br>
+                    com sua Própria Marca
+                </h2>
+                <p class="text-xl lg:text-2xl text-purple-100 max-w-3xl mx-auto">
+                    Retorno do investimento em <strong class="text-yellow-300">30 a 90 dias</strong>
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <!-- Benefit 1 -->
+                <div
+                    class="card-3d bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center fade-in border border-white/20">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Renda Passiva</h3>
+                    <p class="text-purple-100">
+                        Garanta sua independência financeira com um negócio escalável e lucrativo
+                    </p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="card-3d bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center fade-in border border-white/20"
+                    style="transition-delay: 0.1s;">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">ROI Rápido</h3>
+                    <p class="text-purple-100">
+                        Retorno do investimento garantido em 30 a 90 dias com suporte completo
+                    </p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="card-3d bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center fade-in border border-white/20"
+                    style="transition-delay: 0.2s;">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Sua Marca</h3>
+                    <p class="text-purple-100">
+                        Opere com sua própria identidade e construa seu império digital
+                    </p>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center fade-in">
+                <a href="https://api.whatsapp.com/send?phone=558183920320&text=Olá!%20Quero%20saber%20mais%20sobre%20a%20oportunidade%20de%20franquia%20Olindaki!"
+                    target="_blank"
+                    class="inline-flex items-center gap-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-purple-900 px-12 py-6 rounded-full text-xl font-bold shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                    </svg>
+                    <span>Saiba Mais pelo WhatsApp</span>
+                </a>
+                <p class="text-purple-200 mt-6 text-lg">
+                    📞 Entre em contato agora e descubra como se tornar um franqueado de sucesso!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form Section -->
+    <section id="cadastro" class="py-20 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="container mx-auto px-6 max-w-2xl">
+            <div class="fade-in">
+                <h2 class="text-4xl lg:text-5xl font-bold text-center mb-6">
+                    Cadastre sua loja agora!
+                </h2>
+                <p class="text-center text-xl text-gray-300 mb-12">
+                    Preencha o formulário e nossa equipe entrará em contato via WhatsApp para configurar suas
+                    ferramentas
+                </p>
+
+                <form id="cadastroForm" class="bg-white rounded-3xl p-8 lg:p-12 shadow-2xl">
+
+                    <!-- Nome -->
+                    <div class="mb-6">
+                        <label for="nome" class="block text-gray-700 font-semibold mb-2">
+                            Seu Nome Completo <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="nome" name="nome" required
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900" placeholder="Ex: João Silva">
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div class="mb-6">
+                        <label for="whatsapp" class="block text-gray-700 font-semibold mb-2">
+                            WhatsApp (com DDD) <span class="text-red-500">*</span>
+                        </label>
+                        <input type="tel" id="whatsapp" name="whatsapp" required pattern="[0-9]{10,11}"
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900" placeholder="Ex: 81999887766">
+                        <p class="text-sm text-gray-500 mt-1">Apenas números, sem espaços ou caracteres especiais</p>
+                    </div>
+
+                    <!-- Nome da Loja -->
+                    <div class="mb-6">
+                        <label for="loja" class="block text-gray-700 font-semibold mb-2">
+                            Nome da Loja/Restaurante <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="loja" name="loja" required
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900"
+                            placeholder="Ex: Mercadinho do João">
+                    </div>
+
+                    <!-- Plano Escolhido -->
+                    <div class="mb-6">
+                        <label for="plano" class="block text-gray-700 font-semibold mb-2">
+                            Plano Desejado <span class="text-red-500">*</span>
+                        </label>
+                        <select id="plano" name="plano" required
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900">
+                            <option value="">Selecione...</option>
+                            <option value="olindaki">Olindaki (R$ 100/mês)</option>
+                            <option value="olindaki-olinshop">Olindaki + OlinShop (R$ 350/mês)</option>
+                            <option value="olindaki-olindelivery">Olindaki + Olindelivery (R$ 350/mês)</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de Negócio -->
+                    <div class="mb-6">
+                        <label for="tipo" class="block text-gray-700 font-semibold mb-2">
+                            Tipo de Negócio <span class="text-red-500">*</span>
+                        </label>
+                        <select id="tipo" name="tipo" required
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900">
+                            <option value="">Selecione...</option>
+                            <option value="restaurante">Restaurante / Food Service</option>
+                            <option value="loja">Loja / Varejo</option>
+                            <option value="servico">Serviços</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <!-- Email (opcional) -->
+                    <div class="mb-8">
+                        <label for="email" class="block text-gray-700 font-semibold mb-2">
+                            E-mail (opcional)
+                        </label>
+                        <input type="email" id="email" name="email"
+                            class="form-input w-full px-4 py-3 rounded-xl text-gray-900"
+                            placeholder="Ex: joao@exemplo.com">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="cta-button w-full py-4 text-white text-lg font-bold rounded-full">
+                        Enviar Cadastro pelo WhatsApp
+                    </button>
+
+                    <p class="text-center text-sm text-gray-500 mt-4">
+                        Ao enviar, você será redirecionado para o WhatsApp para confirmar seu cadastro.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+                <!-- Logo -->
+                <div class="flex items-center gap-4">
+                    <img src="https://i.imgur.com/94xN3y0.png" alt="Logo Olindaki" class="w-16 h-16 object-contain"
+                        loading="lazy">
+                    <div>
+                        <span class="text-xl font-bold text-white block">Olindaki</span>
+                        <span class="text-sm text-gray-400">Ecossistema Completo</span>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="text-center md:text-left">
+                    <p class="mb-2">
+                        <a href="mailto:sac@olindaki.com" class="hover:text-yellow-400 transition-colors">
+                            📧 sac@olindaki.com
+                        </a>
+                    </p>
+                    <p>
+                        <a href="https://api.whatsapp.com/send?phone=558183920320" target="_blank"
+                            class="hover:text-yellow-400 transition-colors">
+                            📱 +55 81 8392-0320
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-center md:text-right text-sm">
+                    <p>&copy; 2026 Olindaki. Todos os direitos reservados.</p>
+                    <p class="text-gray-500 mt-1">Olinda - PE, Brasil</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Fade-in on scroll animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Form submission handler
+        document.getElementById('cadastroForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Get form values
+            const nome = document.getElementById('nome').value.trim();
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const loja = document.getElementById('loja').value.trim();
+            const plano = document.getElementById('plano').value;
+            const tipo = document.getElementById('tipo').value;
+            const email = document.getElementById('email').value.trim();
+
+            // Validate WhatsApp
+            if (!/^[0-9]{10,11}$/.test(whatsapp)) {
+                alert('Por favor, insira um número de WhatsApp válido (10 ou 11 dígitos, apenas números).');
+                return;
+            }
+
+            // Validate plano
+            if (!plano) {
+                alert('Por favor, selecione o plano desejado.');
+                return;
+            }
+
+            // Validate tipo
+            if (!tipo) {
+                alert('Por favor, selecione o tipo de negócio.');
+                return;
+            }
+
+            // Build WhatsApp message
+            let message = `🎉 *NOVO CADASTRO - OLINDAKI*\n\n`;
+            message += `👤 *Nome:* ${nome}\n`;
+            message += `📱 *WhatsApp:* ${whatsapp}\n`;
+            message += `🏪 *Loja:* ${loja}\n`;
+            message += `💼 *Plano:* ${plano}\n`;
+            message += `🏷️ *Tipo:* ${tipo}\n`;
+            if (email) {
+                message += `📧 *E-mail:* ${email}\n`;
+            }
+            message += `\n✅ Quero conhecer o ecossistema Olindaki completo!`;
+
+            // Encode message
+            const encodedMessage = encodeURIComponent(message);
+
+            // WhatsApp API URL
+            const whatsappURL = `https://api.whatsapp.com/send?phone=558183920320&text=${encodedMessage}`;
+
+            // Redirect to WhatsApp
+            window.open(whatsappURL, '_blank');
+
+            // Optional: Reset form after submission
+            setTimeout(() => {
+                this.reset();
+                alert('Você será redirecionado para o WhatsApp. Caso não abra automaticamente, clique no link que apareceu.');
+            }, 500);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect for hero background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero-section');
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.backgroundPositionY = scrolled * 0.5 + 'px';
+            }
+        });
+    </script>
+</body>
+
+</html>

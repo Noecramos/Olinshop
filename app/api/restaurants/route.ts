@@ -41,33 +41,60 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
+        console.log('Registration request body:', JSON.stringify(body, null, 2));
+
         const { name, slug, responsibleName, email, whatsapp, address, zipCode, image, hours, type, instagram, pixKey } = body;
 
-        // Validation
-        if (!name || !slug) {
-            return NextResponse.json({ error: 'Nome e Slug são obrigatórios' }, { status: 400 });
+        // Detailed validation with specific error messages
+        if (!name) {
+            console.error('Validation failed: name is missing');
+            return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
+        }
+
+        if (!slug) {
+            console.error('Validation failed: slug is missing');
+            return NextResponse.json({ error: 'Slug é obrigatório' }, { status: 400 });
         }
 
         // Check for duplicate slug
         const existing = await sql`SELECT id FROM restaurants WHERE slug = ${slug}`;
         if (existing.rows.length > 0) {
+            console.error('Validation failed: slug already exists:', slug);
             return NextResponse.json({ error: 'Este link (slug) já está em uso.' }, { status: 409 });
         }
 
-        // Insert
+        // Insert with proper null handling
         await sql`
             INSERT INTO restaurants (
                 name, slug, responsible_name, email, whatsapp, address, zip_code, image, hours, type, instagram, pix_key, approved, created_at
             ) VALUES (
-                ${name}, ${slug}, ${responsibleName}, ${email}, ${whatsapp}, ${address}, ${zipCode}, ${image}, ${hours}, ${type}, ${instagram}, ${pixKey}, false, NOW()
+                ${name}, 
+                ${slug}, 
+                ${responsibleName || null}, 
+                ${email || null}, 
+                ${whatsapp || null}, 
+                ${address || null}, 
+                ${zipCode || null}, 
+                ${image || null}, 
+                ${hours || null}, 
+                ${type || null}, 
+                ${instagram || null}, 
+                ${pixKey || null}, 
+                false, 
+                NOW()
             )
         `;
 
+        console.log('Restaurant registered successfully:', slug);
         return NextResponse.json({ success: true, message: 'Cadastro realizado com sucesso!' });
 
     } catch (error: any) {
         console.error('Registration Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Error stack:', error.stack);
+        return NextResponse.json({
+            error: error.message || 'Erro ao processar cadastro',
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }, { status: 500 });
     }
 }
 
