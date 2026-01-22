@@ -27,6 +27,10 @@ const nextConfig = {
       bodySizeLimit: '10mb',
     },
   },
+  // Force new build ID to bypass cache
+  generateBuildId: async () => {
+    return `build-${Date.now()}`;
+  },
 };
 
 export default nextConfig;
