@@ -127,6 +127,10 @@ export default function RegisterShop() {
                 else finalSlug = `${words[0]}-${words[words.length - 1]}`;
             }
 
+            // Add timestamp to ensure uniqueness (temporary fix while Vercel updates)
+            const timestamp = Date.now().toString(36).slice(-4);
+            finalSlug = `${finalSlug}-${timestamp}`;
+
             // Ensure WhatsApp number has country code (55 for Brazil)
             let finalWhatsapp = form.whatsapp.replace(/\D/g, '');
             if (!finalWhatsapp.startsWith('55') && finalWhatsapp.length > 0) {
