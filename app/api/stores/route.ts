@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        rating_sum as "ratingSum", rating_count as "ratingCount",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
                     WHERE slug = ${slug}
@@ -47,6 +48,7 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        rating_sum as "ratingSum", rating_count as "ratingCount",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
                     WHERE slug = ${slug} AND approved = true
@@ -78,6 +80,7 @@ export async function GET(req: NextRequest) {
                     delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                     delivery_time as "deliveryTime", popular_title as "popularTitle",
                     welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                    rating_sum as "ratingSum", rating_count as "ratingCount",
                     created_at as "createdAt", updated_at as "updatedAt"
                 FROM restaurants 
                 WHERE id = ${id} AND approved = true
@@ -99,6 +102,7 @@ export async function GET(req: NextRequest) {
                 delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                 delivery_time as "deliveryTime", popular_title as "popularTitle",
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                rating_sum as "ratingSum", rating_count as "ratingCount",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
             WHERE approved = true
