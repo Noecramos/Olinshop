@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import StarRating from "./StarRating";
+
 
 interface HeaderProps {
     name?: string;
@@ -81,7 +81,6 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600">
                         <div className="flex items-center gap-3">
-                            <StarRating restaurantId={restaurantId || ''} initialSum={ratingSum || 0} initialCount={ratingCount || 0} />
                             <span>{deliveryTime}</span>
                         </div>
                         {address && (

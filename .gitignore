@@ -49,3 +49,4 @@ next-env.d.ts
 postgres_data/
 n8n_data/
 waha_data/
+.vercel
