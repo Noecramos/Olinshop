@@ -86,7 +86,14 @@ function MarketplaceContent() {
   useEffect(() => {
     fetch('/api/stores')
       .then(res => res.json())
-      .then(setStores)
+      .then(data => {
+        if (Array.isArray(data)) {
+          setStores(data);
+        } else {
+          console.error("API did not return an array", data);
+          setStores([]);
+        }
+      })
       .catch(console.error);
 
     fetch(`/api/config?t=${Date.now()}`)
