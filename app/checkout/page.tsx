@@ -148,7 +148,7 @@ export default function CheckoutPage() {
                         onClick={() => router.back()}
                         className="w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-xl hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
                     >
-                        ⬅️ Voltar ao Cardápio
+                        ⬅️ Voltar à Loja
                     </button>
                 </div>
 
