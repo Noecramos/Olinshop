@@ -20,7 +20,16 @@ export async function GET(req: NextRequest) {
             ORDER BY category, name
         `;
 
-        return NextResponse.json(rows);
+        const formattedRows = rows.map(row => {
+            try {
+                return {
+                    ...row,
+                    variants: typeof row.variants === 'string' ? JSON.parse(row.variants) : (row.variants || [])
+                };
+            } catch (e) { return row; }
+        });
+
+        return NextResponse.json(formattedRows);
 
     } catch (error) {
         console.error("Database Error:", error);

@@ -13,6 +13,12 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
     const [selectedVariants, setSelectedVariants] = useState<any>({});
     const [quantity, setQuantity] = useState(1);
 
+    const parsedVariants = (() => {
+        try {
+            return Array.isArray(item.variants) ? item.variants : (typeof item.variants === 'string' ? JSON.parse(item.variants) : []);
+        } catch { return []; }
+    })();
+
     const handleSelect = (variantName: string, option: string) => {
         setSelectedVariants((prev: any) => ({
             ...prev,
@@ -59,7 +65,7 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
 
                 {/* Variants Selection */}
                 <div className="p-6 space-y-4">
-                    {item.variants && item.variants.map((v: any, i: number) => (
+                    {parsedVariants.map((v: any, i: number) => (
                         <div key={i} className="space-y-3">
                             <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
                                 {v.name}

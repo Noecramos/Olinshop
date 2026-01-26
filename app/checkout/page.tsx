@@ -393,9 +393,15 @@ export default function CheckoutPage() {
             const formatCurrency = (val: number) =>
                 val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(/\u00A0/g, ' ');
 
-            const itemsList = cart.map((i: any) =>
-                `${emojis.package} *${i.quantity}x ${i.name}* - ${formatCurrency(i.price * i.quantity)}`
-            ).join('\n');
+            const itemsList = cart.map((i: any) => {
+                let variantsText = "";
+                if (i.selectedVariants && Object.keys(i.selectedVariants).length > 0) {
+                    variantsText = Object.entries(i.selectedVariants)
+                        .map(([key, val]) => `\n   • ${key}: ${val}`)
+                        .join("");
+                }
+                return `${emojis.package} *${i.quantity}x ${i.name}* - ${formatCurrency(i.price * i.quantity)}${variantsText}`;
+            }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? `${emojis.pix} PIX` :
                 (form.paymentMethod === 'card' ? `${emojis.card} Cartão` :
