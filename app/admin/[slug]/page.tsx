@@ -117,12 +117,25 @@ export default function StoreAdmin() {
         const win = window.open('', '_blank');
         if (!win) return;
 
-        const itemsHtml = (order.items || []).map((item: any) => `
-            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
-                <span>${item.quantity}x ${item.name}</span>
-                <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        const itemsHtml = (order.items || []).map((item: any) => {
+            let details = '';
+            if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
+                const variantLines = Object.entries(item.selectedVariants)
+                    .map(([key, val]) => `• ${key}: ${val}`)
+                    .join('<br> &nbsp;&nbsp;');
+                details = `<div style="font-size: 11px; color: #555; padding-left: 10px; margin-top: 2px;">${variantLines}</div>`;
+            }
+
+            return `
+            <div style="margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span>${item.quantity}x ${item.name}</span>
+                    <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                </div>
+                ${details}
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         win.document.write(`
             <html>
