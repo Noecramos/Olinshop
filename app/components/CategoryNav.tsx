@@ -24,7 +24,11 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
         if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato') || lower.includes('sandalia')) return { icon: '👟', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
         if (lower.includes('salto') || lower.includes('scarpin')) return { icon: '👠', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
         if (lower.includes('bota') || lower.includes('coturno')) return { icon: '👢', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
-        if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo') || lower.includes('boné') || lower.includes('bone') || lower.includes('chapeu') || lower.includes('oculos') || lower.includes('bolsa') || lower.includes('carteira')) return { icon: '⌚', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('boné') || lower.includes('bone') || lower.includes('chapeu')) return { icon: '🧢', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('oculos') || lower.includes('óculos')) return { icon: '🕶️', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('bolsa') || lower.includes('mochila') || lower.includes('mala')) return { icon: '👜', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('carteira')) return { icon: '👛', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo') || lower.includes('pulseira') || lower.includes('colar')) return { icon: '⌚', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
         if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return { icon: '🏠', bg: '#ECFDF5', border: '#D1FAE5', text: '#047857' };
         if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return { icon: '💄', bg: '#FEF2F2', border: '#FEE2E2', text: '#B91C1C' };
 
