@@ -14,9 +14,16 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
     const getCategoryStyle = (name: string) => {
         const lower = name.toLowerCase();
         // Generic Shop Categories
-        if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda') || lower.includes('camis') || lower.includes('calç') || lower.includes('bermuda') || lower.includes('short') || lower.includes('blus')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('bermuda') || lower.includes('short')) return { icon: '🩳', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('calça') || lower.includes('jeans')) return { icon: '👖', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('vestido') || lower.includes('saia')) return { icon: '👗', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('biquini') || lower.includes('maiô') || lower.includes('banho') || lower.includes('praia')) return { icon: '👙', bg: '#ECFEFF', border: '#CFFAFE', text: '#0E7490' };
+        if (lower.includes('casaco') || lower.includes('jaqueta') || lower.includes('moletom') || lower.includes('frio')) return { icon: '🧥', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('camis') || lower.includes('blus') || lower.includes('t-shirt') || lower.includes('polo') || lower.includes('roupa') || lower.includes('moda') || lower.includes('vest')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
         if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu') || lower.includes('fone') || lower.includes('audio') || lower.includes('carreg')) return { icon: '💻', bg: '#F1F5F9', border: '#CBD5E1', text: '#334155' };
         if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato') || lower.includes('sandalia')) return { icon: '👟', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
+        if (lower.includes('salto') || lower.includes('scarpin')) return { icon: '👠', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
+        if (lower.includes('bota') || lower.includes('coturno')) return { icon: '👢', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
         if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo') || lower.includes('boné') || lower.includes('bone') || lower.includes('chapeu') || lower.includes('oculos') || lower.includes('bolsa') || lower.includes('carteira')) return { icon: '⌚', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
         if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return { icon: '🏠', bg: '#ECFDF5', border: '#D1FAE5', text: '#047857' };
         if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return { icon: '💄', bg: '#FEF2F2', border: '#FEE2E2', text: '#B91C1C' };
