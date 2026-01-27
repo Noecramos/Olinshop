@@ -19,7 +19,8 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
         if (lower.includes('vestido') || lower.includes('saia')) return { icon: '👗', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
         if (lower.includes('biquini') || lower.includes('maiô') || lower.includes('banho') || lower.includes('praia')) return { icon: '👙', bg: '#ECFEFF', border: '#CFFAFE', text: '#0E7490' };
         if (lower.includes('casaco') || lower.includes('jaqueta') || lower.includes('moletom') || lower.includes('frio')) return { icon: '🧥', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
-        if (lower.includes('camis') || lower.includes('blus') || lower.includes('t-shirt') || lower.includes('polo') || lower.includes('roupa') || lower.includes('moda') || lower.includes('vest')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('polo') || lower.includes('social') || lower.includes('gola')) return { icon: '👔', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('camis') || lower.includes('blus') || lower.includes('t-shirt') || lower.includes('roupa') || lower.includes('moda') || lower.includes('vest')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
         if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu') || lower.includes('fone') || lower.includes('audio') || lower.includes('carreg')) return { icon: '💻', bg: '#F1F5F9', border: '#CBD5E1', text: '#334155' };
         if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato') || lower.includes('sandalia')) return { icon: '👟', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
         if (lower.includes('salto') || lower.includes('scarpin')) return { icon: '👠', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
