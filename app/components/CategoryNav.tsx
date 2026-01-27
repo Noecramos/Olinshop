@@ -14,10 +14,10 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
     const getCategoryStyle = (name: string) => {
         const lower = name.toLowerCase();
         // Generic Shop Categories
-        if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
-        if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu')) return { icon: '💻', bg: '#F1F5F9', border: '#CBD5E1', text: '#334155' };
-        if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato')) return { icon: '👟', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
-        if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo')) return { icon: '⌚', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
+        if (lower.includes('roupa') || lower.includes('vest') || lower.includes('moda') || lower.includes('camis') || lower.includes('calç') || lower.includes('bermuda') || lower.includes('short') || lower.includes('blus')) return { icon: '👕', bg: '#F5F3FF', border: '#DDD6FE', text: '#6D28D9' };
+        if (lower.includes('eletr') || lower.includes('tech') || lower.includes('celu') || lower.includes('fone') || lower.includes('audio') || lower.includes('carreg')) return { icon: '💻', bg: '#F1F5F9', border: '#CBD5E1', text: '#334155' };
+        if (lower.includes('calc') || lower.includes('tenis') || lower.includes('sapato') || lower.includes('sandalia')) return { icon: '👟', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' };
+        if (lower.includes('acess') || lower.includes('joia') || lower.includes('relo') || lower.includes('boné') || lower.includes('bone') || lower.includes('chapeu') || lower.includes('oculos') || lower.includes('bolsa') || lower.includes('carteira')) return { icon: '⌚', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' };
         if (lower.includes('casa') || lower.includes('decor') || lower.includes('move')) return { icon: '🏠', bg: '#ECFDF5', border: '#D1FAE5', text: '#047857' };
         if (lower.includes('beleza') || lower.includes('cosm') || lower.includes('perf')) return { icon: '💄', bg: '#FEF2F2', border: '#FEE2E2', text: '#B91C1C' };
 
