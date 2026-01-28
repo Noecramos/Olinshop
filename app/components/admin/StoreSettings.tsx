@@ -152,8 +152,8 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 ) : (
                                     <div className="w-32 h-32 rounded-3xl bg-white flex items-center justify-center text-gray-300 font-black text-4xl shadow-inner">?</div>
                                 )}
-                                <label className="absolute -bottom-2 -right-2 bg-accent text-white shadow-xl rounded-2xl p-3 cursor-pointer hover:scale-110 transition-all">
-                                    <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+                                <label htmlFor="logo-upload" className="absolute -bottom-2 -right-2 bg-accent text-white shadow-xl rounded-2xl p-3 cursor-pointer hover:scale-110 transition-all">
+                                    <input id="logo-upload" type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
                                     <span className="text-lg">📷</span>
                                 </label>
                             </div>
@@ -162,10 +162,12 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="md:col-span-2">
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Link Exclusivo (URL)</label>
+                                <label htmlFor="storeSlug" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Link Exclusivo (URL)</label>
                                 <div className="relative group">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">https://olinshop.vercel.app/loja/</span>
                                     <input
+                                        id="storeSlug"
+                                        name="storeSlug"
                                         className="w-full pl-64 p-4 bg-gray-100 rounded-2xl outline-none border border-gray-200 font-bold text-gray-600 cursor-not-allowed"
                                         value={form.slug || ''}
                                         readOnly

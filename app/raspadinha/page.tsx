@@ -318,9 +318,11 @@ export default function RaspadinhaPage() {
                                 <p className={styles.winText}>Você ganhou<br /><strong>{result.prize?.label}</strong></p>
 
                                 <div className={styles.inputGroup}>
-                                    <label>Digite seu Nome:</label>
+                                    <label htmlFor="userName">Digite seu Nome:</label>
                                     <input
                                         type="text"
+                                        id="userName"
+                                        name="userName"
                                         placeholder="Seu nome completo"
                                         value={userName}
                                         onChange={(e) => setUserName(e.target.value)}
@@ -340,8 +342,11 @@ export default function RaspadinhaPage() {
                                 <p className={styles.winSub}>Peça para o dono digitar a senha:</p>
 
                                 <div className={styles.inputGroup}>
+                                    <label htmlFor="validationCode" className="sr-only">Senha do Lojista</label>
                                     <input
                                         type="password"
+                                        id="validationCode"
+                                        name="validationCode"
                                         inputMode="numeric"
                                         placeholder="Senha do Lojista"
                                         maxLength={6}

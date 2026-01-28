@@ -111,9 +111,9 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
 
                 {/* Subcategory Selection */}
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase ml-1 mb-2 block">
+                    <span className="text-xs font-semibold text-gray-500 uppercase ml-1 mb-2 block">
                         Subcategorias (Opcional - Selecione múltiplas)
-                    </label>
+                    </span>
 
                     {/* Selected subcategories display */}
                     {subcategories.length > 0 && (
