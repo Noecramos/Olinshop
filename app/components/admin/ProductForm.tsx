@@ -406,51 +406,53 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
                                         {form.trackStock && Array.isArray(v.options) && v.options.length > 0 && (
                                             <div className="mt-2 space-y-2 border-t border-gray-50 pt-2">
-                                                <p className="text-[9px] font-bold text-orange-400 uppercase tracking-tighter">Estoque por Opção:</p>
-                                                <div className="flex flex-col gap-2">
-                                                    {v.options.map((opt: any, optIdx: number) => (
-                                                        <div key={optIdx} className="grid grid-cols-3 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-orange-100/50">
-                                                            <span className="text-[10px] font-bold text-gray-600 truncate">{opt.name}</span>
+                                                <>
+                                                    <p className="text-[9px] font-bold text-orange-400 uppercase tracking-tighter">Estoque por Opção:</p>
+                                                    <div className="flex flex-col gap-2">
+                                                        {v.options.map((opt: any, optIdx: number) => (
+                                                            <div key={optIdx} className="grid grid-cols-3 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-orange-100/50">
+                                                                <span className="text-[10px] font-bold text-gray-600 truncate">{opt.name}</span>
 
-                                                            <div className="flex flex-col">
-                                                                <span className="text-[8px] text-gray-400 font-bold uppercase">Qtd</span>
-                                                                <input
-                                                                    type="number"
-                                                                    id={`v-${i}-opt-${optIdx}-stock`}
-                                                                    name={`v-${i}-opt-${optIdx}-stock`}
-                                                                    className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
-                                                                    value={opt.stock}
-                                                                    onChange={e => {
-                                                                        const newV = [...variants];
-                                                                        const newOpts = [...(newV[i].options as any[])];
-                                                                        newOpts[optIdx] = { ...opt, stock: parseInt(e.target.value) || 0 };
-                                                                        newV[i].options = newOpts;
-                                                                        setVariants(newV);
-                                                                    }}
-                                                                />
-                                                            </div>
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[8px] text-gray-400 font-bold uppercase">Qtd</span>
+                                                                    <input
+                                                                        type="number"
+                                                                        id={`v-${i}-opt-${optIdx}-stock`}
+                                                                        name={`v-${i}-opt-${optIdx}-stock`}
+                                                                        className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
+                                                                        value={opt.stock}
+                                                                        onChange={e => {
+                                                                            const newV = [...variants];
+                                                                            const newOpts = [...(newV[i].options as any[])];
+                                                                            newOpts[optIdx] = { ...opt, stock: parseInt(e.target.value) || 0 };
+                                                                            newV[i].options = newOpts;
+                                                                            setVariants(newV);
+                                                                        }}
+                                                                    />
+                                                                </div>
 
-                                                            <div className="flex flex-col">
-                                                                <span className="text-[8px] text-gray-400 font-bold uppercase">Mín</span>
-                                                                <input
-                                                                    type="number"
-                                                                    id={`v-${i}-opt-${optIdx}-min`}
-                                                                    name={`v-${i}-opt-${optIdx}-min`}
-                                                                    className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
-                                                                    placeholder="0"
-                                                                    value={opt.minStock || 0}
-                                                                    onChange={e => {
-                                                                        const newV = [...variants];
-                                                                        const newOpts = [...(newV[i].options as any[])];
-                                                                        newOpts[optIdx] = { ...opt, minStock: parseInt(e.target.value) || 0 };
-                                                                        newV[i].options = newOpts;
-                                                                        setVariants(newV);
-                                                                    }}
-                                                                />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[8px] text-gray-400 font-bold uppercase">Mín</span>
+                                                                    <input
+                                                                        type="number"
+                                                                        id={`v-${i}-opt-${optIdx}-min`}
+                                                                        name={`v-${i}-opt-${optIdx}-min`}
+                                                                        className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
+                                                                        placeholder="0"
+                                                                        value={opt.minStock || 0}
+                                                                        onChange={e => {
+                                                                            const newV = [...variants];
+                                                                            const newOpts = [...(newV[i].options as any[])];
+                                                                            newOpts[optIdx] = { ...opt, minStock: parseInt(e.target.value) || 0 };
+                                                                            newV[i].options = newOpts;
+                                                                            setVariants(newV);
+                                                                        }}
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                                        ))}
+                                                    </div>
+                                                </>
                                             </div>
                                         )}
                                     </div>
