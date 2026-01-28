@@ -26,12 +26,32 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
         }));
     };
 
-    const isComplete = () => {
-        if (!parsedVariants || parsedVariants.length === 0) return true;
-        return parsedVariants.every((v: any) => v.required === false || selectedVariants[v.name]);
+    const getStockForOption = (variantName: string, optionName: string) => {
+        if (!item.track_stock) return 9999;
+        const variant = parsedVariants.find((v: any) => v.name === variantName);
+        if (!variant || !Array.isArray(variant.options)) return 9999;
+        const option = variant.options.find((o: any) => (typeof o === 'string' ? o : o.name) === optionName);
+        return typeof option === 'object' ? option.stock : 9999;
     };
 
-    const increaseQuantity = () => setQuantity(prev => prev + 1);
+    const isComplete = () => {
+        if (item.track_stock && item.stock_quantity <= 0 && (!parsedVariants || parsedVariants.length === 0)) return false;
+        if (!parsedVariants || parsedVariants.length === 0) return true;
+
+        const allSelected = parsedVariants.every((v: any) => v.required === false || selectedVariants[v.name]);
+        if (!allSelected) return false;
+
+        // Check stock for each selected variant
+        return Object.entries(selectedVariants).every(([vName, oName]) => {
+            if (typeof oName !== 'string') return true;
+            return getStockForOption(vName, oName) > 0;
+        });
+    };
+
+    const increaseQuantity = () => {
+        const maxStock = item.track_stock ? item.stock_quantity : 9999;
+        setQuantity(prev => Math.min(maxStock, prev + 1));
+    };
     const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
     return (
@@ -72,19 +92,26 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                                 {v.required !== false && !selectedVariants[v.name] && <span className="text-[10px] text-blue-500 normal-case font-normal">(Obrigatório)</span>}
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {(typeof v.options === 'string' ? v.options.split(',') : v.options).map((opt: string) => {
-                                    const cleanOpt = opt.trim();
+                                {(typeof v.options === 'string' ? v.options.split(',') : v.options).map((opt: any) => {
+                                    const cleanOpt = typeof opt === 'string' ? opt.trim() : opt.name;
                                     const isSelected = selectedVariants[v.name] === cleanOpt;
+                                    const stock = getStockForOption(v.name, cleanOpt);
+                                    const isOutOfStock = item.track_stock && stock <= 0;
+
                                     return (
                                         <button
                                             key={cleanOpt}
+                                            disabled={isOutOfStock}
                                             onClick={() => handleSelect(v.name, cleanOpt)}
-                                            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${isSelected
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all relative ${isSelected
                                                 ? 'bg-accent border-accent text-white shadow-md transform scale-105'
-                                                : 'bg-white border-gray-200 text-gray-600 hover:border-pink-300'
+                                                : isOutOfStock
+                                                    ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed opacity-60'
+                                                    : 'bg-white border-gray-200 text-gray-600 hover:border-pink-300'
                                                 }`}
                                         >
                                             {cleanOpt}
+                                            {isOutOfStock && <span className="absolute -top-1 -right-1 text-[8px] bg-gray-400 text-white px-1 rounded-full">Esgotado</span>}
                                         </button>
                                     );
                                 })}
@@ -120,10 +147,14 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                         onClick={() => onConfirm({ ...selectedVariants, quantity })}
                         className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95 ${isComplete()
                             ? 'bg-accent text-white hover:bg-accent-hover shadow-pink-200'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : (item.track_stock && item.stock_quantity <= 0) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             }`}
                     >
-                        {isComplete() ? `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho` : 'Selecione as opções'}
+                        {item.track_stock && item.stock_quantity <= 0
+                            ? 'Produto Esgotado'
+                            : isComplete()
+                                ? `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho`
+                                : 'Selecione as opções'}
                     </button>
                 </div>
             </div>

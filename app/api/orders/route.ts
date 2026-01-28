@@ -137,7 +137,56 @@ export async function POST(req: NextRequest) {
 
         const ticketNumber = await getNextTicketNumber(restaurantId);
 
-        // Ensure numbers are numbers
+        // --- Stock Control Logic ---
+        try {
+            for (const item of items) {
+                const productId = item.id;
+                const { rows: pRows } = await sql`SELECT track_stock, stock_quantity, variants FROM products WHERE id = ${productId}`;
+                if (pRows.length > 0) {
+                    const product = pRows[0];
+                    if (product.track_stock) {
+                        let newStockQuantity = (product.stock_quantity || 0) - (item.quantity || 1);
+                        let updatedVariants = product.variants;
+
+                        // If it has variants, update the stock inside the variants JSON
+                        if (item.selectedVariants && updatedVariants) {
+                            let variantsObj = typeof updatedVariants === 'string' ? JSON.parse(updatedVariants) : updatedVariants;
+                            if (Array.isArray(variantsObj)) {
+                                let changed = false;
+                                for (const [vName, selectedOpt] of Object.entries(item.selectedVariants)) {
+                                    const variant = variantsObj.find((v: any) => v.name === vName);
+                                    if (variant && Array.isArray(variant.options)) {
+                                        const option = variant.options.find((o: any) => (typeof o === 'string' ? o : o.name) === selectedOpt);
+                                        if (option && typeof option === 'object') {
+                                            option.stock = (option.stock || 0) - (item.quantity || 1);
+                                            changed = true;
+                                        }
+                                    }
+                                }
+                                if (changed) updatedVariants = variantsObj;
+                            }
+                        }
+
+                        // Update the database
+                        await sql`
+                            UPDATE products 
+                            SET 
+                                stock_quantity = ${Math.max(0, newStockQuantity)}, 
+                                variants = ${JSON.stringify(updatedVariants)},
+                                updated_at = NOW()
+                            WHERE id = ${productId}
+                        `;
+                    }
+                }
+            }
+        } catch (stockError) {
+            console.error("Stock Update Error:", stockError);
+            // We continue even if stock update fails, to not block the order, 
+            // but in a production refined app we might want to handle this better.
+        }
+        // --- End Stock Control Logic ---
+
+        const ticketNumberValue = ticketNumber;
         const nSubtotal = parseFloat(subtotal) || 0;
         const nDeliveryFee = parseFloat(deliveryFee) || 0;
         const nTotal = parseFloat(total) || 0;
@@ -151,7 +200,7 @@ export async function POST(req: NextRequest) {
                 status, service_type, table_number, shipping_method, customer_cpf,
                 customer_email
             ) VALUES (
-                ${restaurantId}, ${ticketNumber}, ${customerName}, ${customerPhone},
+                ${restaurantId}, ${ticketNumberValue}, ${customerName}, ${customerPhone},
                 ${customerAddress}, ${customerZipCode}, ${JSON.stringify(items)}, 
                 ${nSubtotal}, ${nDeliveryFee}, ${nTotal}, ${paymentMethod}, 
                 ${nChangeFor}, ${observations}, 'pending', ${serviceType}, ${tableNumber}, ${shippingMethod}, ${customerCpf},

@@ -20,7 +20,9 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         weight: "0.5",
         height: "15",
         width: "15",
-        length: "15"
+        length: "15",
+        trackStock: false,
+        stockQuantity: "0"
     });
     const [variants, setVariants] = useState<any[]>([]); // [{ name: "Tamanho", options: ["P", "M", "G"] }]
 
@@ -88,7 +90,9 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             weight: parseFloat(form.weight) || 0.5,
             height: parseFloat(form.height) || 15,
             width: parseFloat(form.width) || 15,
-            length: parseFloat(form.length) || 15
+            length: parseFloat(form.length) || 15,
+            trackStock: form.trackStock,
+            stockQuantity: parseInt(form.stockQuantity) || 0
         };
         if (editingId) body.id = editingId;
 
@@ -128,7 +132,9 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             weight: prod.weight?.toString() || "0.5",
             height: prod.height?.toString() || "15",
             width: prod.width?.toString() || "15",
-            length: prod.length?.toString() || "15"
+            length: prod.length?.toString() || "15",
+            trackStock: prod.track_stock || false,
+            stockQuantity: prod.stock_quantity?.toString() || "0"
         });
         setVariants(prod.variants || []);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -136,7 +142,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
     const handleCancel = () => {
         setEditingId(null);
-        setForm({ name: "", description: "", price: "", categoryId: categories[0]?.id || "", image: "", weight: "0.5", height: "15", width: "15", length: "15" });
+        setForm({ name: "", description: "", price: "", categoryId: categories[0]?.id || "", image: "", weight: "0.5", height: "15", width: "15", length: "15", trackStock: false, stockQuantity: "0" });
         setVariants([]);
     };
 
@@ -283,6 +289,40 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             </div>
                         </div>
 
+                        {/* Stock Management Section */}
+                        <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h4 className="text-[10px] font-black text-orange-800 uppercase tracking-widest">Controle de Estoque</h4>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        checked={form.trackStock}
+                                        onChange={e => setForm({ ...form, trackStock: e.target.checked })}
+                                    />
+                                    <div className="relative w-7 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-orange-600"></div>
+                                </label>
+                            </div>
+
+                            {form.trackStock && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Quantidade Total</label>
+                                        <input
+                                            type="number"
+                                            className="w-full p-2 text-xs bg-white rounded-lg border border-orange-100 outline-none focus:border-orange-500"
+                                            placeholder="Geral do produto"
+                                            value={form.stockQuantity}
+                                            onChange={e => setForm({ ...form, stockQuantity: e.target.value })}
+                                        />
+                                        <p className="text-[8px] text-orange-400 mt-1 italic leading-tight">
+                                            * Se o produto possuir variações, o estoque de cada uma será somado ao total.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                         {/* Variants Section */}
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <div className="flex justify-between items-center mb-3">
@@ -334,13 +374,53 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                         <input
                                             placeholder="Opções (ex: P, M, G ou Azul, Preto)"
                                             className="text-xs border-none w-full focus:outline-none text-gray-500"
-                                            value={typeof v.options === 'string' ? v.options : v.options.join(', ')}
+                                            value={typeof v.options === 'string' ? v.options : (Array.isArray(v.options) ? v.options.map((o: any) => typeof o === 'string' ? o : o.name).join(', ') : '')}
                                             onChange={e => {
+                                                const val = e.target.value;
                                                 const newV = [...variants];
-                                                newV[i].options = e.target.value;
+
+                                                if (form.trackStock) {
+                                                    // Convert string back to objects, preserving existing stock if possible
+                                                    const names = val.split(',').map(s => s.trim()).filter(s => s);
+                                                    const currentOpts = Array.isArray(v.options) ? v.options : [];
+                                                    newV[i].options = names.map(name => {
+                                                        const existing = currentOpts.find((o: any) => (typeof o === 'string' ? o : o.name) === name);
+                                                        return {
+                                                            name,
+                                                            stock: typeof existing === 'object' ? existing.stock : 0
+                                                        };
+                                                    });
+                                                } else {
+                                                    newV[i].options = val;
+                                                }
                                                 setVariants(newV);
                                             }}
                                         />
+
+                                        {form.trackStock && Array.isArray(v.options) && v.options.length > 0 && (
+                                            <div className="mt-2 space-y-2 border-t border-gray-50 pt-2">
+                                                <p className="text-[9px] font-bold text-orange-400 uppercase tracking-tighter">Estoque por Opção:</p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {v.options.map((opt: any, optIdx: number) => (
+                                                        <div key={optIdx} className="flex items-center gap-1 bg-gray-50 p-1 rounded">
+                                                            <span className="text-[10px] text-gray-500 truncate flex-1">{opt.name}:</span>
+                                                            <input
+                                                                type="number"
+                                                                className="w-12 text-[10px] p-0.5 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
+                                                                value={opt.stock}
+                                                                onChange={e => {
+                                                                    const newV = [...variants];
+                                                                    const newOpts = [...(newV[i].options as any[])];
+                                                                    newOpts[optIdx] = { ...opt, stock: parseInt(e.target.value) || 0 };
+                                                                    newV[i].options = newOpts;
+                                                                    setVariants(newV);
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                                 {variants.length === 0 && (
