@@ -48,7 +48,7 @@ export default function ProductCard({ item, onAdd }: ProductCardProps) {
                         shareUrl.searchParams.set('produto', item.id.toString());
                         const finalUrl = shareUrl.toString();
 
-                        const text = `Olha esse produto: ${item.name} por ${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}!`;
+                        const text = `Olha esse produto: ${item.name} por ${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} no Olindaki!`;
 
                         if (navigator.share) {
                             navigator.share({
