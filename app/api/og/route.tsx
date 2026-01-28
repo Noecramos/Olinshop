@@ -6,10 +6,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const title = searchParams.get('title') || 'OlinShop';
     const subtitle = searchParams.get('subtitle') || 'Sua loja online favorita';
-    const image = searchParams.get('image');
-
-    // Default font setup (Inter for clean, premium look)
-    // We can load fonts here if needed, but keeping it simple for speed first
+    const image = searchParams.get('image'); // Banner
+    const logo = searchParams.get('logo');   // Store Logo
 
     return new ImageResponse(
         (
@@ -35,7 +33,7 @@ export async function GET(request: Request) {
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
-                            opacity: 0.6,
+                            opacity: 0.5,
                         }}
                     />
                 ) : (
@@ -56,8 +54,8 @@ export async function GET(request: Request) {
                         bottom: 0,
                         left: 0,
                         width: '100%',
-                        height: '70%',
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                        height: '100%',
+                        background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)',
                     }}
                 />
 
@@ -67,24 +65,50 @@ export async function GET(request: Request) {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        justifyContent: 'flex-end',
+                        justifyContent: 'center',
                         width: '100%',
                         height: '100%',
-                        paddingBottom: '40px',
                         zIndex: 10,
+                        padding: '40px',
                     }}
                 >
+                    {/* Store Logo - Prominent Circle */}
+                    {logo && (
+                        <div style={{
+                            display: 'flex',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                            border: '8px solid rgba(255,255,255,0.2)',
+                            boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+                            marginBottom: '20px',
+                            width: '200px',
+                            height: '200px',
+                            background: 'white',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                }}
+                            />
+                        </div>
+                    )}
+
                     {/* Store Name / Title */}
                     <div
                         style={{
-                            fontSize: 60,
+                            fontSize: 70,
                             fontWeight: 900,
-                            background: 'linear-gradient(to right, #fff, #f3f4f6)',
-                            backgroundClip: 'text',
-                            color: 'transparent',
+                            color: 'white',
                             marginBottom: 10,
                             textAlign: 'center',
-                            textShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                            textShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                            lineHeight: 1.1,
                         }}
                     >
                         {title}
@@ -93,11 +117,12 @@ export async function GET(request: Request) {
                     {/* Subtitle / Description */}
                     <div
                         style={{
-                            fontSize: 30,
+                            fontSize: 32,
                             color: '#e5e7eb',
                             textAlign: 'center',
-                            maxWidth: '80%',
+                            maxWidth: '90%',
                             fontWeight: 500,
+                            marginBottom: 40,
                         }}
                     >
                         {subtitle}
@@ -106,33 +131,19 @@ export async function GET(request: Request) {
                     {/* Call to Action Badge */}
                     <div
                         style={{
-                            marginTop: 30,
                             backgroundColor: '#FF1B8D', // Your brand accent color
                             color: 'white',
-                            padding: '12px 30px',
+                            padding: '16px 48px',
                             borderRadius: '50px',
-                            fontSize: 24,
+                            fontSize: 32,
                             fontWeight: 'bold',
-                            boxShadow: '0 8px 16px rgba(255, 27, 141, 0.4)',
+                            boxShadow: '0 10px 25px rgba(255, 27, 141, 0.6)',
+                            display: 'flex',
+                            alignItems: 'center',
                         }}
                     >
-                        Pedir Agora
+                        🛍️ Pedir Agora no Olindaki
                     </div>
-                </div>
-
-                {/* Top Logo Watermark (Optional) */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: 30,
-                        right: 30,
-                        fontSize: 24,
-                        color: 'rgba(255,255,255,0.8)',
-                        fontWeight: 'bold',
-                        zIndex: 10,
-                    }}
-                >
-                    🛍️ OlinShop
                 </div>
             </div>
         ),

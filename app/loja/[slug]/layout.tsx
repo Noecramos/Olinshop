@@ -26,14 +26,15 @@ export async function generateMetadata(
         }
 
         // Construct the Dynamic Image URL
-        const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(store.name)}&subtitle=${encodeURIComponent(store.popularTitle || store.welcomeSubtitle || 'Sua loja online')}&image=${encodeURIComponent(store.banner || store.image || '')}`;
+        // We pass 'image' as the banner (background) and 'logo' as the store's profile picture
+        const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(store.name)}&subtitle=${encodeURIComponent(store.popularTitle || store.welcomeSubtitle || 'Sua loja online')}&image=${encodeURIComponent(store.banner || '')}&logo=${encodeURIComponent(store.image || '')}`;
 
         return {
-            title: `${store.name} | OlinShop`,
-            description: store.welcomeSubtitle || 'Peça agora pelo OlinShop!',
+            title: `${store.name} | Olindaki`,
+            description: store.welcomeSubtitle || 'Peça agora pelo Olindaki!',
             openGraph: {
                 title: store.name,
-                description: store.welcomeSubtitle || 'Peça agora pelo OlinShop!',
+                description: store.welcomeSubtitle || 'Peça agora pelo Olindaki!',
                 images: [
                     {
                         url: ogImageUrl,
@@ -52,7 +53,7 @@ export async function generateMetadata(
         };
     } catch (e) {
         return {
-            title: 'OlinShop',
+            title: 'Olindaki',
             description: 'Sua loja online favorita',
         };
     }
