@@ -310,6 +310,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                         <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Quantidade Total</label>
                                         <input
                                             type="number"
+                                            id="stockQuantity"
+                                            name="stockQuantity"
                                             className="w-full p-2 text-xs bg-white rounded-lg border border-orange-100 outline-none focus:border-orange-500"
                                             placeholder="Geral do produto"
                                             value={form.stockQuantity}
@@ -362,6 +364,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                             </label>
                                         </div>
                                         <input
+                                            id={`v-${i}-name`}
+                                            name={`v-${i}-name`}
                                             placeholder="Nome (ex: Tamanho ou Cor)"
                                             className="text-xs font-bold border-b border-gray-100 w-full focus:outline-none focus:border-blue-300 pb-1"
                                             value={v.name}
@@ -372,6 +376,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                             }}
                                         />
                                         <input
+                                            id={`v-${i}-options`}
+                                            name={`v-${i}-options`}
                                             placeholder="Opções (ex: P, M, G ou Azul, Preto)"
                                             className="text-xs border-none w-full focus:outline-none text-gray-500"
                                             value={typeof v.options === 'string' ? v.options : (Array.isArray(v.options) ? v.options.map((o: any) => typeof o === 'string' ? o : o.name).join(', ') : '')}
@@ -410,6 +416,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                                                 <span className="text-[8px] text-gray-400 font-bold uppercase">Qtd</span>
                                                                 <input
                                                                     type="number"
+                                                                    id={`v-${i}-opt-${optIdx}-stock`}
+                                                                    name={`v-${i}-opt-${optIdx}-stock`}
                                                                     className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
                                                                     value={opt.stock}
                                                                     onChange={e => {
@@ -426,6 +434,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                                                 <span className="text-[8px] text-gray-400 font-bold uppercase">Mín</span>
                                                                 <input
                                                                     type="number"
+                                                                    id={`v-${i}-opt-${optIdx}-min`}
+                                                                    name={`v-${i}-opt-${optIdx}-min`}
                                                                     className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
                                                                     placeholder="0"
                                                                     value={opt.minStock || 0}
