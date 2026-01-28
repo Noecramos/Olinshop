@@ -104,7 +104,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
             if (res.ok) {
                 // Reset
-                setForm({ ...form, name: "", description: "", price: "", image: "", weight: "0.5", height: "15", width: "15", length: "15" });
+                setForm({ ...form, name: "", description: "", price: "", image: "", weight: "0.5", height: "15", width: "15", length: "15", trackStock: false, stockQuantity: "0" });
                 setVariants([]);
                 setEditingId(null);
                 fetchData(); // Refresh list
@@ -387,7 +387,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                                         const existing = currentOpts.find((o: any) => (typeof o === 'string' ? o : o.name) === name);
                                                         return {
                                                             name,
-                                                            stock: typeof existing === 'object' ? existing.stock : 0
+                                                            stock: typeof existing === 'object' ? existing.stock : 0,
+                                                            minStock: typeof existing === 'object' ? (existing.minStock || 0) : 0
                                                         };
                                                     });
                                                 } else {
@@ -400,22 +401,43 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                         {form.trackStock && Array.isArray(v.options) && v.options.length > 0 && (
                                             <div className="mt-2 space-y-2 border-t border-gray-50 pt-2">
                                                 <p className="text-[9px] font-bold text-orange-400 uppercase tracking-tighter">Estoque por Opção:</p>
-                                                <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col gap-2">
                                                     {v.options.map((opt: any, optIdx: number) => (
-                                                        <div key={optIdx} className="flex items-center gap-1 bg-gray-50 p-1 rounded">
-                                                            <span className="text-[10px] text-gray-500 truncate flex-1">{opt.name}:</span>
-                                                            <input
-                                                                type="number"
-                                                                className="w-12 text-[10px] p-0.5 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
-                                                                value={opt.stock}
-                                                                onChange={e => {
-                                                                    const newV = [...variants];
-                                                                    const newOpts = [...(newV[i].options as any[])];
-                                                                    newOpts[optIdx] = { ...opt, stock: parseInt(e.target.value) || 0 };
-                                                                    newV[i].options = newOpts;
-                                                                    setVariants(newV);
-                                                                }}
-                                                            />
+                                                        <div key={optIdx} className="grid grid-cols-3 gap-2 items-center bg-gray-50 p-2 rounded-lg border border-orange-100/50">
+                                                            <span className="text-[10px] font-bold text-gray-600 truncate">{opt.name}</span>
+
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[8px] text-gray-400 font-bold uppercase">Qtd</span>
+                                                                <input
+                                                                    type="number"
+                                                                    className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
+                                                                    value={opt.stock}
+                                                                    onChange={e => {
+                                                                        const newV = [...variants];
+                                                                        const newOpts = [...(newV[i].options as any[])];
+                                                                        newOpts[optIdx] = { ...opt, stock: parseInt(e.target.value) || 0 };
+                                                                        newV[i].options = newOpts;
+                                                                        setVariants(newV);
+                                                                    }}
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[8px] text-gray-400 font-bold uppercase">Mín</span>
+                                                                <input
+                                                                    type="number"
+                                                                    className="w-full text-[10px] p-1 border border-gray-200 rounded text-center outline-none focus:border-orange-300"
+                                                                    placeholder="0"
+                                                                    value={opt.minStock || 0}
+                                                                    onChange={e => {
+                                                                        const newV = [...variants];
+                                                                        const newOpts = [...(newV[i].options as any[])];
+                                                                        newOpts[optIdx] = { ...opt, minStock: parseInt(e.target.value) || 0 };
+                                                                        newV[i].options = newOpts;
+                                                                        setVariants(newV);
+                                                                    }}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -464,11 +486,26 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                     </div>
                                     <p className="text-xs text-gray-500 line-clamp-2 mt-1">{prod.description}</p>
                                     {prod.variants && prod.variants.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 mt-1">
+                                        <div className="flex flex-col gap-2 mt-2">
                                             {prod.variants.map((v: any, idx: number) => (
-                                                <span key={idx} className="text-[9px] bg-blue-50 text-accent px-1.5 py-0.5 rounded border border-blue-100">
-                                                    {v.name}: {typeof v.options === 'string' ? v.options : (Array.isArray(v.options) ? v.options.join(',') : '')}
-                                                </span>
+                                                <div key={idx} className="flex flex-col gap-1 w-full">
+                                                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{v.name}:</span>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {(Array.isArray(v.options) ? v.options : []).map((opt: any, oIdx: number) => {
+                                                            const name = typeof opt === 'string' ? opt : opt.name;
+                                                            const stock = typeof opt === 'object' ? opt.stock : null;
+                                                            const min = typeof opt === 'object' ? opt.minStock : null;
+                                                            const isLow = prod.track_stock && stock !== null && min !== null && stock <= min;
+
+                                                            return (
+                                                                <span key={oIdx} className={`text-[9px] px-1.5 py-0.5 rounded border flex items-center gap-1 ${isLow ? 'bg-orange-50 text-orange-700 border-orange-200 animate-pulse' : 'bg-blue-50 text-accent border-blue-100'}`}>
+                                                                    {name} {prod.track_stock && stock !== null && `(${stock})`}
+                                                                    {isLow && <span title="Estoque Baixo!">⚠️</span>}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
                                             ))}
                                         </div>
                                     )}
