@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getCategoryStyleFromName } from "../../lib/categoryIcons";
 
 interface CategoryNavProps {
     categories: string[];
@@ -11,20 +10,11 @@ interface CategoryNavProps {
 
 export default function CategoryNav({ categories, activeCategory, onSelect }: CategoryNavProps) {
 
-    // Use the central library for consistent icons
-    const getCategoryStyle = (name: string) => {
-        return getCategoryStyleFromName(name);
-    };
-
     return (
         <div className="sticky-nav" style={{ overflowX: "auto", whiteSpace: "nowrap", padding: "10px 0", scrollbarWidth: "none" }}>
             <div className="flex gap-3" style={{ padding: "0 1rem" }}>
                 {categories.map(cat => {
-                    const style = getCategoryStyle(cat);
                     const isActive = activeCategory === cat;
-                    // If category name already has emoji, don't add another icon
-                    const hasEmoji = /\p{Emoji}/u.test(cat);
-                    const displayIcon = hasEmoji ? '' : style.icon;
 
                     return (
                         <button
@@ -33,16 +23,15 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
                             className="flex items-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-95 py-3 px-6"
                             style={{
                                 borderRadius: "20px",
-                                border: isActive ? `2px solid #FF1B8D` : `1px solid ${style.border}`,
-                                background: isActive ? 'white' : style.bg,
-                                color: isActive ? '#FF1B8D' : (style.text === '#616161' ? '#424242' : style.text),
+                                border: isActive ? `2px solid #FF1B8D` : `1px solid #E5E7EB`,
+                                background: isActive ? 'white' : '#F9FAFB',
+                                color: isActive ? '#FF1B8D' : '#374151',
                                 fontWeight: 800,
                                 fontSize: "0.95rem",
                                 opacity: isActive ? 1 : 0.9,
                                 boxShadow: isActive ? '0 10px 20px rgba(255,27,141,0.15)' : 'none'
                             }}
                         >
-                            {displayIcon && <span className="text-xl">{displayIcon}</span>}
                             <span className="tracking-tight">{cat}</span>
                         </button>
                     );
