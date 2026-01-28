@@ -251,36 +251,44 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             <h4 className="text-[10px] font-black text-blue-800 uppercase tracking-widest">Logística (Correios)</h4>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Peso (kg)</label>
+                                    <label htmlFor="weight" className="text-[9px] font-bold text-gray-400 uppercase ml-1">Peso (kg)</label>
                                     <input
                                         type="number" step="0.01"
+                                        id="weight"
+                                        name="weight"
                                         className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
                                         value={form.weight}
                                         onChange={e => setForm({ ...form, weight: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Alt. (cm)</label>
+                                    <label htmlFor="height" className="text-[9px] font-bold text-gray-400 uppercase ml-1">Alt. (cm)</label>
                                     <input
                                         type="number"
+                                        id="height"
+                                        name="height"
                                         className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
                                         value={form.height}
                                         onChange={e => setForm({ ...form, height: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Larg. (cm)</label>
+                                    <label htmlFor="width" className="text-[9px] font-bold text-gray-400 uppercase ml-1">Larg. (cm)</label>
                                     <input
                                         type="number"
+                                        id="width"
+                                        name="width"
                                         className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
                                         value={form.width}
                                         onChange={e => setForm({ ...form, width: e.target.value })}
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Comp. (cm)</label>
+                                    <label htmlFor="length" className="text-[9px] font-bold text-gray-400 uppercase ml-1">Comp. (cm)</label>
                                     <input
                                         type="number"
+                                        id="length"
+                                        name="length"
                                         className="w-full p-2 text-xs bg-white rounded-lg border border-blue-100 outline-none focus:border-blue-500"
                                         value={form.length}
                                         onChange={e => setForm({ ...form, length: e.target.value })}
@@ -293,9 +301,11 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                         <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 space-y-3">
                             <div className="flex justify-between items-center">
                                 <h4 className="text-[10px] font-black text-orange-800 uppercase tracking-widest">Controle de Estoque</h4>
-                                <label className="inline-flex items-center cursor-pointer">
+                                <label htmlFor="trackStock" className="inline-flex items-center cursor-pointer">
                                     <input
                                         type="checkbox"
+                                        id="trackStock"
+                                        name="trackStock"
                                         className="sr-only peer"
                                         checked={form.trackStock}
                                         onChange={e => setForm({ ...form, trackStock: e.target.checked })}
@@ -307,7 +317,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             {form.trackStock && (
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Quantidade Total</label>
+                                        <label htmlFor="stockQuantity" className="text-[9px] font-bold text-gray-400 uppercase ml-1">Quantidade Total</label>
                                         <input
                                             type="number"
                                             id="stockQuantity"
@@ -349,9 +359,11 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                             ✕
                                         </button>
                                         <div className="flex justify-between items-center bg-gray-50/50 p-2 rounded-lg border border-gray-100/50">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-2 cursor-pointer">
+                                            <label htmlFor={`v-${i}-required`} className="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-2 cursor-pointer">
                                                 <input
                                                     type="checkbox"
+                                                    id={`v-${i}-required`}
+                                                    name={`v-${i}-required`}
                                                     checked={v.required !== false} // Default to true if undefined
                                                     onChange={e => {
                                                         const newV = [...variants];

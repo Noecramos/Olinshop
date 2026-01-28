@@ -176,8 +176,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
 
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Nome da Loja</label>
+                                <label htmlFor="storeName" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Nome da Loja</label>
                                 <input
+                                    id="storeName"
+                                    name="storeName"
                                     className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                     value={form.name || ''}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
@@ -185,8 +187,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
 
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Segmento</label>
+                                <label htmlFor="storeType" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Segmento</label>
                                 <select
+                                    id="storeType"
+                                    name="storeType"
                                     className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold appearance-none cursor-pointer"
                                     value={form.type || 'Loja'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
@@ -212,8 +216,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">WhatsApp para Pedidos</label>
+                            <label htmlFor="whatsapp" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">WhatsApp para Pedidos</label>
                             <input
+                                id="whatsapp"
+                                name="whatsapp"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.whatsapp || ''}
                                 onChange={e => setForm({ ...form, whatsapp: e.target.value })}
@@ -221,8 +227,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Instagram (@usuario)</label>
+                            <label htmlFor="instagram" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Instagram (@usuario)</label>
                             <input
+                                id="instagram"
+                                name="instagram"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.instagram || ''}
                                 onChange={e => setForm({ ...form, instagram: e.target.value })}
@@ -230,16 +238,20 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Responsável</label>
+                            <label htmlFor="responsibleName" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Responsável</label>
                             <input
+                                id="responsibleName"
+                                name="responsibleName"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.responsibleName || ''}
                                 onChange={e => setForm({ ...form, responsibleName: e.target.value })}
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">E-mail Administrativo</label>
+                            <label htmlFor="email" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">E-mail Administrativo</label>
                             <input
+                                id="email"
+                                name="email"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.email || ''}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
@@ -258,8 +270,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                     <div className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Tempo Estimado</label>
+                                <label htmlFor="deliveryTime" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Tempo Estimado</label>
                                 <input
+                                    id="deliveryTime"
+                                    name="deliveryTime"
                                     className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-blue-600"
                                     value={form.deliveryTime || ''}
                                     onChange={e => setForm({ ...form, deliveryTime: e.target.value })}
@@ -267,9 +281,11 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Raio Máximo (km)</label>
+                                <label htmlFor="deliveryRadius" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Raio Máximo (km)</label>
                                 <input
                                     type="number"
+                                    id="deliveryRadius"
+                                    name="deliveryRadius"
                                     className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-blue-600"
                                     value={form.deliveryRadius || ''}
                                     onChange={e => setForm({ ...form, deliveryRadius: e.target.value })}
@@ -326,8 +342,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">CEP</label>
+                            <label htmlFor="zipCode" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">CEP</label>
                             <input
+                                id="zipCode"
+                                name="zipCode"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.zipCode || ''}
                                 onChange={e => setForm({ ...form, zipCode: e.target.value })}
@@ -335,8 +353,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Endereço Completo</label>
+                            <label htmlFor="address" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Endereço Completo</label>
                             <input
+                                id="address"
+                                name="address"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.address || ''}
                                 onChange={e => setForm({ ...form, address: e.target.value })}
@@ -347,8 +367,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 <div className="flex flex-col items-center text-center gap-4">
                                     <div className="grid grid-cols-2 gap-8 w-full max-w-sm mb-2">
                                         <div>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Latitude</p>
+                                            <label htmlFor="latitude" className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Latitude</label>
                                             <input
+                                                id="latitude"
+                                                name="latitude"
                                                 className="w-full text-sm font-mono font-bold bg-transparent border-b border-gray-200 focus:border-accent text-center outline-none"
                                                 value={form.latitude || ''}
                                                 onChange={e => setForm({ ...form, latitude: e.target.value })}
@@ -356,8 +378,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                             />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Longitude</p>
+                                            <label htmlFor="longitude" className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Longitude</label>
                                             <input
+                                                id="longitude"
+                                                name="longitude"
                                                 className="w-full text-sm font-mono font-bold bg-transparent border-b border-gray-200 focus:border-accent text-center outline-none"
                                                 value={form.longitude || ''}
                                                 onChange={e => setForm({ ...form, longitude: e.target.value })}
@@ -408,8 +432,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Chave PIX (Para pagamento)</label>
+                            <label htmlFor="pixKey" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Chave PIX (Para pagamento)</label>
                             <input
+                                id="pixKey"
+                                name="pixKey"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold text-emerald-600"
                                 value={form.pixKey || ''}
                                 onChange={e => setForm({ ...form, pixKey: e.target.value })}
@@ -417,8 +443,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Horário de Funcionamento</label>
+                            <label htmlFor="hours" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Horário de Funcionamento</label>
                             <input
+                                id="hours"
+                                name="hours"
                                 className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                 value={form.hours || ''}
                                 onChange={e => setForm({ ...form, hours: e.target.value })}

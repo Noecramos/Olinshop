@@ -145,8 +145,8 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                                 type="button"
                                 onClick={() => toggleSubcategory(option)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${subcategories.includes(option)
-                                        ? 'bg-accent text-white shadow-md'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    ? 'bg-accent text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 {option}
@@ -156,8 +156,11 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
 
                     {/* Custom subcategory input */}
                     <div className="flex gap-2">
+                        <label htmlFor="customSubcategory" className="sr-only">Subcategoria Personalizada</label>
                         <input
                             type="text"
+                            id="customSubcategory"
+                            name="customSubcategory"
                             className="flex-1 p-2 bg-gray-50 rounded-lg border border-gray-200 focus:border-accent outline-none transition-all text-sm"
                             placeholder="Ou digite uma subcategoria personalizada..."
                             value={customSubcategory}
