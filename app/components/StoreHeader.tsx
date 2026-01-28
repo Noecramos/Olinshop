@@ -87,6 +87,7 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600">
                         <div className="flex items-center gap-3">
+                            <span className="font-semibold text-gray-500 text-xs uppercase tracking-wide">Prazo de entrega:</span>
                             <span>{deliveryTime}</span>
                         </div>
                         {address && (
@@ -96,10 +97,10 @@ export default function StoreHeader({ name = "OlinShop", image, banner, rating =
                                     href={formatAddressForLink(address)}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="opacity-80 text-xs md:text-sm bg-black/5 hover:bg-black/10 transition-colors px-2 py-1 rounded-full backdrop-blur-sm flex items-center gap-1 cursor-pointer"
+                                    className="opacity-80 text-xs md:text-sm bg-blue-100/50 hover:bg-blue-100 text-blue-700 transition-colors px-3 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-1.5 cursor-pointer font-bold shadow-sm"
                                 >
                                     <span>📍</span>
-                                    <span className="underline decoration-dotted">{address}</span>
+                                    <span>Como Chegar</span>
                                 </a>
                             </>
                         )}
