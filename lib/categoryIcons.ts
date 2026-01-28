@@ -140,6 +140,7 @@ const categoryStyles: Record<string, CategoryStyle> = {
     'casa': { icon: '🏠', bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D' },
     'decoração': { icon: '🖼️', bg: '#FDF2F8', border: '#FCE7F3', text: '#BE185D' },
     'móvel': { icon: '🪑', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' },
+    'cadeira': { icon: '🪑', bg: '#FFF7ED', border: '#FFEDD5', text: '#C2410C' },
     'cama': { icon: '🛏️', bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF' },
     'banheiro': { icon: '🛁', bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF' },
     'cozinha': { icon: '🍳', bg: '#F3F4F6', border: '#E5E7EB', text: '#374151' },
