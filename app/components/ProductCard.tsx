@@ -43,15 +43,21 @@ export default function ProductCard({ item, onAdd }: ProductCardProps) {
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
+                        // Create deep link for product
+                        const shareUrl = new URL(window.location.href);
+                        shareUrl.searchParams.set('produto', item.id.toString());
+                        const finalUrl = shareUrl.toString();
+
                         const text = `Olha esse produto: ${item.name} por ${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}!`;
+
                         if (navigator.share) {
                             navigator.share({
                                 title: item.name,
                                 text: text,
-                                url: window.location.href,
+                                url: finalUrl,
                             }).catch(console.error);
                         } else {
-                            navigator.clipboard.writeText(`${text} ${window.location.href}`);
+                            navigator.clipboard.writeText(`${text} ${finalUrl}`);
                             alert("Link do produto copiado!");
                         }
                     }}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "../../context/CartContext";
 import StoreHeader from "../../components/StoreHeader";
 import CategoryNav from "../../components/CategoryNav";
@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic';
 export default function StoreFront() {
     const { slug } = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { addToCart, count, total, items } = useCart();
 
     const [restaurant, setRestaurant] = useState<any>(null);
@@ -22,6 +23,17 @@ export default function StoreFront() {
     const [toast, setToast] = useState<string | null>(null);
     const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+
+    // Detect 'produto' query param to auto-open modal (Deep Linking)
+    useEffect(() => {
+        const productId = searchParams.get('produto');
+        if (productId && products.length > 0) {
+            const found = products.find(p => p.id.toString() === productId);
+            if (found) {
+                setSelectedProduct(found);
+            }
+        }
+    }, [searchParams, products]);
 
     useEffect(() => {
         if (!slug) return;
