@@ -27,7 +27,9 @@ export async function generateMetadata(
 
         // Construct the Dynamic Image URL
         // We pass 'image' as the banner (background) and 'logo' as the store's profile picture
-        const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(store.name)}&subtitle=${encodeURIComponent(store.popularTitle || store.welcomeSubtitle || 'Sua loja online')}&image=${encodeURIComponent(store.banner || '')}&logo=${encodeURIComponent(store.image || '')}`;
+        // We add a timestamp 'ts' to force cache refreshing on social platforms
+        const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(store.name)}&subtitle=${encodeURIComponent(store.popularTitle || store.welcomeSubtitle || 'Sua loja online')}&image=${encodeURIComponent(store.banner || '')}&logo=${encodeURIComponent(store.image || '')}&ts=${Date.now()}`;
+
 
         return {
             title: `${store.name} | Olindaki`,
