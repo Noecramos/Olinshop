@@ -325,12 +325,19 @@ function SignupForm() {
     );
 }
 
+import StoreHeader from "../components/StoreHeader";
+
 export default function SignupPage() {
     return (
-        <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
-            <Suspense fallback={<div className="text-center">Carregando...</div>}>
-                <SignupForm />
-            </Suspense>
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-start">
+            <div className="w-full">
+                <StoreHeader />
+            </div>
+            <div className="py-8 px-4 w-full flex justify-center">
+                <Suspense fallback={<div className="text-center">Carregando...</div>}>
+                    <SignupForm />
+                </Suspense>
+            </div>
         </div>
     );
 }
