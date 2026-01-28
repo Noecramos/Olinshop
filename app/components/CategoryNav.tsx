@@ -41,6 +41,10 @@ export default function CategoryNav({ categories, activeCategory, onSelect }: Ca
         if (lower.includes('açaí') || lower.includes('acai') || lower.includes('doce') || lower.includes('sobremesa')) return { icon: '🍧', bg: '#FCE4EC', border: '#F8BBD0', text: '#C2185B' };
         if (lower.includes('combo') || lower.includes('promo')) return { icon: '🏷️', bg: '#F3E5F5', border: '#E1BEE7', text: '#6A1B9A' };
         if (lower.includes('porção') || lower.includes('petisco')) return { icon: '🍟', bg: '#FFF8E1', border: '#FFECB3', text: '#FF6F00' };
+
+        // Delivery / Logistics specific
+        if (lower.includes('entrega') || lower.includes('delivery') || lower.includes('ifood') || lower.includes('motoboy')) return { icon: '🛵', bg: '#F0FDF4', border: '#BBF7D0', text: '#15803D' };
+
         // Default
         return { icon: '📦', bg: '#F5F5F5', border: '#E0E0E0', text: '#616161' };
     };
