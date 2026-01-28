@@ -289,7 +289,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                 <h4 className="text-xs font-bold text-gray-700 uppercase">Grade / Variações</h4>
                                 <button
                                     type="button"
-                                    onClick={() => setVariants([...variants, { name: "", options: "" }])}
+                                    onClick={() => setVariants([...variants, { name: "", options: "", required: true }])}
                                     className="text-[10px] bg-white border border-gray-200 px-2 py-1 rounded-lg hover:bg-gray-100 font-bold"
                                 >
                                     + Adicionar
@@ -306,6 +306,21 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                         >
                                             ✕
                                         </button>
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-2 rounded-lg border border-gray-100/50">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={v.required !== false} // Default to true if undefined
+                                                    onChange={e => {
+                                                        const newV = [...variants];
+                                                        newV[i].required = e.target.checked;
+                                                        setVariants(newV);
+                                                    }}
+                                                    className="w-3 h-3 rounded text-blue-500 focus:ring-blue-500"
+                                                />
+                                                Obrigatório
+                                            </label>
+                                        </div>
                                         <input
                                             placeholder="Nome (ex: Tamanho ou Cor)"
                                             className="text-xs font-bold border-b border-gray-100 w-full focus:outline-none focus:border-blue-300 pb-1"

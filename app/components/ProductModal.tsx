@@ -27,8 +27,8 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
     };
 
     const isComplete = () => {
-        if (!item.variants || item.variants.length === 0) return true;
-        return item.variants.every((v: any) => selectedVariants[v.name]);
+        if (!parsedVariants || parsedVariants.length === 0) return true;
+        return parsedVariants.every((v: any) => v.required === false || selectedVariants[v.name]);
     };
 
     const increaseQuantity = () => setQuantity(prev => prev + 1);
@@ -69,7 +69,7 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                         <div key={i} className="space-y-3">
                             <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
                                 {v.name}
-                                {!selectedVariants[v.name] && <span className="text-[10px] text-blue-500 normal-case font-normal">(Obrigatório)</span>}
+                                {v.required !== false && !selectedVariants[v.name] && <span className="text-[10px] text-blue-500 normal-case font-normal">(Obrigatório)</span>}
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {(typeof v.options === 'string' ? v.options.split(',') : v.options).map((opt: string) => {
