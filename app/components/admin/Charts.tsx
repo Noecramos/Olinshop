@@ -10,8 +10,8 @@ export function StatusPieChart({ data }: { data: any[] }) {
     }
 
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
-            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
+        <div className="w-full h-[300px] flex items-center justify-center overflow-hidden">
+            <ResponsiveContainer width="100%" height={300} debounce={50}>
                 <PieChart>
                     <Pie
                         data={data}
@@ -41,8 +41,8 @@ export function SalesChart({ data }: { data: any[] }) {
     }
 
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
-            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
+        <div className="w-full h-[300px] overflow-hidden">
+            <ResponsiveContainer width="100%" height={300} debounce={50}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <XAxis dataKey="date" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} />
@@ -64,8 +64,8 @@ export function TopProductsChart({ data }: { data: any[] }) {
     }
 
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
-            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
+        <div className="w-full h-[300px] overflow-hidden">
+            <ResponsiveContainer width="100%" height={300} debounce={50}>
                 <BarChart data={data} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" hide />

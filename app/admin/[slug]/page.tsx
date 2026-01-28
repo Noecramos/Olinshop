@@ -4,10 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import {
-    PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
-} from 'recharts';
 import { StatusPieChart, SalesChart, TopProductsChart } from "@/app/components/admin/Charts";
 import ProductForm from "@/app/components/admin/ProductForm";
 import CategoryForm from "@/app/components/admin/CategoryForm";
