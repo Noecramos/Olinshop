@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
 // Helper to check if a string is a valid UUID
-const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+// Helper to check if a string is a valid UUID/ID
+const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) || /^[0-9a-f]{24}$/i.test(id);
 
 // Helper to get next ticket number
 async function getNextTicketNumber(restaurantId: string) {
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
                     o.shipping_method as "shippingMethod", o.customer_cpf as "customerCpf",
                     r.name as "restaurantName", r.slug as "restaurantSlug", r.image as "restaurantImage"
                 FROM orders o
-                JOIN stores r ON o.restaurant_id = r.id
+                JOIN restaurants r ON o.restaurant_id = r.id
                 WHERE o.customer_email = ${customerEmail}
                 ORDER BY o.created_at DESC 
                 LIMIT 20
@@ -141,6 +142,9 @@ export async function POST(req: NextRequest) {
         try {
             for (const item of items) {
                 const productId = item.id;
+                // Valid string check instead of strict UUID to be safe
+                if (!productId || typeof productId !== 'string' || productId.length < 10) continue;
+
                 const { rows: pRows } = await sql`SELECT track_stock, stock_quantity, variants FROM products WHERE id = ${productId}`;
                 if (pRows.length > 0) {
                     const product = pRows[0];
@@ -150,15 +154,31 @@ export async function POST(req: NextRequest) {
 
                         // If it has variants, update the stock inside the variants JSON
                         if (item.selectedVariants && updatedVariants) {
-                            let variantsObj = typeof updatedVariants === 'string' ? JSON.parse(updatedVariants) : updatedVariants;
+                            let variantsObj = null;
+                            try {
+                                variantsObj = typeof updatedVariants === 'string' ? JSON.parse(updatedVariants) : updatedVariants;
+                            } catch (e) {
+                                variantsObj = null;
+                            }
+
                             if (Array.isArray(variantsObj)) {
                                 let changed = false;
                                 for (const [vName, selectedOpt] of Object.entries(item.selectedVariants)) {
-                                    const variant = variantsObj.find((v: any) => v.name === vName);
+                                    // Match by name trimmed to be safe
+                                    const variant = variantsObj.find((v: { name: string; options: any[] }) =>
+                                        v.name.trim() === vName.trim() ||
+                                        v.name.trim().toLowerCase() === vName.trim().toLowerCase()
+                                    );
                                     if (variant && Array.isArray(variant.options)) {
-                                        const option = variant.options.find((o: any) => (typeof o === 'string' ? o : o.name) === selectedOpt);
+                                        const option = variant.options.find((o: { name: string; stock: string } | string) => {
+                                            const optName = (typeof o === 'string' ? o : o.name).trim();
+                                            const selOpt = (selectedOpt as string).trim();
+                                            return optName === selOpt || optName.toLowerCase() === selOpt.toLowerCase();
+                                        });
+
                                         if (option && typeof option === 'object') {
-                                            option.stock = (option.stock || 0) - (item.quantity || 1);
+                                            const currentStock = parseInt(option.stock) || 0;
+                                            option.stock = Math.max(0, currentStock - (item.quantity || 1));
                                             changed = true;
                                         }
                                     }
@@ -171,8 +191,8 @@ export async function POST(req: NextRequest) {
                         await sql`
                             UPDATE products 
                             SET 
-                                stock_quantity = ${Math.max(0, newStockQuantity)}, 
-                                variants = ${JSON.stringify(updatedVariants)},
+                                stock_quantity = ${Math.max(0, parseInt(newStockQuantity.toString()))}, 
+                                variants = ${JSON.stringify(updatedVariants)}::jsonb,
                                 updated_at = NOW()
                             WHERE id = ${productId}
                         `;
@@ -181,8 +201,6 @@ export async function POST(req: NextRequest) {
             }
         } catch (stockError) {
             console.error("Stock Update Error:", stockError);
-            // We continue even if stock update fails, to not block the order, 
-            // but in a production refined app we might want to handle this better.
         }
         // --- End Stock Control Logic ---
 

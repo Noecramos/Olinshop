@@ -31,7 +31,7 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
         const variant = parsedVariants.find((v: any) => v.name === variantName);
         if (!variant || !Array.isArray(variant.options)) return 9999;
         const option = variant.options.find((o: any) => (typeof o === 'string' ? o : o.name) === optionName);
-        return typeof option === 'object' ? option.stock : 9999;
+        return typeof option === 'object' ? (parseInt(option.stock) ?? 0) : 9999;
     };
 
     const isComplete = () => {
@@ -49,7 +49,18 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
     };
 
     const increaseQuantity = () => {
-        const maxStock = item.track_stock ? item.stock_quantity : 9999;
+        let maxStock = item.track_stock ? (parseInt(item.stock_quantity?.toString()) || 0) : 9999;
+
+        // If variants are selected, the bottleneck is the variant with least stock
+        if (item.track_stock && Object.keys(selectedVariants).length > 0) {
+            const variantStocks = Object.entries(selectedVariants).map(([vName, oName]) => {
+                if (typeof oName !== 'string') return 9999;
+                return getStockForOption(vName, oName);
+            });
+            const minVariantStock = Math.min(...variantStocks);
+            if (minVariantStock < 9999) maxStock = minVariantStock;
+        }
+
         setQuantity(prev => Math.min(maxStock, prev + 1));
     };
     const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
@@ -150,7 +161,7 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                             : (item.track_stock && item.stock_quantity <= 0) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             }`}
                     >
-                        {item.track_stock && item.stock_quantity <= 0
+                        {item.track_stock && item.stock_quantity <= 0 && (!parsedVariants || parsedVariants.length === 0)
                             ? 'Produto Esgotado'
                             : isComplete()
                                 ? `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho`
