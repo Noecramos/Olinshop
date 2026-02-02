@@ -1,0 +1,322 @@
+{
+    "name": "Olindelivery Customer Support AI",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "whatsapp",
+                "responseMode": "onReceived",
+                "options": {}
+            },
+            "id": "webhook-whatsapp",
+            "name": "WhatsApp Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.event }}",
+                            "operation": "equals",
+                            "value2": "message"
+                        }
+                    ]
+                }
+            },
+            "id": "filter-messages",
+            "name": "Filter Messages Only",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract message data\nconst payload = $input.first().json.payload;\nconst session = $input.first().json.session;\n\nreturn {\n  json: {\n    session: session,\n    chatId: payload.from,\n    phoneNumber: payload.from.replace('@c.us', ''),\n    messageText: payload.body || '',\n    messageId: payload.id,\n    timestamp: payload.timestamp,\n    fromMe: payload.fromMe || false\n  }\n};"
+            },
+            "id": "extract-message-data",
+            "name": "Extract Message Data",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                650,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json.fromMe }}",
+                            "value2": false
+                        }
+                    ]
+                }
+            },
+            "id": "filter-incoming-only",
+            "name": "Ignore Own Messages",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                850,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.POSTGRES_URL || 'postgresql://user:pass@localhost:5432/olindelivery' }}",
+                "query": "SELECT o.*, r.name as restaurant_name, r.phone as restaurant_phone FROM orders o LEFT JOIN restaurants r ON o.restaurant_id = r.id WHERE o.customer_phone = $1 ORDER BY o.created_at DESC LIMIT 5",
+                "additionalFields": {
+                    "queryParams": "={{ $json.phoneNumber }}"
+                }
+            },
+            "id": "get-customer-orders",
+            "name": "Get Customer Orders",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2,
+            "position": [
+                1050,
+                150
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.POSTGRES_URL || 'postgresql://user:pass@localhost:5432/olindelivery' }}",
+                "query": "SELECT id, name, slug, description, category FROM restaurants WHERE status = 'active' LIMIT 10",
+                "additionalFields": {}
+            },
+            "id": "get-restaurants",
+            "name": "Get Active Restaurants",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2,
+            "position": [
+                1050,
+                350
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Prepare context for AI\nconst messageData = $('Extract Message Data').first().json;\nconst orders = $('Get Customer Orders').all().map(item => item.json);\nconst restaurants = $('Get Active Restaurants').all().map(item => item.json);\n\nconst customerContext = {\n  phoneNumber: messageData.phoneNumber,\n  recentOrders: orders.length > 0 ? orders : 'No recent orders',\n  hasOrders: orders.length > 0\n};\n\nconst systemPrompt = `You are a helpful customer support AI for Olindelivery and OlinShop - food delivery platforms in Brazil.\n\nYour role:\n- Help customers with orders, menu questions, and general inquiries\n- Be friendly, professional, and concise in Portuguese (BR)\n- Provide accurate information about restaurants and orders\n- If you don't know something, be honest and offer to connect them with human support\n\nCustomer Context:\n- Phone: ${customerContext.phoneNumber}\n- Recent Orders: ${customerContext.hasOrders ? orders.length + ' orders found' : 'No previous orders'}\n\nAvailable Restaurants:\n${restaurants.map(r => `- ${r.name}: ${r.description || 'No description'}`).join('\\n')}\n\nRecent Orders:\n${customerContext.hasOrders ? orders.map(o => `Order #${o.id}: ${o.status} - R$ ${o.total} (${new Date(o.created_at).toLocaleDateString('pt-BR')})`).join('\\n') : 'Customer has no previous orders'}\n\nGuidelines:\n- Always respond in Portuguese (BR)\n- Keep responses under 300 characters when possible (WhatsApp limit)\n- Use emojis sparingly but appropriately 😊\n- For order status, provide the most recent status\n- For menu questions, suggest checking the restaurant's page\n- If asked about delivery time, mention it depends on the restaurant\n- For complaints, be empathetic and offer solutions`;\n\nreturn {\n  json: {\n    systemPrompt: systemPrompt,\n    userMessage: messageData.messageText,\n    chatId: messageData.chatId,\n    session: messageData.session,\n    customerContext: customerContext\n  }\n};"
+            },
+            "id": "prepare-ai-context",
+            "name": "Prepare AI Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1250,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpQueryAuth",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "key",
+                            "value": "={{ $env.GOOGLE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY' }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "contents",
+                            "value": "={{ JSON.stringify([{role: 'user', parts: [{text: $json.systemPrompt + '\\n\\nCustomer message: ' + $json.userMessage}]}]) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "google-gemini-ai",
+            "name": "Google Gemini AI",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                1450,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract AI response\nconst response = $input.first().json;\nconst aiText = response.candidates?.[0]?.content?.parts?.[0]?.text || 'Desculpe, não consegui processar sua mensagem. Por favor, tente novamente.';\n\n// Get context from previous node\nconst context = $('Prepare AI Context').first().json;\n\nreturn {\n  json: {\n    chatId: context.chatId,\n    session: context.session,\n    message: aiText\n  }\n};"
+            },
+            "id": "extract-ai-response",
+            "name": "Extract AI Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1650,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/{{ $json.session }}/messages/text",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-Api-Key",
+                            "value": "olinshop_api_key"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "chatId",
+                            "value": "={{ $json.chatId }}"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ $json.message }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "send-whatsapp-response",
+            "name": "Send WhatsApp Response",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                1850,
+                250
+            ]
+        }
+    ],
+    "connections": {
+        "WhatsApp Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Filter Messages Only",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter Messages Only": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Message Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Message Data": {
+            "main": [
+                [
+                    {
+                        "node": "Ignore Own Messages",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Ignore Own Messages": {
+            "main": [
+                [
+                    {
+                        "node": "Get Customer Orders",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Get Active Restaurants",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Customer Orders": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare AI Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Active Restaurants": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare AI Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare AI Context": {
+            "main": [
+                [
+                    {
+                        "node": "Google Gemini AI",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini AI": {
+            "main": [
+                [
+                    {
+                        "node": "Extract AI Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract AI Response": {
+            "main": [
+                [
+                    {
+                        "node": "Send WhatsApp Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 1,
+    "updatedAt": "2026-01-29T01:43:00.000Z",
+    "versionId": "1"
+}

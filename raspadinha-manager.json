@@ -1,0 +1,206 @@
+{
+    "name": "Olindaki - Raspadinha Manager (Universal Version)",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "whatsapp",
+                "options": {}
+            },
+            "id": "webhook-in",
+            "name": "Webhook WAHA",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "whatsapp"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDxmoCXt87HDkmrjOJHm5wFqTK_9GOLMuU",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Você é o Gerente da Raspadinha Olindaki. Sua missão é:\n1. Responder de forma amigável e profissional com emojis 🎁✨.\n2. Explicar que para ganhar prêmios o cliente deve comprar no Olindaki.\n3. Se o cliente enviar um código de 4 dígitos, responda que você vai validar no sistema agora.\n\nMensagem do cliente: {{ $json.body.payload.body }}\"\n    }]\n  }]\n}",
+                "options": {}
+            },
+            "id": "gemini-api",
+            "name": "Google Gemini API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extraindo o texto da resposta do Gemini\nconst aiText = $input.item.json.candidates[0].content.parts[0].text;\nreturn { text: aiText };"
+            },
+            "id": "extract-text",
+            "name": "Extract AI Text",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/sendText",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-Api-Key",
+                            "value": "olinshop_api_key"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"session\": \"default\",\n  \"chatId\": \"{{ $('Webhook WAHA').item.json.body.payload.from }}\",\n  \"text\": \"{{ $json.text }}\"\n}",
+                "options": {}
+            },
+            "id": "waha-send",
+            "name": "Enviar WhatsApp",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                950,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                },
+                "event": "cron"
+            },
+            "id": "cron-trigger",
+            "name": "Check Orders",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                200,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM orders WHERE status = 'pending' AND created_at > NOW() - INTERVAL '2 minutes' LIMIT 5;"
+            },
+            "id": "find-new-orders",
+            "name": "Find New Orders",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.4,
+            "position": [
+                450,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "vercel-postgres",
+                    "name": "Postgres (Vercel)"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://waha:3000/api/sendText",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-Api-Key",
+                            "value": "olinshop_api_key"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"session\": \"default\",\n  \"chatId\": \"{{ $json.customer_phone }}@c.us\",\n  \"text\": \"Olá {{ $json.customer_name }}! 🎉 Seu pedido #{{ $json.ticket_number }} foi recebido! Enquanto preparamos, que tal tentar a sorte? Jogue nossa Raspadinha e ganhe descontos: https://olindaki.com.br/raspadinha\"\n}",
+                "options": {}
+            },
+            "id": "send-invite",
+            "name": "Enviar Convite",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                700,
+                100
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook WAHA": {
+            "main": [
+                [
+                    {
+                        "node": "Google Gemini API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini API": {
+            "main": [
+                [
+                    {
+                        "node": "Extract AI Text",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract AI Text": {
+            "main": [
+                [
+                    {
+                        "node": "Enviar WhatsApp",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Orders": {
+            "main": [
+                [
+                    {
+                        "node": "Find New Orders",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Find New Orders": {
+            "main": [
+                [
+                    {
+                        "node": "Enviar Convite",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

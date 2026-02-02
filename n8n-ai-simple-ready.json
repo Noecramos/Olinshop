@@ -1,0 +1,193 @@
+{
+    "name": "Olindelivery AI Support - Ready to Use",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "whatsapp",
+                "responseMode": "onReceived",
+                "options": {}
+            },
+            "id": "webhook-1",
+            "name": "WhatsApp Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "whatsapp"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract message from WAHA webhook\nconst data = $input.first().json;\n\n// Check if this is a message event\nif (data.event !== 'message') {\n  return [];\n}\n\nconst payload = data.payload;\n\n// Ignore messages from ourselves\nif (payload.fromMe) {\n  return [];\n}\n\nreturn [{\n  json: {\n    session: data.session || 'default',\n    chatId: payload.from,\n    phoneNumber: payload.from.replace('@c.us', ''),\n    messageText: payload.body || '',\n    messageId: payload.id,\n    timestamp: payload.timestamp\n  }\n}];"
+            },
+            "id": "extract-1",
+            "name": "Extract Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Prepare AI prompt\nconst messageData = $input.first().json;\n\nconst systemPrompt = `Você é um assistente de atendimento ao cliente da Olindelivery e OlinShop - plataformas de delivery de comida no Brasil.\n\nSua função:\n- Ajudar clientes com pedidos, dúvidas sobre cardápio e informações gerais\n- Ser amigável, profissional e conciso em Português (BR)\n- Fornecer informações precisas sobre restaurantes e pedidos\n- Se não souber algo, seja honesto e ofereça conectar com suporte humano\n\nDiretrizes:\n- Sempre responda em Português (BR)\n- Mantenha respostas curtas (máximo 300 caracteres quando possível)\n- Use emojis com moderação mas de forma apropriada 😊\n- Para status de pedido, sugira verificar no app ou site\n- Para dúvidas de cardápio, sugira verificar a página do restaurante\n- Para reclamações, seja empático e ofereça soluções\n\nRestaurantes disponíveis:\n- Pizza Place (Italiana)\n- Burger House (Fast Food)\n- Sushi Bar (Japonesa)\n- Padaria Central (Padaria)\n- Churrascaria Gaúcha (Churrasco)`;\n\nreturn [{\n  json: {\n    systemPrompt: systemPrompt,\n    userMessage: messageData.messageText,\n    chatId: messageData.chatId,\n    session: messageData.session,\n    phoneNumber: messageData.phoneNumber\n  }\n}];"
+            },
+            "id": "prepare-1",
+            "name": "Prepare AI Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDplFXvlcyZEG8HEJOQ-1XB4aYkaq4fKNY",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "contents",
+                            "value": "={{ [{\"parts\": [{\"text\": $json.systemPrompt + \"\\n\\nMensagem do cliente: \" + $json.userMessage}]}] }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "gemini-1",
+            "name": "Google Gemini AI",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extract AI response\nconst response = $input.first().json;\nconst context = $('Prepare AI Context').first().json;\n\nlet aiText = 'Desculpe, não consegui processar sua mensagem. Por favor, tente novamente.';\n\ntry {\n  aiText = response.candidates[0].content.parts[0].text;\n} catch (error) {\n  console.log('Error extracting AI response:', error);\n}\n\nreturn [{\n  json: {\n    chatId: context.chatId,\n    session: context.session,\n    message: aiText\n  }\n}];"
+            },
+            "id": "extract-2",
+            "name": "Extract AI Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=http://waha:3000/api/{{ $json.session }}/sendText",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "X-Api-Key",
+                            "value": "olinshop_api_key"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "chatId",
+                            "value": "={{ $json.chatId }}"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ $json.message }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "send-1",
+            "name": "Send WhatsApp Response",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1340,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "WhatsApp Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Message": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare AI Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare AI Context": {
+            "main": [
+                [
+                    {
+                        "node": "Google Gemini AI",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini AI": {
+            "main": [
+                [
+                    {
+                        "node": "Extract AI Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract AI Response": {
+            "main": [
+                [
+                    {
+                        "node": "Send WhatsApp Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 1,
+    "updatedAt": "2026-01-29T12:38:00.000Z",
+    "versionId": "1"
+}
