@@ -348,7 +348,7 @@ export default function GlobalConfigForm() {
                             value={config.footerText}
                             onChange={e => setConfig({ ...config, footerText: e.target.value })}
                             className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                            placeholder="© 2025 OlinShop..."
+                            placeholder="© 2025 LojAky..."
                         />
                     </div>
                 </div>

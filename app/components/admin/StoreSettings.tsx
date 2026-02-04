@@ -164,7 +164,7 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             <div className="md:col-span-2">
                                 <label htmlFor="storeSlug" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Link Exclusivo (URL)</label>
                                 <div className="relative group">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">https://olinshop.vercel.app/loja/</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">https://lojaky.noviapp.com.br/loja/</span>
                                     <input
                                         id="storeSlug"
                                         name="storeSlug"
@@ -399,7 +399,7 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                             setLoading(true);
                                             try {
                                                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(form.address)}&format=json&limit=1`, {
-                                                    headers: { 'User-Agent': 'OlinShop/1.0' }
+                                                    headers: { 'User-Agent': 'LojAky/1.0' }
                                                 });
                                                 const data = await res.json();
                                                 if (data && data[0]) {

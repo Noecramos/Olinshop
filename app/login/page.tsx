@@ -34,7 +34,7 @@ function LoginForm() {
             setLoading(false);
 
             if (res.ok && data.success) {
-                const message = `Olá, ${data.userName}! Sua nova senha de acesso ao OlinShop foi gerada com sucesso: \n\n🔑 Senha: *${data.newPassword}*\n\nUtilize esta senha para fazer seu próximo login.`;
+                const message = `Olá, ${data.userName}! Sua nova senha de acesso ao LojAky foi gerada com sucesso: \n\n🔑 Senha: *${data.newPassword}*\n\nUtilize esta senha para fazer seu próximo login.`;
                 const whatsappUrl = `https://wa.me/${data.phone}?text=${encodeURIComponent(message)}`;
 
                 if (confirm("Sua nova senha foi gerada com sucesso! Deseja recebê-la agora via WhatsApp?")) {

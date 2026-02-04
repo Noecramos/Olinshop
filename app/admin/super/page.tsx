@@ -366,7 +366,7 @@ export default function SuperAdmin() {
 
                                             // Show success message with new slug
                                             if (updatedData.slug !== editingRestaurant.slug) {
-                                                alert(`✅ Slug atualizado com sucesso!\n\nNovo slug: ${updatedData.slug}\n\nO link da loja agora é:\nolinshop.vercel.app/loja/${updatedData.slug}`);
+                                                alert(`✅ Slug atualizado com sucesso!\n\nNovo slug: ${updatedData.slug}\n\nO link da loja agora é:\nlojaky.noviapp.com.br/loja/${updatedData.slug}`);
                                             }
                                         }
 

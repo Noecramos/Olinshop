@@ -4,7 +4,7 @@ export const runtime = 'edge';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const title = searchParams.get('title') || 'OlinShop';
+    const title = searchParams.get('title') || 'LojAky';
     const subtitle = searchParams.get('subtitle') || 'Sua loja online favorita';
     const image = searchParams.get('image'); // Banner
     const logo = searchParams.get('logo');   // Store Logo

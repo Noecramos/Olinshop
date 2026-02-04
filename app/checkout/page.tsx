@@ -229,7 +229,7 @@ export default function CheckoutPage() {
                 // Try to get coordinates for distance calculation
                 const geoRes = await fetch(
                     `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress + ", Brazil")}&format=json&limit=1`,
-                    { headers: { 'User-Agent': 'OlinShop/1.0' } }
+                    { headers: { 'User-Agent': 'LojAky/1.0' } }
                 );
                 const geoData = await geoRes.json();
 
@@ -424,7 +424,7 @@ export default function CheckoutPage() {
                 `${emojis.total} *TOTAL:* ${formatCurrency(total)}\n\n` +
                 (form.observations ? `${emojis.note} *Observações:* ${form.observations.trim()}\n\n` : '') +
                 `${paymentInfo}\n\n` +
-                `_Enviado via OlinShop ${emojis.rocket}_`;
+                `_Enviado via LojAky ${emojis.rocket}_`;
             let cleanPhone = restaurantPhone.replace(/\D/g, '');
             if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
 

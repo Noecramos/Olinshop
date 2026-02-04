@@ -13,7 +13,7 @@ export async function generateMetadata(
 
     // Fetch store details to get name and image for the dynamic card
     // We use a safe fallback for the base URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://olinshop.vercel.app';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://lojaky.noviapp.com.br';
 
     try {
         const res = await fetch(`${baseUrl}/api/stores?slug=${slug}`);
@@ -21,7 +21,7 @@ export async function generateMetadata(
 
         if (!store || store.error) {
             return {
-                title: 'OlinShop',
+                title: 'LojAky',
             };
         }
 
