@@ -380,6 +380,19 @@ export default function StoreAdmin() {
                             </div>
                         )}
                     </div>
+
+                    {/* Register New Store Button (Multistore Feature) */}
+                    {restaurant?.multistoreEnabled && (
+                        <div className="mt-4 px-3">
+                            <a
+                                href={`/register?email=${encodeURIComponent(restaurant.email || '')}`}
+                                className="block w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all text-sm"
+                            >
+                                ➕ Registrar Nova Loja
+                            </a>
+                            <p className="text-[10px] text-gray-400 text-center mt-2 font-medium">Multiloja Ativa</p>
+                        </div>
+                    )}
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">

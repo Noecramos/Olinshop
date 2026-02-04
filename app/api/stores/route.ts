@@ -226,7 +226,8 @@ export async function PUT(req: NextRequest) {
             id, name, slug, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
-            popularTitle, welcomeSubtitle, resetPassword, isOpen, responsibleName
+            popularTitle, welcomeSubtitle, resetPassword, isOpen, responsibleName,
+            multistoreEnabled
         } = body;
 
         if (!id) {
@@ -281,6 +282,7 @@ export async function PUT(req: NextRequest) {
                 delivery_fee_tiers = COALESCE(${JSON.stringify(deliveryFeeTiers) === undefined ? null : JSON.stringify(deliveryFeeTiers)}, delivery_fee_tiers),
                 popular_title = COALESCE(${popularTitle}, popular_title),
                 welcome_subtitle = COALESCE(${welcomeSubtitle}, welcome_subtitle),
+                multistore_enabled = COALESCE(${multistoreEnabled}, multistore_enabled),
                 updated_at = NOW()
             WHERE id = ${id}
             RETURNING 

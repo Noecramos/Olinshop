@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function RegisterShop() {
     const router = useRouter();
@@ -43,6 +43,15 @@ export default function RegisterShop() {
             .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
             .catch(() => { });
     }, []);
+
+    // Pre-fill email from URL params (for multistore registration)
+    const searchParams = useSearchParams();
+    useEffect(() => {
+        const emailParam = searchParams.get('email');
+        if (emailParam) {
+            setForm(prev => ({ ...prev, email: emailParam }));
+        }
+    }, [searchParams]);
 
     // Update form.address whenever parts change
     useEffect(() => {

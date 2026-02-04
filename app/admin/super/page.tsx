@@ -102,6 +102,40 @@ export default function SuperAdmin() {
         }
     };
 
+    const toggleMultistore = async (restaurant: any) => {
+        const newStatus = !restaurant.multistoreEnabled;
+        const confirmMsg = newStatus
+            ? `Ativar MULTILOJA para "${restaurant.name}"?\n\nIsso permitirá que o proprietário registre lojas adicionais.`
+            : `Desativar MULTILOJA para "${restaurant.name}"?`;
+
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            const res = await fetch('/api/stores', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: restaurant.id,
+                    multistoreEnabled: newStatus
+                })
+            });
+
+            if (res.ok) {
+                setRestaurants(prev => prev.map(r =>
+                    r.id === restaurant.id
+                        ? { ...r, multistoreEnabled: newStatus }
+                        : r
+                ));
+                alert(newStatus ? '✅ Multiloja ATIVADA!' : '⏸️ Multiloja desativada');
+            } else {
+                alert('Erro ao atualizar');
+            }
+        } catch (e) {
+            alert('Erro de conexão');
+        }
+    };
+
+
     const resetPassword = async (restaurant: any) => {
         if (!confirm(`Deseja realmente resetar a senha da loja ${restaurant.name}?`)) return;
         try {
@@ -461,6 +495,13 @@ export default function SuperAdmin() {
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
+                                                    <button
+                                                        onClick={() => toggleMultistore(r)}
+                                                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${r.multistoreEnabled ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-purple-100'}`}
+                                                        title={r.multistoreEnabled ? 'Multiloja ATIVA' : 'Ativar Multiloja'}
+                                                    >
+                                                        🏪 {r.multistoreEnabled ? 'Multi' : '+'}
+                                                    </button>
                                                     <button onClick={() => setEditingRestaurant(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">✏️</button>
                                                     <button onClick={() => toggleApproval(r)} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${r.approved ? 'bg-amber-500' : 'bg-accent'} text-white`}>{r.approved ? 'Pausar' : 'Aprovar'}</button>
                                                     <button onClick={() => resetPassword(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">🔑</button>
