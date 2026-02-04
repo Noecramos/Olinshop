@@ -46,7 +46,7 @@ export default function RaspadinhaValidator() {
     return (
         <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden w-full max-w-md mx-auto">
             <div className="bg-gradient-to-r from-purple-700 to-indigo-600 p-6 text-center text-white">
-                <h2 className="text-xl font-bold uppercase tracking-wider">Validador OlindAki</h2>
+                <h2 className="text-xl font-bold uppercase tracking-wider">Validador LojAky</h2>
                 <p className="text-sm opacity-80 mt-1">Raspadinha da Sorte</p>
             </div>
 

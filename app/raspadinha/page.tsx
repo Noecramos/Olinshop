@@ -212,7 +212,7 @@ export default function RaspadinhaPage() {
         }
 
         const phone = '558183920320';
-        const msg = `Olá! Acabei de ganhar na Raspadinha da Sorte da OlindAki! 🎉\n\nNome: *${userName}*\nTicket: *${ticketId}*\nPrêmio: *${result?.prize?.label}*\nData: ${currentTime}\n\nPor favor, valide meu prêmio!`;
+        const msg = `Olá! Acabei de ganhar na Raspadinha da Sorte da LojAky! 🎉\n\nNome: *${userName}*\nTicket: *${ticketId}*\nPrêmio: *${result?.prize?.label}*\nData: ${currentTime}\n\nPor favor, valide meu prêmio!`;
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
         window.open(url, '_blank');
@@ -255,7 +255,7 @@ export default function RaspadinhaPage() {
             <main className={styles.main}>
                 <div className={styles.ticketSection}>
                     <div className={styles.ticketLabel}>
-                        OLINDAKI • #{ticketId}
+                        LOJAKY • #{ticketId}
                     </div>
 
                     <div className={styles.scratchCardContainer}>

@@ -32,11 +32,11 @@ export async function generateMetadata(
 
 
         return {
-            title: `${store.name} | Olindaki`,
-            description: store.welcomeSubtitle || 'Peça agora pelo Olindaki!',
+            title: `${store.name} | LojAky`,
+            description: store.welcomeSubtitle || 'Peça agora pelo LojAky!',
             openGraph: {
                 title: store.name,
-                description: store.welcomeSubtitle || 'Peça agora pelo Olindaki!',
+                description: store.welcomeSubtitle || 'Peça agora pelo LojAky!',
                 images: [
                     {
                         url: ogImageUrl,
@@ -55,7 +55,7 @@ export async function generateMetadata(
         };
     } catch (e) {
         return {
-            title: 'Olindaki',
+            title: 'LojAky',
             description: 'Sua loja online favorita',
         };
     }

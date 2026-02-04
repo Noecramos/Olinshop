@@ -142,7 +142,7 @@ export async function GET(request: Request) {
                             alignItems: 'center',
                         }}
                     >
-                        🛍️ Pedir Agora no Olindaki
+                        🛍️ Pedir Agora no LojAky
                     </div>
                 </div>
             </div>

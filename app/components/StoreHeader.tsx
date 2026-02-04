@@ -61,7 +61,7 @@ export default function StoreHeader({ name = "LojaKy", image, banner, rating = "
                             if (navigator.share) {
                                 navigator.share({
                                     title: name,
-                                    text: `Confira a loja ${name} no Olindaki!`,
+                                    text: `Confira a loja ${name} no LojAky!`,
                                     url: window.location.href,
                                 })
                                     .catch((error) => console.log('Error sharing', error));
