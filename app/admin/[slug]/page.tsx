@@ -345,10 +345,40 @@ export default function StoreAdmin() {
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-gray-100 flex flex-col hidden lg:flex">
                 <div className="p-6 border-b border-gray-50">
-                    <h1 className="text-xl font-black text-gray-900 leading-tight">OLIN<span className="text-accent">SHOP</span></h1>
-                    <div className="mt-2 text-xs font-bold text-gray-500 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-accent rounded-full"></span>
-                        <span className="truncate">{restaurant?.name}</span>
+                    <h1 className="text-xl font-black text-gray-900 leading-tight mb-4">LOJA<span className="text-accent">KY</span></h1>
+
+                    {/* Store Switcher */}
+                    <div className="relative group">
+                        <button className="w-full text-left text-xs font-bold text-gray-500 flex items-center justify-between gap-2 bg-gray-50 p-3 rounded-xl hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-100">
+                            <div className="flex items-center gap-2 overflow-hidden">
+                                <span className={`w-2 h-2 rounded-full ${restaurant?.isOpen ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                <span className="truncate">{restaurant?.name}</span>
+                            </div>
+                            {restaurant?.siblingStores?.length > 0 && <span className="text-gray-400">▼</span>}
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {restaurant?.siblingStores?.length > 0 && (
+                            <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden hidden group-hover:block z-50 animate-fade-in">
+                                <div className="p-2">
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2 py-1">Trocar Loja</p>
+                                    {restaurant.siblingStores.map((store: any) => (
+                                        <button
+                                            key={store.id}
+                                            onClick={() => {
+                                                // Quick switch strategy: Assume trust between siblings
+                                                // In V2 we can handle shared session token
+                                                window.location.href = `/admin/${store.slug}`;
+                                            }}
+                                            className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 text-xs font-bold text-gray-600 transition-colors"
+                                        >
+                                            <span className={`w-1.5 h-1.5 rounded-full ${store.approved ? 'bg-green-400' : 'bg-gray-300'}`}></span>
+                                            {store.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -66,12 +66,28 @@ export async function GET(req: NextRequest) {
             }
 
             const restaurant = rows[0];
+
+            // MULTI-STORE SUPPORT
+            // If admin access, find other stores with the same email
+            let siblingStores: any[] = [];
+            if (isAdminAccess && restaurant.email) {
+                const { rows: siblings } = await sql`
+                    SELECT id, name, slug, image, approved 
+                    FROM restaurants 
+                    WHERE email = ${restaurant.email} 
+                    AND id != ${restaurant.id}
+                    ORDER BY name ASC
+                `;
+                siblingStores = siblings;
+            }
+
             return NextResponse.json({
                 ...restaurant,
                 deliveryFee: Number(restaurant.deliveryFee),
                 deliveryRadius: Number(restaurant.deliveryRadius),
                 latitude: Number(restaurant.latitude),
-                longitude: Number(restaurant.longitude)
+                longitude: Number(restaurant.longitude),
+                siblingStores // Return the list of related stores
             }, { headers: corsHeaders });
         }
 
