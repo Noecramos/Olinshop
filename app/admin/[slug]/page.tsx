@@ -421,7 +421,7 @@ export default function StoreAdmin() {
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
                 {/* Header Banner */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/all-page-header.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative overflow-hidden shadow-lg" style={{ backgroundImage: "url('/header-lojaky.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">{restaurant?.name}</h1>

@@ -454,7 +454,7 @@ export default function CheckoutPage() {
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/all-page-header.png')" }}>
+            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('/header-lojaky.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
@@ -789,7 +789,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
-                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
                 </footer>
             </div>
 

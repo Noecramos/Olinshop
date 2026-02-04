@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function PageHeader() {
-    const [src, setSrc] = useState("https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/all-page-header.png");
+    const [src, setSrc] = useState("/header-lojaky.png");
 
     useEffect(() => {
         fetch('/api/config')
