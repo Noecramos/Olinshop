@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OlinShop",
-  description: "O seu shopping no WhatsApp.",
+  title: "LojaKy",
+  description: "Suas compra na LojAky",
   manifest: "/manifest.json",
   icons: {
     icon: '/icon.png',
@@ -21,7 +21,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1D1D1F",
+  themeColor: "#a855f7",
 };
 
 import ThemeRegistry from "./components/ThemeRegistry";

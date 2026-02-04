@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update LojaKy Config</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #9333ea;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        h1 {
+            color: #a855f7;
+        }
+
+        .info {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🛍️ Update LojaKy Configuration</h1>
+
+        <div class="info">
+            <strong>This will update:</strong><br>
+            • Header Image: /logo-lojaky.png<br>
+            • Splash Image: Animated GIF<br>
+            • Welcome Subtitle: "Suas compra na LojAky"<br>
+            • Footer: "© Noviapp Mobile Apps • LojAky®"<br>
+            • Header Color: #C8C4E9 (purple)
+        </div>
+
+        <button onclick="updateConfig()">Update Configuration Now</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function updateConfig() {
+            const button = document.querySelector('button');
+            const resultDiv = document.getElementById('result');
+
+            button.disabled = true;
+            button.textContent = 'Updating...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const config = {
+                    headerImage: '/logo-lojaky.png',
+                    splashImage: 'https://i.imgur.com/pjzRyRN.gif',
+                    headerBackgroundImage: '/header-lojaky.png',
+                    welcomeSubtitle: 'Suas compra na LojAky',
+                    footerText: '© Noviapp Mobile Apps • LojAky®',
+                    headerBgColor: '#C8C4E9',
+                    headerBackgroundType: 'color'
+                };
+
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Configuration updated successfully! Refresh the homepage to see changes.';
+                    resultDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error: ' + error.message;
+                resultDiv.style.display = 'block';
+                button.disabled = false;
+                button.textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+
+</html>

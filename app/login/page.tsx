@@ -155,6 +155,9 @@ export default function LoginPage() {
                     <LoginForm />
                 </Suspense>
             </div>
+            <footer className="w-full text-center text-gray-400 text-xs py-6">
+                © Noviapp Mobile Apps • LojAky®
+            </footer>
         </div>
     );
 }

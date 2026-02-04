@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update LojaKy Header</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #9333ea;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        h1 {
+            color: #a855f7;
+        }
+
+        .info {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🛍️ Update LojaKy Header Image</h1>
+
+        <div class="info">
+            <strong>New Header Image:</strong><br>
+            <img src="https://i.imgur.com/gmgxupx.png" alt="LojaKy Header">
+            <br>
+            This landscape header will replace the logo in the header area.
+        </div>
+
+        <button onclick="updateHeader()">Update Header Image Now</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function updateHeader() {
+            const button = document.querySelector('button');
+            const resultDiv = document.getElementById('result');
+
+            button.disabled = true;
+            button.textContent = 'Updating...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const config = {
+                    headerBackgroundImage: 'https://i.imgur.com/gmgxupx.png',
+                    headerBackgroundType: 'image'
+                };
+
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Header updated successfully! Redirecting to homepage...';
+                    resultDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error: ' + error.message;
+                resultDiv.style.display = 'block';
+                button.disabled = false;
+                button.textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+
+</html>

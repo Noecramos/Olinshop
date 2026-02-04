@@ -14,13 +14,14 @@ function MarketplaceContent() {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/app-logo.png',
-    splashImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/splash-screen.jpg',
-    headerBackgroundImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/header-main-page.png',
+    headerImage: '/logo-lojaky.png',
+    splashImage: '/splash-lojaky.jpg',
+    headerBackgroundImage: '/header-lojaky.png',
     welcomeTitle: 'O que você\nbusca hoje?',
-    welcomeSubtitle: 'Shopping no WhatsApp',
-    footerText: '© 2025 OlinShop Premium retail',
-    headerBgColor: 'transparent'
+    welcomeSubtitle: 'Suas compra na LojAky',
+    footerText: '© Noviapp Mobile Apps • LojAky®',
+    headerBgColor: '#C8C4E9',
+    headerBackgroundType: 'image'
   });
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
@@ -106,12 +107,13 @@ function MarketplaceContent() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-white">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ backgroundColor: '#C8C4E9' }}>
         <Image
           src={config.splashImage}
-          alt="OlinShop Loading"
-          fill
-          className="object-cover"
+          alt="LojaKy Loading"
+          width={400}
+          height={400}
+          className="object-contain"
           priority
           unoptimized
         />
@@ -181,6 +183,20 @@ function MarketplaceContent() {
             backgroundSize: '100% 100%'
           }}
         >
+          {/* Logo - Centered */}
+          <div className="flex items-center justify-center h-full">
+            {config.headerBackgroundType !== 'image' && (
+              <Image
+                src={config.headerImage || '/logo-lojaky.png'}
+                alt="LojaKy"
+                width={200}
+                height={200}
+                className="object-contain"
+                priority
+                unoptimized
+              />
+            )}
+          </div>
           {/* User Profile / Login Button - Absolute Positioned */}
           <div className="absolute top-4 right-4 z-[60]">
             {user ? (

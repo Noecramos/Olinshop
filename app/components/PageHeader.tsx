@@ -27,7 +27,7 @@ export default function PageHeader() {
             {/* Fallback pattern background if needed, or simple gradient */}
             <Image
                 src={src}
-                alt="OlinShop"
+                alt="LojaKy"
                 width={300}
                 height={100}
                 style={{ objectFit: 'contain', maxHeight: '100px', width: 'auto' }}

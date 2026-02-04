@@ -1,11 +1,11 @@
 {
-  "name": "OlinShop",
-  "short_name": "OlinShop",
-  "description": "O seu shopping no WhatsApp.",
+  "name": "LojaKy",
+  "short_name": "LojaKy",
+  "description": "Suas compra na LojAky",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1D1D1F",
-  "theme_color": "#1D1D1F",
+  "background_color": "#e9d5ff",
+  "theme_color": "#a855f7",
   "icons": [
     {
       "src": "/icon.png",

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update LojaKy Images - FINAL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #9333ea;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        h1 {
+            color: #a855f7;
+        }
+
+        .info {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+        }
+
+        .preview {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 5px;
+        }
+
+        .preview img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .preview h3 {
+            margin-top: 0;
+            color: #6366f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🛍️ Update LojaKy Images - FINAL</h1>
+
+        <div class="info">
+            <strong>✅ New Correct Images Uploaded!</strong><br>
+            This will update the database with the correct local image paths.
+        </div>
+
+        <div class="preview">
+            <h3>Splash Screen (Square):</h3>
+            <p><strong>/splash-lojaky.jpg</strong></p>
+            <p>Full "Suas compras na LojAky" with shopping bag</p>
+        </div>
+
+        <div class="preview">
+            <h3>Header (Landscape):</h3>
+            <p><strong>/header-lojaky.png</strong></p>
+            <p>Horizontal "Suas compras na LojAky" with shopping bag</p>
+        </div>
+
+        <div class="preview">
+            <h3>Logo:</h3>
+            <p><strong>/logo-lojaky.png</strong></p>
+            <p>Same as header (landscape format)</p>
+        </div>
+
+        <button onclick="updateImages()">✅ Update All Images Now</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function updateImages() {
+            const button = document.querySelector('button');
+            const resultDiv = document.getElementById('result');
+
+            button.disabled = true;
+            button.textContent = 'Updating...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const config = {
+                    headerImage: '/logo-lojaky.png',
+                    splashImage: '/splash-lojaky.jpg',
+                    headerBackgroundImage: '/header-lojaky.png',
+                    headerBackgroundType: 'image'
+                };
+
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = '✅ All images updated successfully!<br><br>Redirecting to homepage in 2 seconds...';
+                    resultDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error: ' + error.message;
+                resultDiv.style.display = 'block';
+                button.disabled = false;
+                button.textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+
+</html>

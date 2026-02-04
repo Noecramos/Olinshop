@@ -19,7 +19,7 @@ interface HeaderProps {
     whatsapp?: string;
 }
 
-export default function StoreHeader({ name = "OlinShop", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount, instagram, whatsapp }: HeaderProps) {
+export default function StoreHeader({ name = "LojaKy", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount, instagram, whatsapp }: HeaderProps) {
     const { user, logout } = useAuth();
     const pathname = usePathname();
     const isSignupPage = pathname?.includes('/signup');

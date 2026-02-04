@@ -196,6 +196,11 @@ export default function StoreFront() {
                     {toast}
                 </div>
             )}
+
+            {/* Standard Footer */}
+            <footer className="w-full text-center text-gray-400 text-xs py-8 mt-8 border-t border-gray-100">
+                © Noviapp Mobile Apps • LojAky®
+            </footer>
         </main>
     );
 }
