@@ -38,19 +38,49 @@ export default function StoreFront() {
     useEffect(() => {
         if (!slug) return;
 
+        const fetchProductsForStore = (restaurantId: string) => {
+            fetch(`/api/products?restaurantId=${restaurantId}`)
+                .then(res => res.ok ? res.json() : [])
+                .then(data => setProducts(Array.isArray(data) ? data : []));
+        };
+
         // Fetch Restaurant Details
         fetch(`/api/stores?slug=${slug}`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
-                setRestaurant(data);
-                if (data) {
-                    // Fetch Products for this restaurant
-                    fetch(`/api/products?restaurantId=${data.id}`)
+                if (!data) {
+                    router.push('/');
+                    return;
+                }
+
+                // Check if multistore is enabled and user should see location selector
+                // Only redirect if NOT coming from the location selector itself
+                const fromSelector = searchParams.get('from') === 'selector';
+                if (data.multistoreEnabled && data.email && !fromSelector) {
+                    // Check if there are multiple locations
+                    fetch(`/api/stores/siblings?email=${encodeURIComponent(data.email)}`)
                         .then(res => res.ok ? res.json() : [])
-                        .then(data => setProducts(Array.isArray(data) ? data : []));
+                        .then(siblings => {
+                            if (siblings.length > 1) {
+                                // Multiple locations exist, redirect to selector
+                                router.push(`/loja/${slug}/select-location`);
+                            } else {
+                                // Only one location, proceed normally
+                                setRestaurant(data);
+                                fetchProductsForStore(data.id);
+                            }
+                        })
+                        .catch(() => {
+                            // On error, proceed normally
+                            setRestaurant(data);
+                            fetchProductsForStore(data.id);
+                        });
+                } else {
+                    setRestaurant(data);
+                    fetchProductsForStore(data.id);
                 }
             });
-    }, [slug]);
+    }, [slug, router, searchParams]);
 
     if (!restaurant) return <div className="p-10 text-center">Carregando loja...</div>;
 
