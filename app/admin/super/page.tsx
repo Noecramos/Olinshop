@@ -89,7 +89,7 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua loja *${restaurant.name}* foi aprovada no OlinShop! 🚀\n\nAcesse seu painel administrativo:\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${restaurant.slug}\nSenha: ${finalPassword}\n\nBoas vendas!`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua loja *${restaurant.name}* foi aprovada no LojaKy! 🚀\n\nAcesse seu painel administrativo:\nLink: https://lojaky.noviapp.com.br/admin/${restaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${restaurant.slug}\nSenha: ${finalPassword}\n\nBoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
                 } else {
                     alert('Loja aprovada! Senha gerada: ' + finalPassword);
@@ -127,7 +127,7 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua senha de acesso ao painel do OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app/admin/${restaurant.slug}`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua senha de acesso ao painel do LojaKy foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://lojaky.noviapp.com.br/admin/${restaurant.slug}`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o parceiro?`)) {
                         window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
@@ -190,7 +190,7 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${user.name}! \n\nSua senha de acesso ao OlinShop foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://olinshop.vercel.app`;
+                    const message = `Olá, ${user.name}! \n\nSua senha de acesso ao LojaKy foi resetada. \n\n🔑 Nova Senha: *${data.password}*\n\nLink: https://lojaky.noviapp.com.br`;
 
                     if (confirm(`A nova senha é ${data.password}. Deseja enviá-la agora via WhatsApp para o usuário?`)) {
                         window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
@@ -312,7 +312,7 @@ export default function SuperAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br'}
+                        {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
                     </footer>
                 </div>
             </div>
@@ -327,7 +327,7 @@ export default function SuperAdmin() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Gestão Global</h1>
-                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de Lojas OlinShop</p>
+                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de Lojas LojaKy</p>
                     </div>
                     <button
                         onClick={handleLogout}
@@ -524,7 +524,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
-                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
                 </footer>
             </div>
         </div>

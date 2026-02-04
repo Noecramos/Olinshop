@@ -332,7 +332,7 @@ export default function StoreAdmin() {
                         <span>${totalSales.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                     </div>
 
-                    <p style="text-align: center; margin-top: 30px; font-size: 10px;">Sistema OlinShop • 2025</p>
+                    <p style="text-align: center; margin-top: 30px; font-size: 10px;">Sistema LojaKy • 2026</p>
                 </body>
             </html>
         `);
@@ -359,7 +359,7 @@ export default function StoreAdmin() {
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
                         { id: 'raspadinha', label: 'Raspadinha', icon: '🎲' },
                         { id: 'close_shop', label: 'Fecho de Loja', icon: '🔐', action: printDailySummary },
-                        { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja OlinShop' },
+                        { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja LojaKy' },
                         { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
                     ].map(item => (
                         item.link ? (
@@ -704,7 +704,7 @@ export default function StoreAdmin() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100">
-                    {config.footerText || '© 2025 Noviapp Mobile Apps • www.noviapp.com.br • OlindAki & OlinShop'}
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
                 </footer>
             </main>
         </div>
