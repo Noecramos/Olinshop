@@ -88,15 +88,6 @@ export default function AdminPortal() {
                         </div>
                     </div>
                 </div>
-
-
             </div>
-
-            {/* Footer */}
-            <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
-            </footer>
-        </div>
-        </div >
-    );
+            );
 }
