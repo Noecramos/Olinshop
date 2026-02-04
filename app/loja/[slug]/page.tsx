@@ -57,8 +57,8 @@ export default function StoreFront() {
                 // Only redirect if NOT coming from the location selector itself
                 const fromSelector = searchParams.get('from') === 'selector';
                 if (data.multistoreEnabled && data.email && !fromSelector) {
-                    // Check if there are multiple locations
-                    fetch(`/api/stores/siblings?email=${encodeURIComponent(data.email)}`)
+                    // Check if there are multiple locations of the same type/segment
+                    fetch(`/api/stores/siblings?email=${encodeURIComponent(data.email)}&type=${encodeURIComponent(data.type || '')}`)
                         .then(res => res.ok ? res.json() : [])
                         .then(siblings => {
                             if (siblings.length > 1) {

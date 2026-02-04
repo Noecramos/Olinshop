@@ -13,28 +13,46 @@ export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const email = searchParams.get('email');
+        const type = searchParams.get('type');
 
         if (!email) {
             return NextResponse.json({ error: 'Email parameter required' }, { status: 400, headers: corsHeaders });
         }
 
-        // Fetch all approved stores with this email
-        const { rows } = await sql`
-            SELECT 
-                id, name, slug, responsible_name as "responsibleName",
-                email, whatsapp, instagram,
-                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
-                latitude, longitude, delivery_radius as "deliveryRadius",
-                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
-                delivery_time as "deliveryTime", popular_title as "popularTitle",
-                welcome_subtitle as "welcomeSubtitle", approved, is_open as "isOpen",
-                multistore_enabled as "multistoreEnabled",
-                rating_sum as "ratingSum", rating_count as "ratingCount",
-                created_at as "createdAt", updated_at as "updatedAt"
-            FROM restaurants
-            WHERE email = ${email} AND approved = true
-            ORDER BY name ASC
-        `;
+        // Fetch all approved stores with this email AND same type/segment
+        const { rows } = type 
+            ? await sql`
+                SELECT 
+                    id, name, slug, responsible_name as "responsibleName",
+                    email, whatsapp, instagram,
+                    zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                    latitude, longitude, delivery_radius as "deliveryRadius",
+                    delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                    delivery_time as "deliveryTime", popular_title as "popularTitle",
+                    welcome_subtitle as "welcomeSubtitle", approved, is_open as "isOpen",
+                    multistore_enabled as "multistoreEnabled",
+                    rating_sum as "ratingSum", rating_count as "ratingCount",
+                    created_at as "createdAt", updated_at as "updatedAt"
+                FROM restaurants
+                WHERE email = ${email} AND type = ${type} AND approved = true
+                ORDER BY name ASC
+            `
+            : await sql`
+                SELECT 
+                    id, name, slug, responsible_name as "responsibleName",
+                    email, whatsapp, instagram,
+                    zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                    latitude, longitude, delivery_radius as "deliveryRadius",
+                    delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                    delivery_time as "deliveryTime", popular_title as "popularTitle",
+                    welcome_subtitle as "welcomeSubtitle", approved, is_open as "isOpen",
+                    multistore_enabled as "multistoreEnabled",
+                    rating_sum as "ratingSum", rating_count as "ratingCount",
+                    created_at as "createdAt", updated_at as "updatedAt"
+                FROM restaurants
+                WHERE email = ${email} AND approved = true
+                ORDER BY name ASC
+            `;
 
         return NextResponse.json(rows, { headers: corsHeaders });
 

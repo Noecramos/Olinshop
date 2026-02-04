@@ -31,7 +31,7 @@ export default function SelectLocation() {
 
             // If multistore is enabled and has an email, fetch sibling stores
             if (store.multistoreEnabled && store.email) {
-                const siblingRes = await fetch(`/api/stores/siblings?email=${encodeURIComponent(store.email)}`);
+                const siblingRes = await fetch(`/api/stores/siblings?email=${encodeURIComponent(store.email)}&type=${encodeURIComponent(store.type || '')}`);
                 if (siblingRes.ok) {
                     const siblings = await siblingRes.json();
                     // Include the main store in the list
