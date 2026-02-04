@@ -10,6 +10,7 @@ export default function SuperAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
+    const [groupedRestaurants, setGroupedRestaurants] = useState<{ [key: string]: any[] }>({});
     const [users, setUsers] = useState<any[]>([]);
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
     const [tab, setTab] = useState<'restaurants' | 'users' | 'config' | 'raspadinha'>('restaurants');
@@ -43,6 +44,17 @@ export default function SuperAdmin() {
             const res = await fetch(`/api/restaurants?all=true&t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             setRestaurants(data);
+
+            // Group restaurants by email (owner)
+            const grouped: { [key: string]: any[] } = {};
+            data.forEach((restaurant: any) => {
+                const ownerEmail = restaurant.email || 'sem-email';
+                if (!grouped[ownerEmail]) {
+                    grouped[ownerEmail] = [];
+                }
+                grouped[ownerEmail].push(restaurant);
+            });
+            setGroupedRestaurants(grouped);
         } catch (e) {
             console.error(e);
         }
@@ -448,70 +460,98 @@ export default function SuperAdmin() {
                     </div>
 
                     {tab === 'restaurants' ? (
-                        // Existing Restaurants Table...
-                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50 border-b border-gray-100">
-                                    <tr>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
-                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {restaurants.map((r: any) => (
-                                        <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
-                                            <td className="p-6">
-                                                <div className="flex items-center gap-4">
-                                                    {r.image ? (
-                                                        <img
-                                                            src={r.image}
-                                                            alt={r.name}
-                                                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
-                                                            {r.name?.charAt(0)?.toUpperCase()}
-                                                        </div>
+                        <div className="space-y-6 animate-fade-in">
+                            {Object.entries(groupedRestaurants).map(([ownerEmail, stores]) => (
+                                <div key={ownerEmail} className="bg-white rounded-2xl border-2 border-gray-100 shadow-lg overflow-hidden">
+                                    {/* Owner Header */}
+                                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                                                    👤 {stores[0]?.responsibleName || 'Proprietário'}
+                                                    {stores.length > 1 && (
+                                                        <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
+                                                            {stores.length} lojas
+                                                        </span>
                                                     )}
-                                                    <div>
-                                                        <div className="font-bold text-gray-900 group-hover:text-accent transition-colors">{r.name}</div>
-                                                        <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="p-6">
-                                                <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug}</code>
-                                            </td>
-                                            <td className="p-6">
-                                                <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
-                                            </td>
-                                            <td className="p-6 text-center">
-                                                <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
-                                                    {r.approved ? 'ATIVO' : 'PENDENTE'}
+                                                </h3>
+                                                <p className="text-sm text-gray-500 mt-1">📧 {ownerEmail}</p>
+                                            </div>
+                                            {stores.some((s: any) => s.multistoreEnabled) && (
+                                                <span className="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">
+                                                    🏪 Multiloja Ativa
                                                 </span>
-                                            </td>
-                                            <td className="p-6 text-right">
-                                                <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
-                                                    <button
-                                                        onClick={() => toggleMultistore(r)}
-                                                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${r.multistoreEnabled ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-purple-100'}`}
-                                                        title={r.multistoreEnabled ? 'Multiloja ATIVA' : 'Ativar Multiloja'}
-                                                    >
-                                                        🏪 {r.multistoreEnabled ? 'Multi' : '+'}
-                                                    </button>
-                                                    <button onClick={() => setEditingRestaurant(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">✏️</button>
-                                                    <button onClick={() => toggleApproval(r)} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${r.approved ? 'bg-amber-500' : 'bg-accent'} text-white`}>{r.approved ? 'Pausar' : 'Aprovar'}</button>
-                                                    <button onClick={() => resetPassword(r)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-xl transition-all">🔑</button>
-                                                    <button onClick={() => deleteRestaurant(r.id)} className="p-2.5 text-gray-400 hover:text-accent hover:bg-red-50 rounded-xl transition-all">🗑️</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Stores Table */}
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-gray-50 border-b border-gray-100">
+                                                <tr>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {stores.map((r: any) => (
+                                                    <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
+                                                        <td className="p-4">
+                                                            <div className="flex items-center gap-3">
+                                                                {r.image ? (
+                                                                    <img
+                                                                        src={r.image}
+                                                                        alt={r.name}
+                                                                        className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
+                                                                        {r.name?.charAt(0)?.toUpperCase()}
+                                                                    </div>
+                                                                )}
+                                                                <div>
+                                                                    <div className="font-bold text-gray-900 group-hover:text-accent transition-colors text-sm">{r.name}</div>
+                                                                    <div className="text-xs text-gray-400">{r.type}</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <code className="bg-blue-50 px-2 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug}</code>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <code className="bg-gray-100 px-2 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
+                                                                {r.approved ? 'ATIVO' : 'PENDENTE'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4 text-right">
+                                                            <div className="flex justify-end gap-2 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
+                                                                <button
+                                                                    onClick={() => toggleMultistore(r)}
+                                                                    className={`px-2 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${r.multistoreEnabled ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-purple-100'}`}
+                                                                    title={r.multistoreEnabled ? 'Multiloja ATIVA' : 'Ativar Multiloja'}
+                                                                >
+                                                                    🏪 {r.multistoreEnabled ? 'Multi' : '+'}
+                                                                </button>
+                                                                <button onClick={() => setEditingRestaurant(r)} className="p-1.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-lg transition-all text-sm">✏️</button>
+                                                                <button onClick={() => toggleApproval(r)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${r.approved ? 'bg-amber-500' : 'bg-accent'} text-white`}>{r.approved ? 'Pausar' : 'Aprovar'}</button>
+                                                                <button onClick={() => resetPassword(r)} className="p-1.5 text-gray-400 hover:text-accent hover:bg-blue-50 rounded-lg transition-all text-sm">🔑</button>
+                                                                <button onClick={() => deleteRestaurant(r.id)} className="p-1.5 text-gray-400 hover:text-accent hover:bg-red-50 rounded-lg transition-all text-sm">🗑️</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     ) : tab === 'users' ? (
                         <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
