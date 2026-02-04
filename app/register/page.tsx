@@ -183,7 +183,7 @@ export default function RegisterShop() {
                 <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
-                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinShop e expanda seu negócio.</p>
+                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao LojAky e expanda seu negócio.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -195,7 +195,7 @@ export default function RegisterShop() {
                                     id="name"
                                     name="name"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-accent"
-                                    placeholder="Ex: Olin Shop"
+                                    placeholder="Ex: Sua loja"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
                                     required
