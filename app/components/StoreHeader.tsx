@@ -50,9 +50,8 @@ export default function StoreHeader({ name = "LojaKy", image, banner, rating = "
                 style={{
                     backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || 'transparent'),
                     backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
-                    backgroundSize: 'contain',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
                 }}
             >
                 {/* Share Button - Absolute Positioned Left */}
