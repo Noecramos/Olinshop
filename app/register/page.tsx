@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function RegisterShop() {
+function RegisterForm() {
     const router = useRouter();
 
     const [config, setConfig] = useState({ footerText: '' });
@@ -460,5 +460,13 @@ export default function RegisterShop() {
                 </footer>
             </div>
         </div>
+    );
+}
+
+export default function RegisterShop() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex items-center justify-center"><div className="text-gray-500">Carregando...</div></div>}>
+            <RegisterForm />
+        </Suspense>
     );
 }
