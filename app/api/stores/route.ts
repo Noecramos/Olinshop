@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        multistore_enabled as "multistoreEnabled",
                         rating_sum as "ratingSum", rating_count as "ratingCount",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
@@ -54,6 +55,7 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        multistore_enabled as "multistoreEnabled",
                         rating_sum as "ratingSum", rating_count as "ratingCount",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 

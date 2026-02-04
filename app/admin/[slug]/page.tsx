@@ -29,7 +29,7 @@ export default function StoreAdmin() {
         if (!slug) return;
         try {
             // Use admin=true to bypass approval check for restaurant admin panel
-            const res = await fetch(`/api/stores?slug=${slug}&admin=true`);
+            const res = await fetch(`/api/stores?slug=${slug}&admin=true&_t=${Date.now()}`);
             if (res.ok) {
                 const data = await res.json();
                 setRestaurant(data);
