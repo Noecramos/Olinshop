@@ -24,6 +24,7 @@ export default function StoreAdmin() {
     const [catRefresh, setCatRefresh] = useState(0);
     const [loading, setLoading] = useState<string | null>(null);
     const [config, setConfig] = useState({ footerText: '' });
+    const [bookings, setBookings] = useState<any[]>([]);
 
     const fetchRestaurant = useCallback(async () => {
         if (!slug) return;
@@ -52,6 +53,19 @@ export default function StoreAdmin() {
         }
     }, [restaurant]);
 
+    const fetchBookings = useCallback(async () => {
+        if (!restaurant) return;
+        try {
+            const res = await fetch(`/api/bookings?restaurantId=${restaurant.id}&_t=${Date.now()}`);
+            if (res.ok) {
+                const data = await res.json();
+                setBookings(data);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }, [restaurant]);
+
     // Auth check
     useEffect(() => {
         const session = localStorage.getItem(`admin_session_${slug}`);
@@ -65,7 +79,11 @@ export default function StoreAdmin() {
     useEffect(() => {
         if (auth && restaurant) {
             fetchOrders();
-            const interval = setInterval(fetchOrders, 5000);
+            fetchBookings();
+            const interval = setInterval(() => {
+                fetchOrders();
+                fetchBookings();
+            }, 5000);
             return () => clearInterval(interval);
         }
     }, [auth, restaurant, fetchOrders]);
@@ -399,6 +417,7 @@ export default function StoreAdmin() {
                     {[
                         { id: 'dashboard', label: 'Início', icon: '📊' },
                         { id: 'products', label: 'Produtos', icon: '📦' },
+                        { id: 'bookings', label: 'Agendamentos', icon: '📅' },
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
                         { id: 'raspadinha', label: 'Raspadinha', icon: '🎲' },
                         { id: 'close_shop', label: 'Fecho de Loja', icon: '🔐', action: printDailySummary },
@@ -434,6 +453,7 @@ export default function StoreAdmin() {
                 {[
                     { id: 'dashboard', label: 'Início', icon: '📊' },
                     { id: 'products', label: 'Produtos', icon: '📦' },
+                    { id: 'bookings', label: 'Agenda', icon: '📅' },
                     { id: 'raspadinha', label: 'Sorte', icon: '🎲' },
                     { id: 'close_shop', label: 'Fecho', icon: '🔐', action: printDailySummary },
                     { id: 'settings', label: 'Ajustes', icon: '⚙️' }
@@ -703,6 +723,78 @@ export default function StoreAdmin() {
                                         ))
                                     )}
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'bookings' && (
+                        <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden animate-fade-in p-8">
+                            <div className="flex justify-between items-center mb-8">
+                                <h3 className="text-2xl font-black text-gray-900">📅 Agendamentos</h3>
+                                <button onClick={fetchBookings} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200">🔄</button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {bookings.map(booking => (
+                                    <div key={booking.id} className="border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all bg-gray-50/50">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p className="font-bold text-lg text-gray-900">{booking.customer_name}</p>
+                                                <p className="text-sm text-gray-500">{booking.booking_date} às {booking.booking_time}</p>
+                                            </div>
+                                            <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                        booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                {booking.status === 'pending' ? 'Pendente' :
+                                                    booking.status === 'confirmed' ? 'Confirmado' :
+                                                        booking.status === 'cancelled' ? 'Cancelado' :
+                                                            booking.status === 'completed' ? 'Concluído' : booking.status}
+                                            </span>
+                                        </div>
+                                        <div className="space-y-2 mb-4">
+                                            <p className="text-sm">📞 {booking.customer_phone}</p>
+                                            {booking.items && booking.items.map((item: any, i: number) => (
+                                                <p key={i} className="text-sm font-medium">✂️ {item.quantity}x {item.product_name}</p>
+                                            ))}
+                                            {booking.notes && <p className="text-xs bg-yellow-50 p-2 rounded text-yellow-800">📝 {booking.notes}</p>}
+                                        </div>
+                                        <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
+                                            <p className="font-bold text-accent">R$ {booking.total_price}</p>
+                                            <div className="flex gap-2">
+                                                {booking.status === 'pending' && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            await fetch('/api/bookings', { method: 'PUT', body: JSON.stringify({ id: booking.id, status: 'confirmed' }) });
+                                                            fetchBookings();
+                                                        }}
+                                                        className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600"
+                                                    >
+                                                        Confirmar
+                                                    </button>
+                                                )}
+                                                {booking.status !== 'cancelled' && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm('Cancelar agendamento?')) {
+                                                                await fetch('/api/bookings', { method: 'PUT', body: JSON.stringify({ id: booking.id, status: 'cancelled' }) });
+                                                                fetchBookings();
+                                                            }
+                                                        }}
+                                                        className="px-3 py-1 bg-red-100 text-red-500 rounded-lg text-xs font-bold hover:bg-red-200"
+                                                    >
+                                                        Cancelar
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {bookings.length === 0 && (
+                                    <div className="col-span-full text-center py-20 text-gray-400">
+                                        Nenhum agendamento encontrado
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

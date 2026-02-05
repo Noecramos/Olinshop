@@ -8,6 +8,7 @@ import CategoryNav from "../../components/CategoryNav";
 import ProductCard from "../../components/ProductCard";
 import FloatingCart from "../../components/FloatingCart";
 import ProductModal from "../../components/ProductModal";
+import BookingModal from "../../components/BookingModal";
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +24,8 @@ export default function StoreFront() {
     const [toast, setToast] = useState<string | null>(null);
     const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [bookingServices, setBookingServices] = useState<any[]>([]);
 
     // Detect 'produto' query param to auto-open modal (Deep Linking)
     useEffect(() => {
@@ -104,6 +107,22 @@ export default function StoreFront() {
         if (!selectedProduct) return;
 
         const { quantity = 1, ...variants } = data;
+
+        // Check for booking
+        const isService = selectedProduct.isService || selectedProduct.requiresBooking;
+        const shouldBook = isService || (restaurant.bookingMode === 'always');
+
+        if (shouldBook) {
+            setBookingServices([{
+                id: selectedProduct.id,
+                name: selectedProduct.name,
+                price: parseFloat(selectedProduct.price),
+                duration: selectedProduct.serviceDuration
+            }]);
+            setIsBookingModalOpen(true);
+            setSelectedProduct(null);
+            return;
+        }
 
         // Add item to cart with quantity
         addToCart({ ...selectedProduct, selectedVariants: variants, quantity });
@@ -216,6 +235,13 @@ export default function StoreFront() {
                     onConfirm={handleConfirmVariants}
                 />
             )}
+
+            <BookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => setIsBookingModalOpen(false)}
+                restaurant={restaurant}
+                selectedServices={bookingServices}
+            />
 
             {toast && (
                 <div className="animate-fade-in" style={{

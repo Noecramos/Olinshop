@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
                 id, restaurant_id as "restaurantId", name, price, category, 
                 image, description, variants, weight, height, width, length,
                 track_stock, stock_quantity,
+                is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration",
                 created_at as "createdAt"
             FROM products 
             WHERE restaurant_id = ${restaurantId} 
@@ -41,16 +42,24 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { restaurantId, name, price, category, image, description, variants, weight, height, width, length, trackStock, stockQuantity } = body;
+        const { restaurantId, name, price, category, image, description, variants, weight, height, width, length, trackStock, stockQuantity, isService, requiresBooking, serviceDuration } = body;
 
         if (!restaurantId || !name || !price) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         const { rows } = await sql`
-            INSERT INTO products (restaurant_id, name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity)
-            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${JSON.stringify(variants)}, ${weight || 0.5}, ${height || 15}, ${width || 15}, ${length || 15}, ${trackStock || false}, ${stockQuantity || 0})
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity
+            INSERT INTO products (
+                restaurant_id, name, price, category, image, description, variants, 
+                weight, height, width, length, track_stock, stock_quantity,
+                is_service, requires_booking, service_duration
+            )
+            VALUES (
+                ${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${JSON.stringify(variants)}, 
+                ${weight || 0.5}, ${height || 15}, ${width || 15}, ${length || 15}, ${trackStock || false}, ${stockQuantity || 0},
+                ${isService || false}, ${requiresBooking || false}, ${serviceDuration || 30}
+            )
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity, is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration"
         `;
 
         return NextResponse.json(rows[0]);
@@ -64,7 +73,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
-        const { id, name, price, category, image, description, variants, weight, height, width, length, trackStock, stockQuantity } = body;
+        const { id, name, price, category, image, description, variants, weight, height, width, length, trackStock, stockQuantity, isService, requiresBooking, serviceDuration } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -77,9 +86,10 @@ export async function PUT(req: NextRequest) {
                 variants = ${JSON.stringify(variants)}, 
                 weight = ${weight}, height = ${height}, width = ${width}, length = ${length},
                 track_stock = ${trackStock || false}, stock_quantity = ${stockQuantity || 0},
+                is_service = ${isService || false}, requires_booking = ${requiresBooking || false}, service_duration = ${serviceDuration || 30},
                 updated_at = NOW()
             WHERE id = ${id}
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity, is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration"
         `;
 
         return NextResponse.json(rows[0]);

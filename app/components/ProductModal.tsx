@@ -164,7 +164,9 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                         {item.track_stock && item.stock_quantity <= 0 && (!parsedVariants || parsedVariants.length === 0)
                             ? 'Produto Esgotado'
                             : isComplete()
-                                ? `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho`
+                                ? (item.requiresBooking || item.isService
+                                    ? '📅 Agendar Horário'
+                                    : `Adicionar ${quantity} ${quantity > 1 ? 'itens' : 'item'} ao Carrinho`)
                                 : 'Selecione as opções'}
                     </button>
                 </div>
