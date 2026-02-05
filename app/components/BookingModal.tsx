@@ -131,7 +131,7 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                 <div className="sticky top-0 bg-gradient-to-r from-accent to-purple-600 text-white p-6 rounded-t-3xl">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-2xl font-black">📅 Agendar Horário</h2>
+                            <h2 className="text-2xl font-black">{isAdmin ? '🔒 Bloquear Horário' : '📅 Agendar Horário'}</h2>
                             <p className="text-sm opacity-90 mt-1">{restaurant?.name}</p>
                         </div>
                         <button onClick={onClose} className="text-white hover:bg-white/20 p-2 rounded-full transition-all">
@@ -145,62 +145,74 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                     {step === 1 && (
                         <div className="space-y-6">
                             {/* Selected Services */}
-                            <div className="bg-gray-50 rounded-2xl p-4">
-                                <h3 className="font-bold text-gray-900 mb-3">Serviços Selecionados:</h3>
-                                {selectedServices.map((service, index) => (
-                                    <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-                                        <div>
-                                            <p className="font-bold text-sm">{service.name}</p>
-                                            <p className="text-xs text-gray-500">{service.duration || restaurant?.booking_duration || 30} min</p>
+                            {/* Selected Services */}
+                            {!isAdmin ? (
+                                <div className="bg-gray-50 rounded-2xl p-4">
+                                    <h3 className="font-bold text-gray-900 mb-3">Serviços Selecionados:</h3>
+                                    {selectedServices.map((service, index) => (
+                                        <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
+                                            <div>
+                                                <p className="font-bold text-sm">{service.name}</p>
+                                                <p className="text-xs text-gray-500">{service.duration || restaurant?.booking_duration || 30} min</p>
+                                            </div>
+                                            <p className="font-bold text-accent">R$ {service.price.toFixed(2)}</p>
                                         </div>
-                                        <p className="font-bold text-accent">R$ {service.price.toFixed(2)}</p>
+                                    ))}
+                                    <div className="flex justify-between items-center pt-3 mt-3 border-t-2 border-gray-300">
+                                        <p className="font-black text-gray-900">Total:</p>
+                                        <p className="font-black text-xl text-accent">R$ {totalPrice.toFixed(2)}</p>
                                     </div>
-                                ))}
-                                <div className="flex justify-between items-center pt-3 mt-3 border-t-2 border-gray-300">
-                                    <p className="font-black text-gray-900">Total:</p>
-                                    <p className="font-black text-xl text-accent">R$ {totalPrice.toFixed(2)}</p>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        💳 Sinal de {depositPercent}%: <span className="font-bold">R$ {depositAmount.toFixed(2)}</span>
+                                    </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">
-                                    💳 Sinal de {depositPercent}%: <span className="font-bold">R$ {depositAmount.toFixed(2)}</span>
-                                </p>
-                            </div>
+                            ) : (
+                                <div className="bg-red-50 rounded-2xl p-4 border border-red-100">
+                                    <h3 className="font-bold text-red-900">🔒 Bloqueio de Agenda</h3>
+                                    <p className="text-sm text-red-700 mt-1">Selecione uma data e horário para tornar indisponível.</p>
+                                </div>
+                            )}
 
                             {/* Form Fields */}
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">Nome Completo *</label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
-                                        placeholder="Seu nome"
-                                        required
-                                    />
-                                </div>
+                                {!isAdmin && (
+                                    <>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-2">Nome Completo *</label>
+                                            <input
+                                                type="text"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
+                                                placeholder="Seu nome"
+                                                required
+                                            />
+                                        </div>
 
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">WhatsApp *</label>
-                                    <input
-                                        type="tel"
-                                        value={formData.phone}
-                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                        className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
-                                        placeholder="(81) 99999-9999"
-                                        required
-                                    />
-                                </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-2">WhatsApp *</label>
+                                            <input
+                                                type="tel"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
+                                                placeholder="(81) 99999-9999"
+                                                required
+                                            />
+                                        </div>
 
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">E-mail (opcional)</label>
-                                    <input
-                                        type="email"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
-                                        placeholder="seu@email.com"
-                                    />
-                                </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-2">E-mail (opcional)</label>
+                                            <input
+                                                type="email"
+                                                value={formData.email}
+                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-accent outline-none"
+                                                placeholder="seu@email.com"
+                                            />
+                                        </div>
+                                    </>
+                                )}
 
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-2">Data *</label>
@@ -256,7 +268,7 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                                 disabled={!formData.name || !formData.phone || !formData.date || !formData.time || loading}
                                 className="w-full bg-gradient-to-r from-accent to-purple-600 text-white font-black py-4 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'Processando...' : 'Continuar para Pagamento →'}
+                                {loading ? 'Processando...' : (isAdmin ? '💾 Salvar Bloqueio' : 'Continuar para Pagamento →')}
                             </button>
                         </div>
                     )}
