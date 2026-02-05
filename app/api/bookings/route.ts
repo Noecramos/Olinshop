@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: 'Restaurant ID required' }, { status: 400, headers: corsHeaders });
         }
 
-        let query = sql`
+        let queryStr = `
             SELECT 
                 b.*,
                 json_agg(
@@ -39,20 +39,24 @@ export async function GET(req: NextRequest) {
                 ) as items
             FROM bookings b
             LEFT JOIN booking_items bi ON b.id = bi.booking_id
-            WHERE b.restaurant_id = ${restaurantId}
+            WHERE b.restaurant_id = $1
         `;
 
+        const params: any[] = [restaurantId];
+
         if (date) {
-            query = sql`${query} AND b.booking_date = ${date}`;
+            params.push(date);
+            queryStr += ` AND b.booking_date = $${params.length}`;
         }
 
         if (status) {
-            query = sql`${query} AND b.status = ${status}`;
+            params.push(status);
+            queryStr += ` AND b.status = $${params.length}`;
         }
 
-        query = sql`${query} GROUP BY b.id ORDER BY b.booking_date DESC, b.booking_time DESC`;
+        queryStr += ` GROUP BY b.id ORDER BY b.booking_date DESC, b.booking_time DESC`;
 
-        const { rows } = await query;
+        const { rows } = await sql.query(queryStr, params);
 
         return NextResponse.json(rows, { headers: corsHeaders });
 
