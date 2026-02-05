@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
                 image, description, variants, weight, height, width, length,
                 track_stock, stock_quantity,
                 is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration",
+                is_sold_by_weight as "isSoldByWeight",
                 created_at as "createdAt"
             FROM products 
             WHERE restaurant_id = ${restaurantId} 
