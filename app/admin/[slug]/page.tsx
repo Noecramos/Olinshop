@@ -25,7 +25,7 @@ export default function StoreAdmin() {
     const [catRefresh, setCatRefresh] = useState(0);
     const [loading, setLoading] = useState<string | null>(null);
     const [config, setConfig] = useState({ footerText: '' });
-    const [config, setConfig] = useState({ footerText: '' });
+
     const [bookings, setBookings] = useState<any[]>([]);
     const [showBlock, setShowBlock] = useState(false);
 
@@ -217,6 +217,50 @@ export default function StoreAdmin() {
             alert('Erro ao editar pedido');
         } finally {
             setLoading(null);
+        }
+    };
+
+    const updateBookingStatus = async (id: string, status: string, booking?: any) => {
+        if (!confirm('Deseja alterar o status do agendamento?')) return;
+
+        // Open WhatsApp window immediately if confirming (to bypass popup blockers)
+        let waWindow: Window | null = null;
+        if (status === 'confirmed' && booking) {
+            waWindow = window.open('', '_blank');
+        }
+
+        try {
+            const res = await fetch('/api/bookings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status })
+            });
+
+            if (res.ok) {
+                fetchBookings();
+
+                // Navigate the popup to WhatsApp
+                if (status === 'confirmed' && booking && waWindow) {
+                    const phone = (booking.customer_phone || '').replace(/\D/g, '');
+                    if (phone) {
+                        const cleanPhone = phone.startsWith('55') ? phone : `55${phone}`;
+                        const msg = `Olá ${booking.customer_name || ''}, seu agendamento na ${restaurant?.name} para ${new Date(booking.booking_date).toLocaleDateString()} às ${booking.booking_time} foi CONFIRMADO! ✅`;
+                        waWindow.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+                    } else {
+                        waWindow.close();
+                        alert('Telefone do cliente inválido para WhatsApp');
+                    }
+                } else if (waWindow) {
+                    waWindow.close();
+                }
+
+            } else {
+                if (waWindow) waWindow.close();
+                alert('Erro ao atualizar status');
+            }
+        } catch (error) {
+            if (waWindow) waWindow.close();
+            alert('Erro de conexão');
         }
     };
 
@@ -854,13 +898,13 @@ export default function StoreAdmin() {
         </div>
     )
 }
-                </div >
+            </div >
 
     {/* Footer */ }
     < footer className = "w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100" >
         { config.footerText || '© Noviapp Mobile Apps • LojAky®' }
-                </footer >
-            </main >
-        </div >
+            </footer >
+        </main >
+    </div >
     );
 }
