@@ -265,7 +265,7 @@ export async function PUT(req: NextRequest) {
         }, { status: 500, headers: corsHeaders });
     }
 }
-}
+
 
 // DELETE - Permanently delete booking
 export async function DELETE(req: NextRequest) {
