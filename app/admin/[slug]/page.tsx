@@ -870,7 +870,7 @@ export default function StoreAdmin() {
                         isOpen={showBlock}
                         onClose={() => { setShowBlock(false); fetchBookings(); }}
                         restaurant={restaurant}
-                        selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]}
+                        selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 30 }]}
                         isAdmin={true}
                     />
 

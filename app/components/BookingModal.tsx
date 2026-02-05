@@ -232,7 +232,17 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
 
                                 {formData.date && (
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-2">Horário *</label>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="block text-sm font-bold text-gray-700">Horário *</label>
+                                            {isAdmin && availableSlots.length > 0 && (
+                                                <button
+                                                    onClick={() => setSelectedTimes(availableSlots)}
+                                                    className="text-xs text-accent font-bold hover:underline"
+                                                >
+                                                    Bloquear Dia Inteiro (Selecionar Tudo)
+                                                </button>
+                                            )}
+                                        </div>
                                         {availableSlots.length > 0 ? (
                                             <div className="grid grid-cols-4 gap-2">
                                                 {availableSlots.map((slot) => (
@@ -248,8 +258,8 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                                                             }
                                                         }}
                                                         className={`p-3 rounded-xl font-bold text-sm transition-all ${(isAdmin ? selectedTimes.includes(slot) : formData.time === slot)
-                                                                ? 'bg-accent text-white'
-                                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                            ? 'bg-accent text-white'
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                             }`}
                                                     >
                                                         {slot}
