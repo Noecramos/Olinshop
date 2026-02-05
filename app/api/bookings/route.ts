@@ -93,17 +93,31 @@ export async function POST(req: NextRequest) {
         }
 
         // Check if time slot is available
+        // Check if time slot is available (Overlap Logic)
         const { rows: existingBookings } = await sql`
-            SELECT * FROM bookings
+            SELECT booking_time, duration FROM bookings
             WHERE restaurant_id = ${restaurantId}
             AND booking_date = ${bookingDate}
-            AND booking_time = ${bookingTime}
             AND status NOT IN ('cancelled', 'completed')
         `;
 
-        if (existingBookings.length > 0) {
+        const toMinutes = (time: string) => {
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const newStart = toMinutes(bookingTime);
+        const newEnd = newStart + (parseInt(duration) || 30);
+
+        const hasOverlap = existingBookings.some((b: any) => {
+            const bStart = toMinutes(b.booking_time);
+            const bEnd = bStart + (b.duration || 30);
+            return (newStart < bEnd && newEnd > bStart);
+        });
+
+        if (hasOverlap) {
             return NextResponse.json({
-                error: 'Time slot already booked',
+                error: 'Time slot overlaps with an existing booking',
                 available: false
             }, { status: 409, headers: corsHeaders });
         }

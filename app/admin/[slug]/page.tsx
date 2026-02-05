@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import BookingModal from "../../components/BookingModal";
 import { StatusPieChart, SalesChart, TopProductsChart } from "@/app/components/admin/Charts";
 import ProductForm from "@/app/components/admin/ProductForm";
 import CategoryForm from "@/app/components/admin/CategoryForm";
@@ -24,7 +25,9 @@ export default function StoreAdmin() {
     const [catRefresh, setCatRefresh] = useState(0);
     const [loading, setLoading] = useState<string | null>(null);
     const [config, setConfig] = useState({ footerText: '' });
+    const [config, setConfig] = useState({ footerText: '' });
     const [bookings, setBookings] = useState<any[]>([]);
+    const [showBlock, setShowBlock] = useState(false);
 
     const fetchRestaurant = useCallback(async () => {
         if (!slug) return;
@@ -731,7 +734,10 @@ export default function StoreAdmin() {
                         <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden animate-fade-in p-8">
                             <div className="flex justify-between items-center mb-8">
                                 <h3 className="text-2xl font-black text-gray-900">📅 Agendamentos</h3>
-                                <button onClick={fetchBookings} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200">🔄</button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setShowBlock(true)} className="px-4 py-2 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200">🔒 Bloquear Horário</button>
+                                    <button onClick={fetchBookings} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200">🔄</button>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -743,8 +749,8 @@ export default function StoreAdmin() {
                                                 <p className="text-sm text-gray-500">{booking.booking_date} às {booking.booking_time}</p>
                                             </div>
                                             <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                        booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                                                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
                                                 }`}>
                                                 {booking.status === 'pending' ? 'Pendente' :
                                                     booking.status === 'confirmed' ? 'Confirmado' :
@@ -764,10 +770,7 @@ export default function StoreAdmin() {
                                             <div className="flex gap-2">
                                                 {booking.status === 'pending' && (
                                                     <button
-                                                        onClick={async () => {
-                                                            await fetch('/api/bookings', { method: 'PUT', body: JSON.stringify({ id: booking.id, status: 'confirmed' }) });
-                                                            fetchBookings();
-                                                        }}
+                                                        onClick={() => updateBookingStatus(booking.id, 'confirmed', booking)}
                                                         className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600"
                                                     >
                                                         Confirmar
@@ -775,12 +778,7 @@ export default function StoreAdmin() {
                                                 )}
                                                 {booking.status !== 'cancelled' && (
                                                     <button
-                                                        onClick={async () => {
-                                                            if (confirm('Cancelar agendamento?')) {
-                                                                await fetch('/api/bookings', { method: 'PUT', body: JSON.stringify({ id: booking.id, status: 'cancelled' }) });
-                                                                fetchBookings();
-                                                            }
-                                                        }}
+                                                        onClick={() => updateBookingStatus(booking.id, 'cancelled', booking)}
                                                         className="px-3 py-1 bg-red-100 text-red-500 rounded-lg text-xs font-bold hover:bg-red-200"
                                                     >
                                                         Cancelar
@@ -799,49 +797,70 @@ export default function StoreAdmin() {
                         </div>
                     )}
 
-                    {tab === 'products' && (
-                        <div className="space-y-12 animate-fade-in">
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
-                                <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
-                            </div>
-
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
-                                <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
-                            </div>
-                        </div>
-                    )}
-
-                    {tab === 'raspadinha' && (
-                        <div className="animate-fade-in flex justify-center py-10">
-                            <RaspadinhaValidator />
-                        </div>
-                    )}
-
-                    {tab === 'settings' && (
-                        <div className="animate-fade-in">
-                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                                <StoreSettings
-                                    restaurant={restaurant}
-                                    onUpdate={(data: any) => {
-                                        if (data?.slug && data.slug !== slug) {
-                                            router.replace(`/admin/${data.slug}`);
-                                        } else {
-                                            fetchRestaurant();
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    )}
+                                    )}
                 </div>
-
-                {/* Footer */}
-                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100">
-                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
-                </footer>
-            </main>
         </div>
+                        </div >
+                    )
+}
+
+<BookingModal
+    isOpen={showBlock}
+    onClose={() => { setShowBlock(false); fetchBookings(); }}
+    restaurant={restaurant}
+    selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]}
+    isAdmin={true}
+/>
+
+{
+    tab === 'products' && (
+        <div className="space-y-12 animate-fade-in">
+            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
+                <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
+            </div>
+
+            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
+                <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
+            </div>
+        </div>
+    )
+}
+
+{
+    tab === 'raspadinha' && (
+        <div className="animate-fade-in flex justify-center py-10">
+            <RaspadinhaValidator />
+        </div>
+    )
+}
+
+{
+    tab === 'settings' && (
+        <div className="animate-fade-in">
+            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                <StoreSettings
+                    restaurant={restaurant}
+                    onUpdate={(data: any) => {
+                        if (data?.slug && data.slug !== slug) {
+                            router.replace(`/admin/${data.slug}`);
+                        } else {
+                            fetchRestaurant();
+                        }
+                    }}
+                />
+            </div>
+        </div>
+    )
+}
+                </div >
+
+    {/* Footer */ }
+    < footer className = "w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100" >
+        { config.footerText || '© Noviapp Mobile Apps • LojAky®' }
+                </footer >
+            </main >
+        </div >
     );
 }

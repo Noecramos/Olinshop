@@ -12,9 +12,10 @@ interface BookingModalProps {
         price: number;
         duration?: number;
     }>;
+    isAdmin?: boolean;
 }
 
-export default function BookingModal({ isOpen, onClose, restaurant, selectedServices }: BookingModalProps) {
+export default function BookingModal({ isOpen, onClose, restaurant, selectedServices, isAdmin }: BookingModalProps) {
     const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Confirmation
     const [formData, setFormData] = useState({
         name: '',
@@ -24,6 +25,13 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
         time: '',
         notes: ''
     });
+
+    // Admin Pre-fill
+    useEffect(() => {
+        if (isAdmin && isOpen) {
+            setFormData(prev => ({ ...prev, name: 'BLOQUEIO DE AGENDA', phone: '00000000000', email: 'bloqueio@admin.com', notes: 'Horário bloqueado pelo estabelecimento' }));
+        }
+    }, [isAdmin, isOpen]);
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [bookingResult, setBookingResult] = useState<any>(null);
@@ -79,7 +87,12 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
 
             if (res.ok) {
                 setBookingResult(data);
-                setStep(2); // Go to payment step
+                if (isAdmin) {
+                    alert('Bloqueio realizado com sucesso!');
+                    onClose();
+                } else {
+                    setStep(2); // Go to payment step
+                }
             } else {
                 alert(data.error || 'Erro ao criar agendamento');
             }
@@ -211,8 +224,8 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                                                         key={slot}
                                                         onClick={() => setFormData({ ...formData, time: slot })}
                                                         className={`p-3 rounded-xl font-bold text-sm transition-all ${formData.time === slot
-                                                                ? 'bg-accent text-white'
-                                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                            ? 'bg-accent text-white'
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                             }`}
                                                     >
                                                         {slot}
