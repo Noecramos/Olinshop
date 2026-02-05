@@ -818,7 +818,7 @@ export default function StoreAdmin() {
                                                 <div>
                                                     <p className="font-bold text-gray-900">{booking.customer_name}</p>
                                                     <p className="text-xs text-gray-500">
-                                                        {booking.booking_date.split('-').reverse().join('/')} às {booking.booking_time}
+                                                        {new Date(booking.booking_date).toLocaleDateString('pt-BR')} às {booking.booking_time?.substring(0, 5)}
                                                     </p>
                                                 </div>
                                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
