@@ -240,16 +240,18 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
                         <div className="flex gap-4">
                             <div className="flex-1">
-                                <div className="flex justify-between items-center mb-1">
-                                    <label htmlFor="productPrice" className="text-xs font-semibold text-gray-500 uppercase ml-1">{form.isSoldByWeight ? 'Preço por Kg (R$)' : 'Preço (R$)'}</label>
-                                    <label className="flex items-center gap-1 cursor-pointer">
+                                <div className="flex justify-between items-end mb-1">
+                                    <label htmlFor="productPrice" className="text-xs font-semibold text-gray-500 uppercase ml-1">
+                                        {form.isSoldByWeight ? 'Preço (Kg)' : 'Preço'}
+                                    </label>
+                                    <label className="flex items-center gap-1.5 cursor-pointer bg-gray-100 px-2 py-0.5 rounded-lg hover:bg-gray-200 transition-colors">
                                         <input
                                             type="checkbox"
-                                            className="w-3 h-3 rounded text-accent focus:ring-accent"
+                                            className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-gray-300"
                                             checked={form.isSoldByWeight}
                                             onChange={e => setForm({ ...form, isSoldByWeight: e.target.checked })}
                                         />
-                                        <span className="text-[9px] font-bold text-gray-500 uppercase">Por Peso/Granel</span>
+                                        <span className="text-[10px] font-bold text-gray-600 uppercase">Peso/Granel</span>
                                     </label>
                                 </div>
                                 <input
