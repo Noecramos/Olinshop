@@ -177,8 +177,8 @@ export async function POST(req: NextRequest) {
                                         });
 
                                         if (option && typeof option === 'object') {
-                                            const currentStock = parseInt(option.stock) || 0;
-                                            option.stock = Math.max(0, currentStock - (item.quantity || 1));
+                                            const currentStock = parseFloat(option.stock.toString()) || 0;
+                                            option.stock = Math.max(0, parseFloat((currentStock - (item.quantity || 1)).toFixed(3)));
                                             changed = true;
                                         }
                                     }
@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
                         await sql`
                             UPDATE products 
                             SET 
-                                stock_quantity = ${Math.max(0, parseInt(newStockQuantity.toString()))}, 
+                                stock_quantity = ${Math.max(0, parseFloat(newStockQuantity.toFixed(3)))}, 
                                 variants = ${JSON.stringify(updatedVariants)}::jsonb,
                                 updated_at = NOW()
                             WHERE id = ${productId}

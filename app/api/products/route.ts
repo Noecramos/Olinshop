@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
                 image, description, variants, weight, height, width, length,
                 track_stock, stock_quantity,
                 is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration",
+                is_sold_by_weight as "isSoldByWeight",
                 created_at as "createdAt"
             FROM products 
             WHERE restaurant_id = ${restaurantId} 
@@ -52,14 +53,14 @@ export async function POST(req: NextRequest) {
             INSERT INTO products (
                 restaurant_id, name, price, category, image, description, variants, 
                 weight, height, width, length, track_stock, stock_quantity,
-                is_service, requires_booking, service_duration
+                is_service, requires_booking, service_duration, is_sold_by_weight
             )
             VALUES (
                 ${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${JSON.stringify(variants)}, 
                 ${weight || 0.5}, ${height || 15}, ${width || 15}, ${length || 15}, ${trackStock || false}, ${stockQuantity || 0},
-                ${isService || false}, ${requiresBooking || false}, ${serviceDuration || 30}
+                ${isService || false}, ${requiresBooking || false}, ${serviceDuration || 30}, ${body.isSoldByWeight || false}
             )
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity, is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration"
+            RETURNING *, is_sold_by_weight as "isSoldByWeight"
         `;
 
         return NextResponse.json(rows[0]);
@@ -87,9 +88,10 @@ export async function PUT(req: NextRequest) {
                 weight = ${weight}, height = ${height}, width = ${width}, length = ${length},
                 track_stock = ${trackStock || false}, stock_quantity = ${stockQuantity || 0},
                 is_service = ${isService || false}, requires_booking = ${requiresBooking || false}, service_duration = ${serviceDuration || 30},
+                is_sold_by_weight = ${body.isSoldByWeight || false},
                 updated_at = NOW()
             WHERE id = ${id}
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, variants, weight, height, width, length, track_stock, stock_quantity, is_service as "isService", requires_booking as "requiresBooking", service_duration as "serviceDuration"
+            RETURNING *, is_sold_by_weight as "isSoldByWeight"
         `;
 
         return NextResponse.json(rows[0]);

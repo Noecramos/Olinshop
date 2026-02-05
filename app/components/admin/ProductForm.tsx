@@ -26,7 +26,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         stockQuantity: "0",
         isService: false,
         requiresBooking: false,
-        serviceDuration: "60"
+        serviceDuration: "60",
+        isSoldByWeight: false
     });
     const [variants, setVariants] = useState<any[]>([]); // [{ name: "Tamanho", options: ["P", "M", "G"] }]
 
@@ -116,12 +117,14 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             height: parseFloat(form.height) || 15,
             width: parseFloat(form.width) || 15,
             length: parseFloat(form.length) || 15,
-            length: parseFloat(form.length) || 15,
             trackStock: form.trackStock,
-            stockQuantity: parseInt(form.stockQuantity) || 0,
+            stockQuantity: form.isSoldByWeight ? (parseFloat(form.stockQuantity) || 0) : (parseInt(form.stockQuantity) || 0),
             isService: form.isService,
             requiresBooking: form.requiresBooking,
-            serviceDuration: parseInt(form.serviceDuration) || 60
+            isService: form.isService,
+            requiresBooking: form.requiresBooking,
+            serviceDuration: parseInt(form.serviceDuration) || 60,
+            isSoldByWeight: form.isSoldByWeight
         };
         if (editingId) body.id = editingId;
 
@@ -166,7 +169,9 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             stockQuantity: prod.stock_quantity?.toString() || "0",
             isService: prod.is_service || false,
             requiresBooking: prod.requires_booking || false,
-            serviceDuration: prod.service_duration?.toString() || "60"
+            requiresBooking: prod.requires_booking || false,
+            serviceDuration: prod.service_duration?.toString() || "60",
+            isSoldByWeight: prod.isSoldByWeight || prod.is_sold_by_weight || false
         });
         setVariants(prod.variants || []);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -174,7 +179,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
     const handleCancel = () => {
         setEditingId(null);
-        setForm({ name: "", description: "", price: "", categoryId: categories[0]?.id || "", image: "", weight: "0.5", height: "15", width: "15", length: "15", trackStock: false, stockQuantity: "0" });
+        setForm({ name: "", description: "", price: "", categoryId: categories[0]?.id || "", image: "", weight: "0.5", height: "15", width: "15", length: "15", trackStock: false, stockQuantity: "0", isService: false, requiresBooking: false, serviceDuration: "60", isSoldByWeight: false });
         setVariants([]);
     };
 
@@ -235,7 +240,18 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
                         <div className="flex gap-4">
                             <div className="flex-1">
-                                <label htmlFor="productPrice" className="text-xs font-semibold text-gray-500 uppercase ml-1">Preço (R$)</label>
+                                <div className="flex justify-between items-center mb-1">
+                                    <label htmlFor="productPrice" className="text-xs font-semibold text-gray-500 uppercase ml-1">{form.isSoldByWeight ? 'Preço por Kg (R$)' : 'Preço (R$)'}</label>
+                                    <label className="flex items-center gap-1 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="w-3 h-3 rounded text-accent focus:ring-accent"
+                                            checked={form.isSoldByWeight}
+                                            onChange={e => setForm({ ...form, isSoldByWeight: e.target.checked })}
+                                        />
+                                        <span className="text-[9px] font-bold text-gray-500 uppercase">Por Peso/Granel</span>
+                                    </label>
+                                </div>
                                 <input
                                     id="productPrice"
                                     name="productPrice"
@@ -409,13 +425,13 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             {form.trackStock && (
                                 <div className="space-y-4">
                                     <div>
-                                        <label htmlFor="stockQuantity" className="text-xs font-bold text-gray-400 uppercase ml-1">Quantidade Total</label>
+                                        <label htmlFor="stockQuantity" className="text-xs font-bold text-gray-400 uppercase ml-1">{form.isSoldByWeight ? 'Quantidade Total (Kg/g)' : 'Quantidade Total'}</label>
                                         <input
-                                            type="number"
+                                            type="number" step={form.isSoldByWeight ? "0.001" : "1"}
                                             id="stockQuantity"
                                             name="stockQuantity"
                                             className="w-full p-2.5 text-sm bg-white rounded-lg border border-orange-100 outline-none focus:border-orange-500"
-                                            placeholder="Geral do produto"
+                                            placeholder={form.isSoldByWeight ? "Ex: 20.5" : "Geral do produto"}
                                             value={form.stockQuantity}
                                             onChange={e => setForm({ ...form, stockQuantity: e.target.value })}
                                         />
