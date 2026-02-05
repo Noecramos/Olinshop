@@ -153,11 +153,18 @@ export async function POST(req: NextRequest) {
 
         // Create booking items
         for (const item of items) {
+            let pid = item.productId;
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(pid);
+
+            if (pid === 'block' || !isUUID) {
+                pid = null;
+            }
+
             await sql`
                 INSERT INTO booking_items (
                     booking_id, product_id, product_name, product_price, quantity
                 ) VALUES (
-                    ${booking.id}, ${item.productId}, ${item.productName}, ${item.productPrice}, ${item.quantity}
+                    ${booking.id}, ${pid}, ${item.productName}, ${item.productPrice}, ${item.quantity}
                 )
             `;
         }
