@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Get day of week
-        const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'lowercase' });
+        const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
         const bookingHours = restaurant.booking_hours || {};
         const dayHours = bookingHours[dayOfWeek] || [];
 
