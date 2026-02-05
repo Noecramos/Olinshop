@@ -86,15 +86,20 @@ export default function AdminPortal() {
                                     </Link>
                                 </div>
                             </div>
+                            {/* Spacer to align buttons with Left Card footer */}
+                            <div className="mt-4 text-center border-t border-transparent pt-4 invisible select-none" aria-hidden="true">
+                                <p className="text-xs mb-2 font-medium">Spacer</p>
+                                <span className="text-sm font-bold block">Spacer</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
-                </footer>
             </div>
+
+            {/* Footer */}
+            <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
+                {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
+            </footer>
         </div>
     );
 }
