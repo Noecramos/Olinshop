@@ -223,10 +223,18 @@ export default function StoreAdmin() {
     const updateBookingStatus = async (id: string, status: string, booking?: any) => {
         if (!confirm('Deseja alterar o status do agendamento?')) return;
 
-        // Open WhatsApp window immediately if confirming (to bypass popup blockers)
-        let waWindow: Window | null = null;
+        // Optimistic WhatsApp Open (Before Async Fetch)
         if (status === 'confirmed' && booking) {
-            waWindow = window.open('', '_blank');
+            const phone = (booking.customer_phone || '').replace(/\D/g, '');
+            if (phone) {
+                const cleanPhone = phone.startsWith('55') ? phone : `55${phone}`;
+                // Safe date formatting
+                const dateParts = booking.booking_date.split('-');
+                const fmtDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                const msg = `Olá ${booking.customer_name || ''}, seu agendamento na ${restaurant?.name} para ${fmtDate} às ${booking.booking_time} foi CONFIRMADO! ✅`;
+                window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
         }
 
         try {
@@ -238,28 +246,10 @@ export default function StoreAdmin() {
 
             if (res.ok) {
                 fetchBookings();
-
-                // Navigate the popup to WhatsApp
-                if (status === 'confirmed' && booking && waWindow) {
-                    const phone = (booking.customer_phone || '').replace(/\D/g, '');
-                    if (phone) {
-                        const cleanPhone = phone.startsWith('55') ? phone : `55${phone}`;
-                        const msg = `Olá ${booking.customer_name || ''}, seu agendamento na ${restaurant?.name} para ${new Date(booking.booking_date).toLocaleDateString()} às ${booking.booking_time} foi CONFIRMADO! ✅`;
-                        waWindow.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
-                    } else {
-                        waWindow.close();
-                        alert('Telefone do cliente inválido para WhatsApp');
-                    }
-                } else if (waWindow) {
-                    waWindow.close();
-                }
-
             } else {
-                if (waWindow) waWindow.close();
-                alert('Erro ao atualizar status');
+                alert('Erro ao atualizar status no sistema');
             }
         } catch (error) {
-            if (waWindow) waWindow.close();
             alert('Erro de conexão');
         }
     };
@@ -841,70 +831,57 @@ export default function StoreAdmin() {
                         </div>
                     )}
 
-                                    )}
+                    <BookingModal 
+                        isOpen={showBlock} 
+                        onClose={() => { setShowBlock(false); fetchBookings(); }} 
+                        restaurant={restaurant} 
+                        selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]} 
+                        isAdmin={true}
+                    />
+
+                    {tab === 'products' && (
+                        <div className="space-y-12 animate-fade-in">
+                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
+                                <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
+                            </div>
+
+                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
+                                <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'raspadinha' && (
+                        <div className="animate-fade-in flex justify-center py-10">
+                            <RaspadinhaValidator />
+                        </div>
+                    )}
+
+                    {tab === 'settings' && (
+                        <div className="animate-fade-in">
+                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                                <StoreSettings
+                                    restaurant={restaurant}
+                                    onUpdate={(data: any) => {
+                                        if (data?.slug && data.slug !== slug) {
+                                            router.replace(`/admin/${data.slug}`);
+                                        } else {
+                                            fetchRestaurant();
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
+
+                {/* Footer */}
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100">
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'}
+                </footer>
+            </main>
         </div>
-                        </div >
-                    )
-}
-
-<BookingModal
-    isOpen={showBlock}
-    onClose={() => { setShowBlock(false); fetchBookings(); }}
-    restaurant={restaurant}
-    selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]}
-    isAdmin={true}
-/>
-
-{
-    tab === 'products' && (
-        <div className="space-y-12 animate-fade-in">
-            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Categorias</h3>
-                <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
-            </div>
-
-            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                <h3 className="text-xl font-black text-gray-900 mb-6 underline decoration-accent decoration-4 underline-offset-8">Catálogo</h3>
-                <ProductForm restaurantId={restaurant.id} onSave={() => { }} refreshCategories={catRefresh} />
-            </div>
-        </div>
-    )
-}
-
-{
-    tab === 'raspadinha' && (
-        <div className="animate-fade-in flex justify-center py-10">
-            <RaspadinhaValidator />
-        </div>
-    )
-}
-
-{
-    tab === 'settings' && (
-        <div className="animate-fade-in">
-            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-                <StoreSettings
-                    restaurant={restaurant}
-                    onUpdate={(data: any) => {
-                        if (data?.slug && data.slug !== slug) {
-                            router.replace(`/admin/${data.slug}`);
-                        } else {
-                            fetchRestaurant();
-                        }
-                    }}
-                />
-            </div>
-        </div>
-    )
-}
-            </div >
-
-    {/* Footer */ }
-    < footer className = "w-full text-center text-gray-400 text-xs py-6 mt-8 border-t border-gray-100" >
-        { config.footerText || '© Noviapp Mobile Apps • LojAky®' }
-            </footer >
-        </main >
-    </div >
     );
 }
