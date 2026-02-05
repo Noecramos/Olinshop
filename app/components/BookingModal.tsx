@@ -25,6 +25,7 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
         time: '',
         notes: ''
     });
+    const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
     // Admin Pre-fill
     useEffect(() => {
@@ -62,43 +63,46 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    restaurantId: restaurant.id,
-                    customerName: formData.name,
-                    customerPhone: formData.phone,
-                    customerEmail: formData.email,
-                    bookingDate: formData.date,
-                    bookingTime: formData.time,
-                    duration: totalDuration,
-                    notes: formData.notes,
-                    items: selectedServices.map(s => ({
-                        productId: s.id,
-                        productName: s.name,
-                        productPrice: s.price,
-                        quantity: 1
-                    }))
-                })
-            });
+            const timesToBook = isAdmin ? selectedTimes : [formData.time];
 
-            const data = await res.json();
+            // Loop for multiple blocks (Admin) or single booking
+            for (const timeSlot of timesToBook) {
+                const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        restaurantId: restaurant.id,
+                        customerName: formData.name,
+                        customerPhone: formData.phone,
+                        customerEmail: formData.email,
+                        bookingDate: formData.date,
+                        bookingTime: timeSlot,
+                        duration: totalDuration,
+                        notes: formData.notes,
+                        items: selectedServices.map(s => ({
+                            productId: s.id,
+                            productName: s.name,
+                            productPrice: s.price,
+                            quantity: 1
+                        }))
+                    })
+                });
 
-            if (res.ok) {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Erro ao criar agendamento');
                 setBookingResult(data);
-                if (isAdmin) {
-                    alert('Bloqueio realizado com sucesso!');
-                    onClose();
-                } else {
-                    setStep(2); // Go to payment step
-                }
-            } else {
-                alert(data.error || 'Erro ao criar agendamento');
             }
-        } catch (error) {
+
+            if (isAdmin) {
+                alert(`Bloqueio de ${timesToBook.length} horário(s) realizado com sucesso!`);
+                onClose();
+            } else {
+                setStep(2); // Go to payment step
+            }
+
+        } catch (error: any) {
             console.error('Error creating booking:', error);
-            alert('Erro ao criar agendamento');
+            alert(error.message || 'Erro ao criar agendamento');
         } finally {
             setLoading(false);
         }
@@ -234,10 +238,18 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                                                 {availableSlots.map((slot) => (
                                                     <button
                                                         key={slot}
-                                                        onClick={() => setFormData({ ...formData, time: slot })}
-                                                        className={`p-3 rounded-xl font-bold text-sm transition-all ${formData.time === slot
-                                                            ? 'bg-accent text-white'
-                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                        onClick={() => {
+                                                            if (isAdmin) {
+                                                                setSelectedTimes(prev =>
+                                                                    prev.includes(slot) ? prev.filter(t => t !== slot) : [...prev, slot]
+                                                                );
+                                                            } else {
+                                                                setFormData({ ...formData, time: slot });
+                                                            }
+                                                        }}
+                                                        className={`p-3 rounded-xl font-bold text-sm transition-all ${(isAdmin ? selectedTimes.includes(slot) : formData.time === slot)
+                                                                ? 'bg-accent text-white'
+                                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                             }`}
                                                     >
                                                         {slot}
@@ -265,10 +277,10 @@ export default function BookingModal({ isOpen, onClose, restaurant, selectedServ
                             {/* Submit Button */}
                             <button
                                 onClick={handleSubmit}
-                                disabled={!formData.name || !formData.phone || !formData.date || !formData.time || loading}
+                                disabled={!formData.name || !formData.phone || !formData.date || (!isAdmin && !formData.time) || (isAdmin && selectedTimes.length === 0) || loading}
                                 className="w-full bg-gradient-to-r from-accent to-purple-600 text-white font-black py-4 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'Processando...' : (isAdmin ? '💾 Salvar Bloqueio' : 'Continuar para Pagamento →')}
+                                {loading ? 'Processando...' : (isAdmin ? `💾 Salvar Bloqueio (${selectedTimes.length})` : 'Continuar para Pagamento →')}
                             </button>
                         </div>
                     )}
