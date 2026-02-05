@@ -27,6 +27,7 @@ export default function StoreAdmin() {
     const [config, setConfig] = useState({ footerText: '' });
 
     const [bookings, setBookings] = useState<any[]>([]);
+    const [bookingTab, setBookingTab] = useState('clients'); // 'clients' | 'blocks'
     const [showBlock, setShowBlock] = useState(false);
 
     const fetchRestaurant = useCallback(async () => {
@@ -780,83 +781,105 @@ export default function StoreAdmin() {
 
                     {tab === 'bookings' && (
                         <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden animate-fade-in p-8">
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-2xl font-black text-gray-900">📅 Agendamentos</h3>
+                            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                                <div>
+                                    <h3 className="text-2xl font-black text-gray-900">📅 Agendamentos</h3>
+                                    <p className="text-gray-500 text-xs font-bold mt-1">Gerencie sua agenda e bloqueios</p>
+                                </div>
+                                <div className="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                                    <button
+                                        onClick={() => setBookingTab('clients')}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${bookingTab === 'clients' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    >
+                                        Clientes ({bookings.filter(b => b.customer_name !== 'BLOQUEIO DE AGENDA').length})
+                                    </button>
+                                    <button
+                                        onClick={() => setBookingTab('blocks')}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${bookingTab === 'blocks' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                    >
+                                        Bloqueios ({bookings.filter(b => b.customer_name === 'BLOQUEIO DE AGENDA').length})
+                                    </button>
+                                </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => setShowBlock(true)} className="px-4 py-2 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200">🔒 Bloquear Horário</button>
+                                    <button onClick={() => setShowBlock(true)} className="px-4 py-2 bg-red-100 text-red-600 font-bold rounded-xl hover:bg-red-200 text-xs flex items-center gap-2">
+                                        <span>🔒</span> Bloquear Horário
+                                    </button>
                                     <button onClick={fetchBookings} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200">🔄</button>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {bookings.map(booking => (
-                                    <div key={booking.id} className="border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all bg-gray-50/50 text-sm">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div>
-                                                <p className="font-bold text-gray-900">{booking.customer_name}</p>
-                                                <p className="text-xs text-gray-500">
-                                                    {booking.booking_date.split('-').reverse().join('/')} às {booking.booking_time}
-                                                </p>
+                                {bookings
+                                    .filter(b => bookingTab === 'clients' ? b.customer_name !== 'BLOQUEIO DE AGENDA' : b.customer_name === 'BLOQUEIO DE AGENDA')
+                                    .sort((a, b) => new Date(`${a.booking_date}T${a.booking_time}`).getTime() - new Date(`${b.booking_date}T${b.booking_time}`).getTime())
+                                    .map(booking => (
+                                        <div key={booking.id} className="border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all bg-gray-50/50 text-sm">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <p className="font-bold text-gray-900">{booking.customer_name}</p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {booking.booking_date.split('-').reverse().join('/')} às {booking.booking_time}
+                                                    </p>
+                                                </div>
+                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                        booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                                                    }`}>
+                                                    {booking.status === 'pending' ? 'Pendente' :
+                                                        booking.status === 'confirmed' ? 'Confirmado' :
+                                                            booking.status === 'cancelled' ? 'Cancelado' :
+                                                                booking.status === 'completed' ? 'Concluído' : booking.status}
+                                                </span>
                                             </div>
-                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
-                                                }`}>
-                                                {booking.status === 'pending' ? 'Pendente' :
-                                                    booking.status === 'confirmed' ? 'Confirmado' :
-                                                        booking.status === 'cancelled' ? 'Cancelado' :
-                                                            booking.status === 'completed' ? 'Concluído' : booking.status}
-                                            </span>
-                                        </div>
-                                        <div className="space-y-1 mb-3">
-                                            <p className="text-xs text-gray-600">📞 {booking.customer_phone}</p>
-                                            {booking.items && booking.items.map((item: any, i: number) => (
-                                                <p key={i} className="text-xs font-medium">✂️ {item.quantity}x {item.product_name}</p>
-                                            ))}
-                                            {booking.notes && <p className="text-xs bg-yellow-50 p-1 rounded text-yellow-800 italic">📝 {booking.notes}</p>}
-                                        </div>
-                                        <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
-                                            <p className="font-bold text-accent">R$ {booking.total_price}</p>
-                                            <div className="flex gap-1">
-                                                {booking.status === 'pending' && (
-                                                    <button
-                                                        onClick={() => updateBookingStatus(booking.id, 'confirmed', booking)}
-                                                        className="px-2 py-1 bg-green-500 text-white rounded-md text-xs font-bold hover:bg-green-600"
-                                                        title="Confirmar"
-                                                    >
-                                                        ✅
-                                                    </button>
-                                                )}
-                                                {booking.status !== 'cancelled' ? (
-                                                    <button
-                                                        onClick={() => updateBookingStatus(booking.id, 'cancelled', booking)}
-                                                        className="px-2 py-1 bg-yellow-100 text-yellow-600 rounded-md text-xs font-bold hover:bg-yellow-200"
-                                                        title="Cancelar"
-                                                    >
-                                                        🚫
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => deleteBooking(booking.id)}
-                                                        className="px-2 py-1 bg-red-100 text-red-600 rounded-md text-xs font-bold hover:bg-red-200"
-                                                        title="Excluir Permanentemente"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                )}
-                                                {booking.status !== 'cancelled' && (
-                                                    <button
-                                                        onClick={() => deleteBooking(booking.id)}
-                                                        className="px-2 py-1 bg-gray-100 text-gray-400 rounded-md text-xs font-bold hover:bg-red-100 hover:text-red-600 ml-1"
-                                                        title="Excluir"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                )}
+                                            <div className="space-y-1 mb-3">
+                                                <p className="text-xs text-gray-600">📞 {booking.customer_phone}</p>
+                                                {booking.items && booking.items.map((item: any, i: number) => (
+                                                    <p key={i} className="text-xs font-medium">✂️ {item.quantity}x {item.product_name}</p>
+                                                ))}
+                                                {booking.notes && <p className="text-xs bg-yellow-50 p-1 rounded text-yellow-800 italic">📝 {booking.notes}</p>}
+                                            </div>
+                                            <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
+                                                <p className="font-bold text-accent">R$ {booking.total_price}</p>
+                                                <div className="flex gap-1">
+                                                    {booking.status === 'pending' && (
+                                                        <button
+                                                            onClick={() => updateBookingStatus(booking.id, 'confirmed', booking)}
+                                                            className="px-2 py-1 bg-green-500 text-white rounded-md text-xs font-bold hover:bg-green-600"
+                                                            title="Confirmar"
+                                                        >
+                                                            ✅
+                                                        </button>
+                                                    )}
+                                                    {booking.status !== 'cancelled' ? (
+                                                        <button
+                                                            onClick={() => updateBookingStatus(booking.id, 'cancelled', booking)}
+                                                            className="px-2 py-1 bg-yellow-100 text-yellow-600 rounded-md text-xs font-bold hover:bg-yellow-200"
+                                                            title="Cancelar"
+                                                        >
+                                                            🚫
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => deleteBooking(booking.id)}
+                                                            className="px-2 py-1 bg-red-100 text-red-600 rounded-md text-xs font-bold hover:bg-red-200"
+                                                            title="Excluir Permanentemente"
+                                                        >
+                                                            🗑️
+                                                        </button>
+                                                    )}
+                                                    {booking.status !== 'cancelled' && (
+                                                        <button
+                                                            onClick={() => deleteBooking(booking.id)}
+                                                            className="px-2 py-1 bg-gray-100 text-gray-400 rounded-md text-xs font-bold hover:bg-red-100 hover:text-red-600 ml-1"
+                                                            title="Excluir"
+                                                        >
+                                                            🗑️
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
                                 {bookings.length === 0 && (
                                     <div className="col-span-full text-center py-20 text-gray-400">
                                         Nenhum agendamento encontrado
