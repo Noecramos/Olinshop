@@ -23,7 +23,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         width: "15",
         length: "15",
         trackStock: false,
-        stockQuantity: "0"
+        stockQuantity: "0",
+        isService: false,
+        requiresBooking: false,
+        serviceDuration: "60"
     });
     const [variants, setVariants] = useState<any[]>([]); // [{ name: "Tamanho", options: ["P", "M", "G"] }]
 
@@ -113,8 +116,12 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             height: parseFloat(form.height) || 15,
             width: parseFloat(form.width) || 15,
             length: parseFloat(form.length) || 15,
+            length: parseFloat(form.length) || 15,
             trackStock: form.trackStock,
-            stockQuantity: parseInt(form.stockQuantity) || 0
+            stockQuantity: parseInt(form.stockQuantity) || 0,
+            isService: form.isService,
+            requiresBooking: form.requiresBooking,
+            serviceDuration: parseInt(form.serviceDuration) || 60
         };
         if (editingId) body.id = editingId;
 
@@ -156,7 +163,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             width: prod.width?.toString() || "15",
             length: prod.length?.toString() || "15",
             trackStock: prod.track_stock || false,
-            stockQuantity: prod.stock_quantity?.toString() || "0"
+            stockQuantity: prod.stock_quantity?.toString() || "0",
+            isService: prod.is_service || false,
+            requiresBooking: prod.requires_booking || false,
+            serviceDuration: prod.service_duration?.toString() || "60"
         });
         setVariants(prod.variants || []);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -266,6 +276,48 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                 value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
                             />
+                        </div>
+
+                        {/* Service Settings */}
+                        <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 space-y-3">
+                            <div className="flex justify-between items-center">
+                                <h4 className="text-[10px] font-black text-purple-800 uppercase tracking-widest">Configuração de Agendamento</h4>
+                                <label className="inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={form.isService}
+                                        onChange={e => setForm({ ...form, isService: e.target.checked, requiresBooking: e.target.checked })}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                                    <span className="ml-2 text-xs font-bold text-gray-500">É serviço?</span>
+                                </label>
+                            </div>
+
+                            {form.isService && (
+                                <div className="grid grid-cols-2 gap-3 animate-fade-in">
+                                    <div>
+                                        <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Duração (min)</label>
+                                        <input
+                                            type="number"
+                                            value={form.serviceDuration}
+                                            onChange={e => setForm({ ...form, serviceDuration: e.target.value })}
+                                            className="w-full p-2 text-xs bg-white rounded-lg border border-purple-100 outline-none focus:border-purple-500"
+                                        />
+                                    </div>
+                                    <div className="flex items-end pb-2">
+                                        <label className="flex items-center gap-2 text-xs font-bold text-gray-600 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={form.requiresBooking}
+                                                onChange={e => setForm({ ...form, requiresBooking: e.target.checked })}
+                                                className="w-4 h-4 text-purple-600 rounded"
+                                            />
+                                            Exige Agendamento
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Logistics Section */}

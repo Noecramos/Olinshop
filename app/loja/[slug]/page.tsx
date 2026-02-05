@@ -42,13 +42,13 @@ export default function StoreFront() {
         if (!slug) return;
 
         const fetchProductsForStore = (restaurantId: string) => {
-            fetch(`/api/products?restaurantId=${restaurantId}`)
+            fetch(`/api/products?restaurantId=${restaurantId}&_t=${Date.now()}&bypass=true`, { headers: { 'Cache-Control': 'no-store' } })
                 .then(res => res.ok ? res.json() : [])
                 .then(data => setProducts(Array.isArray(data) ? data : []));
         };
 
         // Fetch Restaurant Details
-        fetch(`/api/stores?slug=${slug}`)
+        fetch(`/api/stores?slug=${slug}&_t=${Date.now()}&bypass=true`, { headers: { 'Cache-Control': 'no-store' } })
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (!data) {
