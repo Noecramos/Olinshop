@@ -265,3 +265,35 @@ export async function PUT(req: NextRequest) {
         }, { status: 500, headers: corsHeaders });
     }
 }
+}
+
+// DELETE - Permanently delete booking
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: 'Booking ID required' }, { status: 400, headers: corsHeaders });
+        }
+
+        // Delete items first (foreign key)
+        await sql`DELETE FROM booking_items WHERE booking_id = ${id}`;
+
+        // Delete booking
+        const { rowCount } = await sql`DELETE FROM bookings WHERE id = ${id}`;
+
+        if (rowCount === 0) {
+            return NextResponse.json({ error: 'Booking not found' }, { status: 404, headers: corsHeaders });
+        }
+
+        return NextResponse.json({ success: true }, { headers: corsHeaders });
+
+    } catch (error: any) {
+        console.error("Database Error:", error);
+        return NextResponse.json({
+            error: "Failed to delete booking",
+            details: error.message
+        }, { status: 500, headers: corsHeaders });
+    }
+}

@@ -254,6 +254,20 @@ export default function StoreAdmin() {
         }
     };
 
+    const deleteBooking = async (id: string) => {
+        if (!confirm('❌ ATENÇÃO: Deseja EXCLUIR permanentemente este agendamento?')) return;
+        try {
+            const res = await fetch(`/api/bookings?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                fetchBookings();
+            } else {
+                alert('Erro ao excluir agendamento');
+            }
+        } catch (e) {
+            alert('Erro de conexão');
+        }
+    };
+
     if (!restaurant) return <div className="h-screen flex items-center justify-center">Carregando...</div>;
 
     if (!auth) {
@@ -776,13 +790,15 @@ export default function StoreAdmin() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {bookings.map(booking => (
-                                    <div key={booking.id} className="border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all bg-gray-50/50">
-                                        <div className="flex justify-between items-start mb-4">
+                                    <div key={booking.id} className="border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all bg-gray-50/50 text-sm">
+                                        <div className="flex justify-between items-start mb-2">
                                             <div>
-                                                <p className="font-bold text-lg text-gray-900">{booking.customer_name}</p>
-                                                <p className="text-sm text-gray-500">{booking.booking_date} às {booking.booking_time}</p>
+                                                <p className="font-bold text-gray-900">{booking.customer_name}</p>
+                                                <p className="text-xs text-gray-500">
+                                                    {booking.booking_date.split('-').reverse().join('/')} às {booking.booking_time}
+                                                </p>
                                             </div>
-                                            <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
                                                 booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                                     booking.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
                                                 }`}>
@@ -792,30 +808,49 @@ export default function StoreAdmin() {
                                                             booking.status === 'completed' ? 'Concluído' : booking.status}
                                             </span>
                                         </div>
-                                        <div className="space-y-2 mb-4">
-                                            <p className="text-sm">📞 {booking.customer_phone}</p>
+                                        <div className="space-y-1 mb-3">
+                                            <p className="text-xs text-gray-600">📞 {booking.customer_phone}</p>
                                             {booking.items && booking.items.map((item: any, i: number) => (
-                                                <p key={i} className="text-sm font-medium">✂️ {item.quantity}x {item.product_name}</p>
+                                                <p key={i} className="text-xs font-medium">✂️ {item.quantity}x {item.product_name}</p>
                                             ))}
-                                            {booking.notes && <p className="text-xs bg-yellow-50 p-2 rounded text-yellow-800">📝 {booking.notes}</p>}
+                                            {booking.notes && <p className="text-xs bg-yellow-50 p-1 rounded text-yellow-800 italic">📝 {booking.notes}</p>}
                                         </div>
-                                        <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
+                                        <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
                                             <p className="font-bold text-accent">R$ {booking.total_price}</p>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-1">
                                                 {booking.status === 'pending' && (
                                                     <button
                                                         onClick={() => updateBookingStatus(booking.id, 'confirmed', booking)}
-                                                        className="px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600"
+                                                        className="px-2 py-1 bg-green-500 text-white rounded-md text-xs font-bold hover:bg-green-600"
+                                                        title="Confirmar"
                                                     >
-                                                        Confirmar
+                                                        ✅
+                                                    </button>
+                                                )}
+                                                {booking.status !== 'cancelled' ? (
+                                                    <button
+                                                        onClick={() => updateBookingStatus(booking.id, 'cancelled', booking)}
+                                                        className="px-2 py-1 bg-yellow-100 text-yellow-600 rounded-md text-xs font-bold hover:bg-yellow-200"
+                                                        title="Cancelar"
+                                                    >
+                                                        🚫
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => deleteBooking(booking.id)}
+                                                        className="px-2 py-1 bg-red-100 text-red-600 rounded-md text-xs font-bold hover:bg-red-200"
+                                                        title="Excluir Permanentemente"
+                                                    >
+                                                        🗑️
                                                     </button>
                                                 )}
                                                 {booking.status !== 'cancelled' && (
                                                     <button
-                                                        onClick={() => updateBookingStatus(booking.id, 'cancelled', booking)}
-                                                        className="px-3 py-1 bg-red-100 text-red-500 rounded-lg text-xs font-bold hover:bg-red-200"
+                                                        onClick={() => deleteBooking(booking.id)}
+                                                        className="px-2 py-1 bg-gray-100 text-gray-400 rounded-md text-xs font-bold hover:bg-red-100 hover:text-red-600 ml-1"
+                                                        title="Excluir"
                                                     >
-                                                        Cancelar
+                                                        🗑️
                                                     </button>
                                                 )}
                                             </div>
@@ -831,11 +866,11 @@ export default function StoreAdmin() {
                         </div>
                     )}
 
-                    <BookingModal 
-                        isOpen={showBlock} 
-                        onClose={() => { setShowBlock(false); fetchBookings(); }} 
-                        restaurant={restaurant} 
-                        selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]} 
+                    <BookingModal
+                        isOpen={showBlock}
+                        onClose={() => { setShowBlock(false); fetchBookings(); }}
+                        restaurant={restaurant}
+                        selectedServices={[{ id: 'block', name: 'BLOQUEIO ADMINISTRATIVO', price: 0, duration: 60 }]}
                         isAdmin={true}
                     />
 
