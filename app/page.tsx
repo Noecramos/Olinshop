@@ -92,18 +92,29 @@ function MarketplaceContent() {
           // Deduplicate: Show only 1 store per Email (Prefer Multistore Parent)
           const seenEmails = new Set();
           const uniqueStores: any[] = [];
-          
-          // Sort so MultistoreEnabled comes first (as Parent)
-          const sorted = [...data].sort((a, b) => (b.multistoreEnabled === true ? 1 : 0) - (a.multistoreEnabled === true ? 1 : 0));
-          
-          sorted.forEach(store => {
-             const key = store.email || store.id; // Group by email
-             if (!seenEmails.has(key)) {
-                 seenEmails.add(key);
-                 uniqueStores.push(store);
-             }
+
+          // Sort: 1. MultistoreEnabled (Parent), 2. Oldest Created (Main Store)
+          const sorted = [...data].sort((a, b) => {
+            // Priority 1: Multistore Enabled
+            const aMulti = a.multistoreEnabled === true;
+            const bMulti = b.multistoreEnabled === true;
+            if (aMulti && !bMulti) return -1;
+            if (!aMulti && bMulti) return 1;
+
+            // Priority 2: Creation Date (Oldest First)
+            const dateA = new Date(a.created_at || 0).getTime();
+            const dateB = new Date(b.created_at || 0).getTime();
+            return dateA - dateB;
           });
-          
+
+          sorted.forEach(store => {
+            const key = store.email || store.id; // Group by email
+            if (!seenEmails.has(key)) {
+              seenEmails.add(key);
+              uniqueStores.push(store);
+            }
+          });
+
           setStores(uniqueStores);
         } else {
           console.error("API did not return an array", data);
