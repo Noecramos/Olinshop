@@ -593,8 +593,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             <div className="w-full lg:w-2/3">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h3 className="font-bold text-gray-800 text-lg">Catálogo de Produtos ({products.length}) <span className="text-[10px] text-gray-400 font-normal">ID: {restaurantId.slice(0, 8)}...</span></h3>
-                        <p className="text-[10px] text-gray-400">Total carregado da API: {products.length}</p>
+                        <h3 className="font-bold text-gray-800 text-lg">Catálogo de Produtos ({products.length})</h3>
                         {products.filter(p => p.track_stock && p.stock_quantity <= 5).length > 0 && (
                             <div className="bg-orange-100 text-orange-700 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase inline-flex items-center gap-2 border border-orange-200 mt-2">
                                 <span>⚠️ {products.filter(p => p.track_stock && p.stock_quantity <= 5).length} Itens com Estoque Baixo!</span>
