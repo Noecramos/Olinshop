@@ -85,7 +85,7 @@ function MarketplaceContent() {
   };
 
   useEffect(() => {
-    fetch('/api/stores')
+    fetch(`/api/stores?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
