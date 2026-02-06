@@ -89,7 +89,22 @@ function MarketplaceContent() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setStores(data);
+          // Deduplicate: Show only 1 store per Email (Prefer Multistore Parent)
+          const seenEmails = new Set();
+          const uniqueStores: any[] = [];
+          
+          // Sort so MultistoreEnabled comes first (as Parent)
+          const sorted = [...data].sort((a, b) => (b.multistoreEnabled === true ? 1 : 0) - (a.multistoreEnabled === true ? 1 : 0));
+          
+          sorted.forEach(store => {
+             const key = store.email || store.id; // Group by email
+             if (!seenEmails.has(key)) {
+                 seenEmails.add(key);
+                 uniqueStores.push(store);
+             }
+          });
+          
+          setStores(uniqueStores);
         } else {
           console.error("API did not return an array", data);
           setStores([]);

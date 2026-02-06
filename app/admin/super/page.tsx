@@ -81,12 +81,17 @@ export default function SuperAdmin() {
                 body: JSON.stringify({ id: restaurant.id, approved: newStatus })
             });
 
-            const data = await res.json();
+            console.log('API Response:', data);
             const finalPassword = data.password || restaurant.password;
 
             if (newStatus) {
+                console.log('Approving restaurant:', restaurant.id);
                 // Update local state to show password immediately
-                setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, approved: true, password: finalPassword } : r));
+                setRestaurants(prev => {
+                    const updated = prev.map(r => r.id === restaurant.id ? { ...r, approved: true, password: finalPassword } : r);
+                    console.log('Updated State length:', updated.length);
+                    return updated;
+                });
 
                 // Send WhatsApp
                 const phone = restaurant.whatsapp || restaurant.phone;
