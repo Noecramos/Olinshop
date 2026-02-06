@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 interface ProductModalProps {
@@ -12,6 +12,11 @@ interface ProductModalProps {
 export default function ProductModal({ item, onClose, onConfirm }: ProductModalProps) {
     const [selectedVariants, setSelectedVariants] = useState<any>({});
     const [quantity, setQuantity] = useState(1);
+
+    // Reset quantity when item changes
+    useEffect(() => {
+        setQuantity(1);
+    }, [item]);
 
     const parsedVariants = (() => {
         try {
@@ -141,52 +146,51 @@ export default function ProductModal({ item, onClose, onConfirm }: ProductModalP
                             )}
                         </div>
 
-                        {item.isSoldByWeight ? (
                             // Weighted Input
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={() => setQuantity(q => Math.max(0.005, parseFloat((q - 0.1).toFixed(3))))}
-                                    className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold text-xl text-gray-700"
-                                >-</button>
-                                <input
-                                    type="number"
-                                    step="0.001"
-                                    min="0.001"
-                                    max={item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999}
-                                    value={quantity}
-                                    onChange={(e) => {
-                                        let val = parseFloat(e.target.value);
-                                        if (isNaN(val)) val = 0;
-                                        const max = item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999;
-                                        setQuantity(Math.min(max, val));
-                                    }}
-                                    className="flex-1 h-12 text-center bg-gray-50 rounded-xl border-2 border-transparent focus:border-accent outline-none font-bold text-xl"
-                                />
-                                <button
-                                    onClick={() => {
-                                        const max = item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999;
-                                        setQuantity(q => Math.min(max, parseFloat((q + 0.1).toFixed(3))));
-                                    }}
-                                    className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold text-xl text-gray-700"
-                                >+</button>
-                            </div>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setQuantity(q => Math.max(0.005, parseFloat((q - 0.05).toFixed(3))))}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold text-xl text-gray-700"
+                            >-</button>
+                            <input
+                                type="number"
+                                step="0.005"
+                                min="0.005"
+                                max={item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999}
+                                value={quantity}
+                                onChange={(e) => {
+                                    let val = parseFloat(e.target.value);
+                                    if (isNaN(val)) val = 0;
+                                    const max = item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999;
+                                    setQuantity(Math.min(max, val));
+                                }}
+                                className="flex-1 h-12 text-center bg-gray-50 rounded-xl border-2 border-transparent focus:border-accent outline-none font-bold text-xl"
+                            />
+                            <button
+                                onClick={() => {
+                                    const max = item.track_stock ? (parseFloat(item.stock_quantity) || 9999) : 9999;
+                                    setQuantity(q => Math.min(max, parseFloat((q + 0.05).toFixed(3))));
+                                }}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold text-xl text-gray-700"
+                            >+</button>
+                        </div>
                         ) : (
-                            // Standard Integer Selector
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={decreaseQuantity}
-                                    className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
-                                >
-                                    −
-                                </button>
-                                <span className="text-2xl font-bold text-gray-900 min-w-[3rem] text-center">{quantity}</span>
-                                <button
-                                    onClick={increaseQuantity}
-                                    className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
-                                >
-                                    +
-                                </button>
-                            </div>
+                        // Standard Integer Selector
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={decreaseQuantity}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
+                            >
+                                −
+                            </button>
+                            <span className="text-2xl font-bold text-gray-900 min-w-[3rem] text-center">{quantity}</span>
+                            <button
+                                onClick={increaseQuantity}
+                                className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center font-bold text-xl text-gray-700"
+                            >
+                                +
+                            </button>
+                        </div>
                         )}
                     </div>
                 </div>
