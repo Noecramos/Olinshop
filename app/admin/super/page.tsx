@@ -534,7 +534,7 @@ export default function SuperAdmin() {
                                                             <code className="bg-gray-100 px-2 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
                                                         </td>
                                                         <td className="p-4 text-xs font-bold text-gray-500">
-                                                            {r.createdAt ? new Date(r.createdAt).toLocaleDateString('pt-BR') : '-'}
+                                                            {(r.createdAt || r.created_at) ? new Date(r.createdAt || r.created_at).toLocaleDateString('pt-BR') : '-'}
                                                         </td>
                                                         <td className="p-4 text-center">
                                                             <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
@@ -616,7 +616,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
-                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'} v1.1
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'} v1.2
                 </footer>
             </div>
         </div>
