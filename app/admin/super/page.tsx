@@ -497,12 +497,12 @@ export default function SuperAdmin() {
                                         <table className="w-full text-left">
                                             <thead className="bg-gray-50 border-b border-gray-100">
                                                 <tr>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug</th>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Data Cadastro</th>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
-                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                                    <th style={{ width: '28%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
+                                                    <th style={{ width: '20%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug</th>
+                                                    <th style={{ width: '10%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                                    <th style={{ width: '12%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Data Cadastro</th>
+                                                    <th style={{ width: '10%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                                    <th style={{ width: '20%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-100">
@@ -616,7 +616,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
-                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'} v1.2
+                    {config.footerText || '© Noviapp Mobile Apps • LojAky®'} v1.3
                 </footer>
             </div>
         </div>
