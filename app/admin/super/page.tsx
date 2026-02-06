@@ -44,21 +44,23 @@ export default function SuperAdmin() {
             const res = await fetch(`/api/restaurants?all=true&t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             setRestaurants(data);
-
-            // Group restaurants by email (owner)
-            const grouped: { [key: string]: any[] } = {};
-            data.forEach((restaurant: any) => {
-                const ownerEmail = restaurant.email || 'sem-email';
-                if (!grouped[ownerEmail]) {
-                    grouped[ownerEmail] = [];
-                }
-                grouped[ownerEmail].push(restaurant);
-            });
-            setGroupedRestaurants(grouped);
         } catch (e) {
             console.error(e);
         }
     };
+
+    // Auto-group restaurants when state updates (Fixes UI sync)
+    useEffect(() => {
+        const grouped: { [key: string]: any[] } = {};
+        restaurants.forEach((restaurant: any) => {
+            const ownerEmail = restaurant.email || 'sem-email';
+            if (!grouped[ownerEmail]) {
+                grouped[ownerEmail] = [];
+            }
+            grouped[ownerEmail].push(restaurant);
+        });
+        setGroupedRestaurants(grouped);
+    }, [restaurants]);
 
     const fetchUsers = async () => {
         try {
