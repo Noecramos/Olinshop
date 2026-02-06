@@ -135,6 +135,7 @@ export async function GET(req: NextRequest) {
                 delivery_time as "deliveryTime", popular_title as "popularTitle",
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                 rating_sum as "ratingSum", rating_count as "ratingCount",
+                multistore_enabled as "multistoreEnabled",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
             WHERE approved = true
