@@ -593,7 +593,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             <div className="w-full lg:w-2/3">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h3 className="font-bold text-gray-800 text-lg">Catálogo de Produtos ({products.length})</h3>
+                        <h3 className="font-bold text-gray-800 text-lg">Catálogo de Produtos ({products.length}) <span className="text-[10px] text-gray-400 font-normal">ID: {restaurantId.slice(0, 8)}...</span></h3>
+                        <p className="text-[10px] text-gray-400">Total carregado da API: {products.length}</p>
                         {products.filter(p => p.track_stock && p.stock_quantity <= 5).length > 0 && (
                             <div className="bg-orange-100 text-orange-700 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase inline-flex items-center gap-2 border border-orange-200 mt-2">
                                 <span>⚠️ {products.filter(p => p.track_stock && p.stock_quantity <= 5).length} Itens com Estoque Baixo!</span>
@@ -704,6 +705,68 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             </div>
                         );
                     })}
+
+                    {/* Uncategorized Products Section */}
+                    {(() => {
+                        const categorizedIds = new Set();
+                        categories.forEach(cat => {
+                            products.filter(p => p.category === cat.name).forEach(p => categorizedIds.add(p.id));
+                        });
+                        const uncategorized = products.filter(p => !categorizedIds.has(p.id));
+
+                        if (uncategorized.length === 0) return null;
+
+                        const isExpanded = expandedCategories.includes('Uncategorized');
+
+                        return (
+                            <div className="bg-white rounded-2xl border border-red-100 overflow-hidden shadow-sm mt-4">
+                                <button
+                                    onClick={() => setExpandedCategories(prev =>
+                                        prev.includes('Uncategorized') ? prev.filter(c => c !== 'Uncategorized') : [...prev, 'Uncategorized']
+                                    )}
+                                    className="w-full p-4 flex justify-between items-center bg-red-50/50 hover:bg-red-100 transition-colors"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl">⚠️</span>
+                                        <div className="text-left">
+                                            <h4 className="font-bold text-red-800">Sem Categoria / Outros</h4>
+                                            <p className="text-[10px] text-red-500 font-medium uppercase tracking-wider">{uncategorized.length} Produtos Perdidos</p>
+                                        </div>
+                                    </div>
+                                    <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+                                </button>
+
+                                {isExpanded && (
+                                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
+                                        {uncategorized.map(prod => (
+                                            <div key={prod.id} className={`bg-white p-4 rounded-xl border transition-all border-red-100 hover:shadow-md`}>
+                                                <div className="flex gap-4">
+                                                    <div className="w-16 h-16 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
+                                                        {prod.image ? (
+                                                            <img src={prod.image} className="w-full h-full object-cover" alt="" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex justify-between items-start">
+                                                            <h4 className="font-bold text-sm text-gray-900 truncate">{prod.name}</h4>
+                                                            <div className="flex gap-1">
+                                                                <button onClick={() => handleEdit(prod)} className="p-1 text-accent hover:bg-blue-50 rounded transition-colors" title="Editar">✏️</button>
+                                                                <button onClick={() => handleDelete(prod.id)} className="p-1 text-accent hover:bg-red-50 rounded transition-colors" title="Excluir">🗑️</button>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{prod.description}</p>
+                                                        <div className="mt-2 text-xs font-bold text-red-600">Categoria: "{prod.category || 'Nenhuma'}"</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })()}
 
                     {products.length === 0 && (
                         <div className="py-10 text-center text-gray-400 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
