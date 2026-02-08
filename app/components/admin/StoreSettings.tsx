@@ -10,25 +10,6 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
     useEffect(() => {
         if (restaurant) {
             setForm(restaurant);
-
-            // Fetch fresh data to ensure createdAt is accurate (fix for date mismatch)
-            if (restaurant.id) {
-                fetch(`/api/restaurants?id=${restaurant.id}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && (data.createdAt || data.created_at)) {
-                            // Merge fresh creation date into form
-                            setForm(prev => ({
-                                ...prev,
-                                createdAt: data.createdAt || data.created_at,
-                                // ensure we don't overwrite user edits if they started typing, but this runs fast on mount
-                                subscription_expires_at: prev.subscription_expires_at || data.subscription_expires_at,
-                                saasTrialDays: prev.saasTrialDays || data.saasTrialDays || data.saas_trial_days
-                            }));
-                        }
-                    })
-                    .catch(err => console.error("Failed to refresh store data:", err));
-            }
         }
     }, [restaurant]);
 
@@ -242,6 +223,13 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 />
                                 <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
                                     {form.subscription_expires_at ? 'Data definida no sistema.' : 'Data estimada (Baseada no cadastro + carência).'}
+                                    <br />
+                                    <span className="text-[9px] text-gray-400 block mt-1">
+                                        Base de Cálculo (Cadastro): {(() => {
+                                            const createdRaw = form.createdAt || form.created_at || restaurant.createdAt || restaurant.created_at;
+                                            return createdRaw ? new Date(createdRaw).toLocaleDateString() : 'N/A';
+                                        })()}
+                                    </span>
                                 </p>
                             </div>
 
