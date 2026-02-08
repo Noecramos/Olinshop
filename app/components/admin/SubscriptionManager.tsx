@@ -20,7 +20,7 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [pixData, setPixData] = useState<{ encodedImage: string, payload: string, expirationDate: string } | null>(null);
-    const [selectedBilling, setSelectedBilling] = useState<"BOLETO" | "PIX" | "CREDIT_CARD">("BOLETO");
+    const [selectedBilling, setSelectedBilling] = useState<"BOLETO" | "PIX" | "CREDIT_CARD">("PIX");
 
     useEffect(() => {
         // Ideally fetch plans from an API. For now we hardcode or mock since we just created the table
