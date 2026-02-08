@@ -15,6 +15,10 @@ export async function GET(req: Request) {
         if (id) {
             const { rows } = await sql`
                 SELECT *, 
+                created_at as "createdAt",
+                updated_at as "updatedAt",
+                saas_trial_days as "saasTrialDays",
+                saas_monthly_price as "saasMonthlyPrice",
                 pix_key as "pixKey", 
                 zip_code as "zipCode", 
                 responsible_name as "responsibleName",
@@ -26,7 +30,24 @@ export async function GET(req: Request) {
         }
 
         if (all === 'true') {
-            const { rows } = await sql`SELECT * FROM restaurants ORDER BY created_at DESC`;
+            const { rows } = await sql`
+                SELECT 
+                    *,
+                    id, 
+                    created_at as "createdAt", 
+                    updated_at as "updatedAt",
+                    responsible_name as "responsibleName",
+                    zip_code as "zipCode",
+                    pix_key as "pixKey",
+                    delivery_radius as "deliveryRadius",
+                    delivery_fee_tiers as "deliveryFeeTiers",
+                    welcome_subtitle as "welcomeSubtitle",
+                    is_open as "isOpen",
+                    saas_trial_days as "saasTrialDays",
+                    saas_monthly_price as "saasMonthlyPrice"
+                FROM restaurants 
+                ORDER BY created_at DESC
+            `;
             return NextResponse.json(rows);
         }
 
@@ -137,13 +158,39 @@ export async function PUT(req: Request) {
             // Generate password if approving and no password exists
             let password = undefined;
             if (approved) {
-                const { rows } = await sql`SELECT password FROM restaurants WHERE id = ${id}`;
-                if (!rows[0]?.password) {
+                const { rows } = await sql`SELECT password, subscription_status FROM restaurants WHERE id = ${id}`;
+
+                // Get trial days
+                const { rows: settings } = await sql`SELECT value FROM global_settings WHERE key = 'saasTrialDays'`;
+                const trialDays = settings.length > 0 ? parseInt(settings[0].value) : 7;
+
+                // Prepare updates
+                const updates: any[] = [];
+                let password = rows[0]?.password;
+
+                if (!password) {
                     password = Math.random().toString(36).slice(-8);
-                    await sql`UPDATE restaurants SET approved = ${approved}, password = ${password} WHERE id = ${id}`;
+                }
+
+                // If first time approval (no subscription status), grant trial
+                if (!rows[0]?.subscription_status) {
+                    // Start trial
+                    await sql`
+                        UPDATE restaurants 
+                        SET approved = true, 
+                            password = ${password},
+                            subscription_status = 'active',
+                            subscription_expires_at = NOW() + make_interval(days => ${trialDays})
+                        WHERE id = ${id}
+                    `;
                 } else {
-                    await sql`UPDATE restaurants SET approved = ${approved} WHERE id = ${id}`;
-                    password = rows[0].password;
+                    // Just enable, keep existing subscription
+                    await sql`
+                        UPDATE restaurants 
+                        SET approved = true, 
+                            password = ${password}
+                        WHERE id = ${id}
+                    `;
                 }
             } else {
                 await sql`UPDATE restaurants SET approved = ${approved} WHERE id = ${id}`;

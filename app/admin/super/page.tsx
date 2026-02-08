@@ -15,6 +15,7 @@ export default function SuperAdmin() {
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
     const [tab, setTab] = useState<'restaurants' | 'users' | 'config' | 'raspadinha'>('restaurants');
     const [config, setConfig] = useState({ footerText: '' });
+    const [stats, setStats] = useState({ mrr: 0, totalStores: 0, activeStores: 0, growth: [] as any[] });
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -35,7 +36,7 @@ export default function SuperAdmin() {
     useEffect(() => {
         fetch('/api/config')
             .then(res => res.ok ? res.json() : {})
-            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .then((data: any) => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
             .catch(() => { });
     }, []);
 
@@ -60,6 +61,33 @@ export default function SuperAdmin() {
             grouped[ownerEmail].push(restaurant);
         });
         setGroupedRestaurants(grouped);
+
+        // Calculate stats
+        const active = restaurants.filter(r => r.subscription_status === 'active');
+        const mrr = active.length * 49.90; // Assuming base price
+
+        // Calculate growth (last 30 days)
+        const last30Days = Array.from({ length: 30 }, (_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }).reverse();
+
+        const growthData = last30Days.map(dayStr => {
+            const count = restaurants.filter(r => {
+                if (!r.createdAt) return false;
+                const d = new Date(r.createdAt);
+                return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) === dayStr;
+            }).length;
+            return { label: dayStr, count };
+        });
+
+        setStats({
+            mrr,
+            totalStores: restaurants.length,
+            activeStores: active.length,
+            growth: growthData
+        });
     }, [restaurants]);
 
     const fetchUsers = async () => {
@@ -81,6 +109,7 @@ export default function SuperAdmin() {
                 body: JSON.stringify({ id: restaurant.id, approved: newStatus })
             });
 
+            const data = await res.json();
             console.log('API Response:', data);
             const finalPassword = data.password || restaurant.password;
 
@@ -436,8 +465,55 @@ export default function SuperAdmin() {
                     </div>
                 )}
 
+
+
+                {/* 📊 GRÁFICOS E METRICAS */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-8 animate-fade-in-up">
+                    {/* MRR Card */}
+                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Receita Mensal (MRR)</h3>
+                            <div className="text-3xl font-black text-gray-900">R$ {stats.mrr.toFixed(2)}</div>
+                        </div>
+                        <div className="mt-4 flex items-center text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded w-fit">
+                            💹 +{stats.activeStores} Assinantes
+                        </div>
+                    </div>
+
+                    {/* Total Stores */}
+                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total de Lojas</h3>
+                            <div className="text-3xl font-black text-gray-900">{stats.totalStores}</div>
+                        </div>
+                        <div className="mt-4 text-xs text-gray-400 font-medium">
+                            {stats.activeStores} lojas ativas (pagantes)
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 md:col-span-2 flex flex-col">
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Crescimento (Últimos 30 dias)</h3>
+                        <div className="flex-1 flex items-end justify-between gap-1 h-24">
+                            {stats.growth.map((item, idx) => (
+                                <div key={idx} className="flex flex-col items-center justify-end h-full w-full group">
+                                    <div
+                                        className="w-full bg-blue-100 rounded-t-[2px] transition-all group-hover:bg-blue-500 relative"
+                                        style={{ height: `${Math.max(5, (item.count / (stats.totalStores > 0 ? stats.totalStores : 1)) * 100 * 2)}%` }} // Scaling factor for better visibility
+                                    >
+                                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                            {item.count}
+                                        </div>
+                                    </div>
+                                    {/* Show label only for every 5th item to avoid clutter */}
+                                    <span className="text-[8px] font-bold text-gray-400 mt-2 whitespace-nowrap hidden sm:block" style={{ opacity: idx % 5 === 0 ? 1 : 0 }}>{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Main Card Content */}
-                <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up min-h-[500px]">
+                <div className="bg-white rounded-[32px] shadow-2xl p-6 md:p-8 animate-fade-in-up min-h-[500px]">
 
                     <div className="flex gap-6 mb-8 border-b border-gray-100 pb-px">
                         <button
@@ -497,14 +573,16 @@ export default function SuperAdmin() {
                                         <table className="w-full text-left">
                                             <thead className="bg-gray-50 border-b border-gray-100">
                                                 <tr>
-                                                    <th style={{ width: '28%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
-                                                    <th style={{ width: '20%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug</th>
-                                                    <th style={{ width: '10%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
-                                                    <th style={{ width: '12%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Data Cadastro</th>
-                                                    <th style={{ width: '10%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
-                                                    <th style={{ width: '20%' }} className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
-                                                </tr>
-                                            </thead>
+
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Loja</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider">Cadastro</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Assinatura</th>
+                                                    <th className="p-4 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                                </tr >
+                                            </thead >
                                             <tbody className="divide-y divide-gray-100">
                                                 {stores.map((r: any) => (
                                                     <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
@@ -533,13 +611,39 @@ export default function SuperAdmin() {
                                                         <td className="p-4">
                                                             <code className="bg-gray-100 px-2 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password}</code>
                                                         </td>
-                                                        <td className="p-4 text-xs font-bold text-gray-500">
-                                                            {(r.createdAt || r.created_at) ? new Date(r.createdAt || r.created_at).toLocaleDateString('pt-BR') : '-'}
+                                                        <td className="p-4">
+                                                            <div className="text-xs font-bold text-gray-500">
+                                                                {(() => {
+                                                                    const d = r.createdAt || r.created_at;
+                                                                    return d && !isNaN(new Date(d).getTime()) ? new Date(d).toLocaleDateString() : '-';
+                                                                })()}
+                                                            </div>
+                                                            <div className="text-[10px] text-gray-400">
+                                                                {(() => {
+                                                                    const d = r.createdAt || r.created_at;
+                                                                    return d && !isNaN(new Date(d).getTime()) ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                                                                })()}
+                                                            </div>
                                                         </td>
                                                         <td className="p-4 text-center">
                                                             <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
                                                                 {r.approved ? 'ATIVO' : 'PENDENTE'}
                                                             </span>
+                                                        </td>
+                                                        <td className="p-4 text-center">
+                                                            <div className="flex flex-col items-center">
+                                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase mb-1 ${r.subscription_status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                                                                    r.subscription_status === 'overdue' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'
+                                                                    }`}>
+                                                                    {r.subscription_status === 'active' ? 'Assinante' :
+                                                                        r.subscription_status === 'overdue' ? 'Vencido' : 'Gratuito'}
+                                                                </span>
+                                                                {r.subscription_expires_at && (
+                                                                    <span className="text-[9px] text-gray-400">
+                                                                        Exp: {new Date(r.subscription_expires_at).toLocaleDateString()}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         </td>
                                                         <td className="p-4 text-right">
                                                             <div className="flex justify-end gap-2 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
@@ -559,11 +663,12 @@ export default function SuperAdmin() {
                                                     </tr>
                                                 ))}
                                             </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                        </table >
+                                    </div >
+                                </div >
+                            ))
+                            }
+                        </div >
                     ) : tab === 'users' ? (
                         <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
                             <table className="w-full text-left">
@@ -612,13 +717,13 @@ export default function SuperAdmin() {
                             <RaspadinhaValidator />
                         </div>
                     )}
-                </div>
+                </div >
 
                 {/* Footer outside the card */}
-                <footer className="footer text-center text-gray-600 text-xs py-10 mt-2">
+                < footer className="footer text-center text-gray-600 text-xs py-10 mt-2" >
                     {config.footerText || '© Noviapp Mobile Apps • LojAky®'} v1.3
-                </footer>
-            </div>
-        </div>
+                </footer >
+            </div >
+        </div >
     );
 }

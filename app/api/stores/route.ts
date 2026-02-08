@@ -44,7 +44,13 @@ export async function GET(req: NextRequest) {
                         booking_mode as "bookingMode",
                         booking_duration as "bookingDuration",
                         booking_deposit_percent as "bookingDepositPercent",
+                        booking_deposit_percent as "bookingDepositPercent",
                         rating_sum as "ratingSum", rating_count as "ratingCount",
+                        subscription_status as "subscription_status",
+                        subscription_expires_at as "subscription_expires_at",
+                        asaas_subscription_id as "asaas_subscription_id",
+                        saas_trial_days as "saasTrialDays",
+                        saas_monthly_price as "saasMonthlyPrice",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
                     WHERE slug = ${slug}
@@ -238,7 +244,8 @@ export async function PUT(req: NextRequest) {
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
             popularTitle, welcomeSubtitle, resetPassword, isOpen, responsibleName,
-            multistoreEnabled
+            multistoreEnabled, subscription_status, subscription_expires_at,
+            saasTrialDays, saasMonthlyPrice
         } = body;
 
         if (!id) {
@@ -294,6 +301,10 @@ export async function PUT(req: NextRequest) {
                 popular_title = COALESCE(${popularTitle}, popular_title),
                 welcome_subtitle = COALESCE(${welcomeSubtitle}, welcome_subtitle),
                 multistore_enabled = COALESCE(${multistoreEnabled}, multistore_enabled),
+                subscription_status = COALESCE(${subscription_status}, subscription_status),
+                subscription_expires_at = COALESCE(${subscription_expires_at}, subscription_expires_at),
+                saas_trial_days = COALESCE(${saasTrialDays}, saas_trial_days),
+                saas_monthly_price = COALESCE(${saasMonthlyPrice}, saas_monthly_price),
                 updated_at = NOW()
             WHERE id = ${id}
             RETURNING 
@@ -304,6 +315,10 @@ export async function PUT(req: NextRequest) {
                 delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                 delivery_time as "deliveryTime", popular_title as "popularTitle",
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                subscription_status as "subscription_status",
+                subscription_expires_at as "subscription_expires_at",
+                saas_trial_days as "saasTrialDays",
+                saas_monthly_price as "saasMonthlyPrice",
                 created_at as "createdAt", updated_at as "updatedAt"
         `;
 

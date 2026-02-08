@@ -10,6 +10,7 @@ import ProductForm from "@/app/components/admin/ProductForm";
 import CategoryForm from "@/app/components/admin/CategoryForm";
 import StoreSettings from "@/app/components/admin/StoreSettings";
 import RaspadinhaValidator from "../../components/admin/RaspadinhaValidator";
+import SubscriptionManager from "@/app/components/admin/SubscriptionManager";
 
 export default function StoreAdmin() {
     const params = useParams();
@@ -472,6 +473,7 @@ export default function StoreAdmin() {
                         { id: 'bookings', label: 'Agendamentos', icon: '📅' },
                         { id: 'settings', label: 'Ajustes', icon: '⚙️' },
                         { id: 'raspadinha', label: 'Raspadinha', icon: '🎲' },
+                        { id: 'subscription', label: 'Assinatura', icon: '⭐' },
                         { id: 'close_shop', label: 'Fecho de Loja', icon: '🔐', action: printDailySummary },
                         { id: 'support', label: 'Suporte', icon: '🟢', link: 'https://wa.me/5581995515777?text=Olá, preciso de suporte com minha loja LojaKy' },
                         { id: 'logout', label: 'Sair', icon: '🚪', action: () => { localStorage.removeItem(`admin_session_${slug}`); window.location.reload(); } }
@@ -931,6 +933,12 @@ export default function StoreAdmin() {
                                     }}
                                 />
                             </div>
+                        </div>
+                    )}
+
+                    {tab === 'subscription' && (
+                        <div className="animate-fade-in">
+                            <SubscriptionManager restaurant={restaurant} />
                         </div>
                     )}
                 </div>

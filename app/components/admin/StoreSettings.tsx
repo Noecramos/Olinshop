@@ -10,6 +10,25 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
     useEffect(() => {
         if (restaurant) {
             setForm(restaurant);
+
+            // Fetch fresh data to ensure createdAt is accurate (fix for date mismatch)
+            if (restaurant.id) {
+                fetch(`/api/restaurants?id=${restaurant.id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && (data.createdAt || data.created_at)) {
+                            // Merge fresh creation date into form
+                            setForm(prev => ({
+                                ...prev,
+                                createdAt: data.createdAt || data.created_at,
+                                // ensure we don't overwrite user edits if they started typing, but this runs fast on mount
+                                subscription_expires_at: prev.subscription_expires_at || data.subscription_expires_at,
+                                saasTrialDays: prev.saasTrialDays || data.saasTrialDays || data.saas_trial_days
+                            }));
+                        }
+                    })
+                    .catch(err => console.error("Failed to refresh store data:", err));
+            }
         }
     }, [restaurant]);
 
@@ -136,6 +155,171 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
             </div>
 
             <form onSubmit={handleSave} className="space-y-8">
+                {/* 💎 ASSINATURA E ACESSO (Only for Super Admin/Internal use usually, but here exposed for editing) */}
+                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm border-l-4 border-l-purple-500">
+                    <div className="flex items-center gap-3 mb-8">
+                        <span className="text-2xl">💎</span>
+                        <h3 className="font-black text-xl text-gray-900">Assinatura e Acesso</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label htmlFor="subscription_status" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Status da Assinatura</label>
+                            <select
+                                id="subscription_status"
+                                className={`w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold appearance-none cursor-pointer ${form.subscription_status === 'active' ? 'text-green-600' :
+                                    form.subscription_status === 'overdue' ? 'text-red-600' : 'text-gray-600'
+                                    }`}
+                                value={form.subscription_status || 'free'}
+                                onChange={e => setForm({ ...form, subscription_status: e.target.value })}
+                            >
+                                <option value="free">Gratuito / Sem Plano</option>
+                                <option value="active">Ativo (Premium)</option>
+                                <option value="pending">Pendente</option>
+                                <option value="overdue">Vencido (Bloqueado)</option>
+                                <option value="canceled">Cancelado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">ID Asaas (Referência)</label>
+                            <input
+                                readOnly
+                                className="w-full p-4 bg-gray-100/50 rounded-2xl outline-none border border-transparent font-mono text-xs text-gray-400"
+                                value={form.asaas_subscription_id || 'Não integrado'}
+                            />
+                        </div>
+
+                        {/* Separate Vencimento and Carência as requested */}
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-50">
+                            <div>
+                                <label htmlFor="subscription_expires_at" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Data de Vencimento</label>
+                                <input
+                                    type="date"
+                                    id="subscription_expires_at"
+                                    readOnly
+                                    className="w-full p-4 bg-gray-100 rounded-2xl outline-none border border-transparent text-gray-500 font-bold cursor-not-allowed"
+                                    value={(() => {
+                                        let targetDate: Date | null = null;
+
+                                        // 1. Try actual stored expiry
+                                        if (form.subscription_expires_at) {
+                                            // Optimization: If already YYYY-MM-DD string, just return it
+                                            if (typeof form.subscription_expires_at === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(form.subscription_expires_at)) {
+                                                return form.subscription_expires_at;
+                                            }
+
+                                            const d = new Date(form.subscription_expires_at);
+                                            if (!isNaN(d.getTime())) {
+                                                targetDate = d;
+                                            }
+                                        }
+
+                                        // 2. Fallback: Calculate from createdAt + trial days
+                                        if (!targetDate) {
+                                            const createdRaw = form.createdAt || form.created_at || restaurant.createdAt || restaurant.created_at;
+
+                                            // Use Local Date object to match Super Admin display
+                                            let baseDate = createdRaw && !isNaN(new Date(createdRaw).getTime())
+                                                ? new Date(createdRaw)
+                                                : new Date();
+
+                                            // Reset to Local Noon
+                                            baseDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 12, 0, 0, 0);
+
+                                            const trialDays = parseInt(form.saasTrialDays) || 7;
+                                            const safeTrialDays = isNaN(trialDays) ? 7 : trialDays;
+
+                                            targetDate = new Date(baseDate);
+                                            targetDate.setDate(targetDate.getDate() + safeTrialDays);
+                                        }
+
+                                        // Format as YYYY-MM-DD using local time
+                                        const year = targetDate.getFullYear();
+                                        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+                                        const day = String(targetDate.getDate()).padStart(2, '0');
+                                        return `${year}-${month}-${day}`;
+                                    })()}
+                                />
+                                <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
+                                    {form.subscription_expires_at ? 'Data definida no sistema.' : 'Data estimada (Baseada no cadastro + carência).'}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label htmlFor="saasTrialDays" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Carência (Dias)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        id="saasTrialDays"
+                                        className="w-full p-4 pl-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500 transition-all border border-gray-100 font-bold text-gray-700"
+                                        value={form.saasTrialDays || ''}
+                                        onChange={e => {
+                                            const days = parseInt(e.target.value);
+
+                                            // Only update date if days is a valid positive number
+                                            // Only update date if days is a valid positive number
+                                            if (!isNaN(days) && days > 0) {
+                                                const createdRaw = form.createdAt || form.created_at || restaurant.createdAt || restaurant.created_at;
+
+                                                let baseDate = createdRaw && !isNaN(new Date(createdRaw).getTime())
+                                                    ? new Date(createdRaw)
+                                                    : new Date();
+
+                                                // Reset to Local Noon to avoid midnight math issues
+                                                baseDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 12, 0, 0, 0);
+
+                                                const newExpires = new Date(baseDate);
+                                                newExpires.setDate(newExpires.getDate() + days);
+
+                                                // Format as YYYY-MM-DD using local time
+                                                const year = newExpires.getFullYear();
+                                                const month = String(newExpires.getMonth() + 1).padStart(2, '0');
+                                                const day = String(newExpires.getDate()).padStart(2, '0');
+                                                const localYMD = `${year}-${month}-${day}`;
+
+                                                setForm({
+                                                    ...form,
+                                                    saasTrialDays: e.target.value,
+                                                    subscription_expires_at: localYMD
+                                                });
+                                            } else {
+                                                // Just update the trial days input, don't touch the date
+                                                setForm({
+                                                    ...form,
+                                                    saasTrialDays: e.target.value
+                                                });
+                                            }
+                                        }}
+                                        placeholder="Global (7)"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">dias</span>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
+                                    Define o período de teste (a partir da criação da loja).
+                                </p>
+                            </div>
+
+                            <div>
+                                <label htmlFor="saasMonthlyPrice" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Valor Mensal (R$)</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">R$</span>
+                                    <input
+                                        type="text" // Using text to allow better formatting if needed, but simple number for now
+                                        id="saasMonthlyPrice"
+                                        className="w-full p-4 pl-10 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-100 font-bold text-green-700"
+                                        value={form.saasMonthlyPrice || ''}
+                                        onChange={e => setForm({ ...form, saasMonthlyPrice: e.target.value })}
+                                        placeholder="Global"
+                                    />
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
+                                    Preço personalizado para esta loja.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* 🏷️ IDENTIDADE DA LOJA */}
                 <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-8">
@@ -208,6 +392,8 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                         </div>
                     </div>
                 </div>
+
+
 
                 {/* 📱 CONTATO E RESPONSÁVEL */}
                 <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
@@ -476,7 +662,7 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                         )}
                     </button>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 }

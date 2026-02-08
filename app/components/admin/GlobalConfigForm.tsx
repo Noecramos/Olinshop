@@ -45,7 +45,10 @@ export default function GlobalConfigForm() {
         secondaryColor: '#6B4CE6',
         pageHeaderImage: '',
         splashImage: '',
-        featuredItems: [] as any[]
+        featuredItems: [] as any[],
+        saasTrialDays: '7',
+        saasMonthlyPrice: '49.90',
+        saasPixKey: ''
     });
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -604,6 +607,52 @@ export default function GlobalConfigForm() {
                             Nenhum item em destaque. Adicione um para começar.
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* SEÇÃO 5: CONFIGURAÇÕES SAAS (ASSINATURA) */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    💳 Configurações de Assinatura (SaaS)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Preço Mensal Base (R$)</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-3 text-gray-500 font-bold">R$</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={config.saasMonthlyPrice || '49.90'}
+                                onChange={e => setConfig({ ...config, saasMonthlyPrice: e.target.value })}
+                                className="w-full pl-10 p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors font-bold text-lg"
+                                placeholder="49.90"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Valor base usado para novos planos mensais.</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Período de Carência (Dias)</label>
+                        <input
+                            type="number"
+                            value={config.saasTrialDays || '7'}
+                            onChange={e => setConfig({ ...config, saasTrialDays: e.target.value })}
+                            className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors font-bold text-lg"
+                            placeholder="7"
+                        />
+                        <p className="text-xs text-gray-500 mt-2">Dias grátis que a loja recebe após aprovação.</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Chave Pix (Recebimento Manual)</label>
+                        <input
+                            type="text"
+                            value={config.saasPixKey || ''}
+                            onChange={e => setConfig({ ...config, saasPixKey: e.target.value })}
+                            className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                            placeholder="CPF, CNPJ, Email ou Aleatória"
+                        />
+                        <p className="text-xs text-gray-500 mt-2">Usado apenas se o gateway automático falhar ou para pagamentos manuais.</p>
+                    </div>
                 </div>
             </div>
 
