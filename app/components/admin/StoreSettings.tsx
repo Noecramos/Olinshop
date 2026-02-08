@@ -213,11 +213,9 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                         </p>
                     </div>
                 </div>
-        </div>
-                </div >
 
-        {/* 🏷️ IDENTIDADE DA LOJA */ }
-        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
+                {/* 🏷️ IDENTIDADE DA LOJA */}
+                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">🏪</span>
                         <h3 className="font-black text-xl text-gray-900">Identidade da Loja</h3>
@@ -287,12 +285,12 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
                         </div>
                     </div>
-                </div >
+                </div>
 
 
 
-        {/* 📱 CONTATO E RESPONSÁVEL */ }
-        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
+                {/* 📱 CONTATO E RESPONSÁVEL */}
+                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">📱</span>
                         <h3 className="font-black text-xl text-gray-900">Contato e Equipe</h3>
@@ -342,10 +340,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                     </div>
-                </div >
+                </div>
 
-        {/* 🚚 LOGÍSTICA DE ENTREGA */ }
-        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
+                {/* 🚚 LOGÍSTICA DE ENTREGA */}
+                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">🚚</span>
                         <h3 className="font-black text-xl text-gray-900">Logística de Entrega</h3>
@@ -417,8 +415,8 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                     </div>
                 </div >
 
-        {/* 📍 LOCALIZAÇÃO */ }
-        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
+                {/* 📍 LOCALIZAÇÃO */}
+                < div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">📍</span>
                         <h3 className="font-black text-xl text-gray-900">Localização</h3>
@@ -507,8 +505,8 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                     </div>
                 </div >
 
-        {/* 💳 OPERAÇÃO E PAGAMENTO */ }
-        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
+                {/* 💳 OPERAÇÃO E PAGAMENTO */}
+                < div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">💳</span>
                         <h3 className="font-black text-xl text-gray-900">Operação e Pagamento</h3>
@@ -540,24 +538,24 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                     </div>
                 </div >
 
-        <div className="sticky bottom-8 z-20">
-            <button
-                type="submit"
-                disabled={loading || uploading}
-                className="w-full py-5 bg-black text-white font-black rounded-2xl shadow-2xl hover:bg-gray-800 transform active:scale-[0.98] transition-all text-lg uppercase tracking-widest flex items-center justify-center gap-3"
-            >
-                {loading ? (
-                    <>
-                        <span className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin"></span>
-                        Salvando...
-                    </>
-                ) : (
-                    <>
-                        <span>💾</span> Salvar Todas as Alterações
-                    </>
-                )}
-            </button>
-        </div>
+                <div className="sticky bottom-8 z-20">
+                    <button
+                        type="submit"
+                        disabled={loading || uploading}
+                        className="w-full py-5 bg-black text-white font-black rounded-2xl shadow-2xl hover:bg-gray-800 transform active:scale-[0.98] transition-all text-lg uppercase tracking-widest flex items-center justify-center gap-3"
+                    >
+                        {loading ? (
+                            <>
+                                <span className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin"></span>
+                                Salvando...
+                            </>
+                        ) : (
+                            <>
+                                <span>💾</span> Salvar Todas as Alterações
+                            </>
+                        )}
+                    </button>
+                </div>
             </form >
         </div >
     );
