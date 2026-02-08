@@ -64,7 +64,10 @@ export default function SuperAdmin() {
 
         // Calculate stats
         const active = restaurants.filter(r => r.subscription_status === 'active');
-        const mrr = active.length * 49.90; // Assuming base price
+        const mrr = active.reduce((sum, r) => {
+            const price = parseFloat(r.saasMonthlyPrice || r.saas_monthly_price) || 0;
+            return sum + price;
+        }, 0);
 
         // Calculate growth (last 30 days)
         const last30Days = Array.from({ length: 30 }, (_, i) => {

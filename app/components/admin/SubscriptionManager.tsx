@@ -135,11 +135,16 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
 
                 <div className="flex items-center gap-4 mb-6">
                     <div className={`px-4 py-2 rounded-xl text-sm font-bold uppercase ${restaurant.subscription_status === 'active' ? 'bg-green-100 text-green-700' :
-                        restaurant.subscription_status === 'overdue' ? 'bg-red-100 text-red-700' :
-                            'bg-yellow-100 text-yellow-700'
+                            restaurant.subscription_status === 'overdue' ? 'bg-red-100 text-red-700' :
+                                restaurant.subscription_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-gray-100 text-gray-500' // Default / Free
                         }`}>
-                        Status: {restaurant.subscription_status === 'active' ? 'Ativo' :
-                            restaurant.subscription_status === 'overdue' ? 'Vencido' : 'Pendente'}
+                        Status: {
+                            restaurant.subscription_status === 'active' ? 'Ativo' :
+                                restaurant.subscription_status === 'overdue' ? 'Vencido' :
+                                    restaurant.subscription_status === 'pending' ? 'Pendente' :
+                                        'Gratuito'
+                        }
                     </div>
                     {restaurant.subscription_expires_at && (
                         <p className="text-gray-500 font-medium text-sm">
