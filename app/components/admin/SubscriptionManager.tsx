@@ -241,7 +241,7 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
                                         {loading ? 'Processando...' : 'Assinar Agora'}
                                     </button>
 
-                                    <p className="text-[10px] text-center text-gray-400 mt-3 font-medium">
+                                    <p className="text-[10px] text-center text-red-600 mt-3 font-bold">
                                         Cobrado a cada {plan.duration_months} meses<br />
                                         Total: R$ {totalVal.toFixed(2)}
                                     </p>
