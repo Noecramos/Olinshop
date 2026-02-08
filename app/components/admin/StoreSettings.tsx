@@ -155,7 +155,7 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 onChange={e => setForm({ ...form, subscription_status: e.target.value })}
                             >
                                 <option value="free">Gratuito / Sem Plano</option>
-                                <option value="active">Ativo (Premium)</option>
+                                <option value="active">Assinante (Plano Pró)</option>
                                 <option value="pending">Pendente</option>
                                 <option value="overdue">Vencido (Bloqueado)</option>
                                 <option value="canceled">Cancelado</option>
