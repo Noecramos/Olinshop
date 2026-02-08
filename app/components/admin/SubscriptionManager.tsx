@@ -17,23 +17,34 @@ interface SubscriptionManagerProps {
 
 export default function SubscriptionManager({ restaurant }: SubscriptionManagerProps) {
     const [plans, setPlans] = useState<Plan[]>([]);
+    const [globalConfig, setGlobalConfig] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
     const [error, setError] = useState("");
     const [pixData, setPixData] = useState<{ encodedImage: string, payload: string, expirationDate: string } | null>(null);
     const [selectedBilling, setSelectedBilling] = useState<"BOLETO" | "PIX" | "CREDIT_CARD">("PIX");
 
     useEffect(() => {
-        // Ideally fetch plans from an API. For now we hardcode or mock since we just created the table
-        // but didn't make a GET endpoint for plans. 
-        // Let's create a simple fetch or hardcode for immediate feedback.
+        const fetchData = async () => {
+            try {
+                const [plansRes, configRes] = await Promise.all([
+                    fetch('/api/saas-plans'),
+                    fetch('/api/config')
+                ]);
 
-        // Hardcoded for MVP speed, but matches the migration script
-        setPlans([
-            { id: 1, name: "Mensal", duration_months: 1, discount_percent: 0, active: true },
-            { id: 2, name: "Trimestral", duration_months: 3, discount_percent: 5, active: true },
-            { id: 3, name: "Semestral", duration_months: 6, discount_percent: 10, active: true },
-            { id: 4, name: "Anual", duration_months: 12, discount_percent: 20, active: true },
-        ]);
+                const plansData = await plansRes.json();
+                const configData = await configRes.json();
+
+                setPlans(plansData.filter((p: any) => p.active));
+                setGlobalConfig(configData);
+            } catch (err) {
+                console.error("Error loading subscription data", err);
+            } finally {
+                setPageLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const handleSubscribe = async (plan: Plan) => {
@@ -73,11 +84,13 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
     };
 
     const calculatePrice = (plan: Plan) => {
-        // Use store specific price if set, otherwise fallback to 49.90 (or better, fetch global config)
-        const basePrice = parseFloat(restaurant.saasMonthlyPrice || restaurant.saas_monthly_price) || 49.90;
+        // Use store specific price -> Global config price -> Hardcoded fallback
+        const basePrice = parseFloat(restaurant.saasMonthlyPrice || restaurant.saas_monthly_price || globalConfig?.saasMonthlyPrice) || 49.90;
         const monthlyPrice = basePrice * (1 - plan.discount_percent / 100);
         return monthlyPrice;
     };
+
+    if (pageLoading) return <div className="text-center py-20 font-bold text-gray-400">Carregando planos...</div>;
 
     if (pixData) {
         return (

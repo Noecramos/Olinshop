@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import StoreSettings from "../../components/admin/StoreSettings";
 import GlobalConfigForm from "../../components/admin/GlobalConfigForm";
-
+import SaaSPlansForm from "../../components/admin/SaaSPlansForm";
 import RaspadinhaValidator from "../../components/admin/RaspadinhaValidator";
 
 export default function SuperAdmin() {
@@ -714,7 +714,10 @@ export default function SuperAdmin() {
                             </table>
                         </div>
                     ) : tab === 'config' ? (
-                        <GlobalConfigForm />
+                        <div className="space-y-8 animate-fade-in">
+                            <GlobalConfigForm />
+                            <SaaSPlansForm />
+                        </div>
                     ) : (
                         <div className="flex justify-center py-10 animate-fade-in">
                             <RaspadinhaValidator />
