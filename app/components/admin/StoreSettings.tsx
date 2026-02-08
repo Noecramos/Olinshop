@@ -176,24 +176,48 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">R$</span>
                                     <input
-                                        type="text" // Using text to allow better formatting if needed, but simple number for now
+                                        type="number"
                                         id="saasMonthlyPrice"
-                                        className="w-full p-4 pl-10 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-100 font-bold text-green-700"
+                                        className="w-full pl-12 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
                                         value={form.saasMonthlyPrice || ''}
                                         onChange={e => setForm({ ...form, saasMonthlyPrice: e.target.value })}
-                                        placeholder="Global"
+                                        placeholder="49.90"
                                     />
                                 </div>
-                                <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
-                                    Preço personalizado para esta loja.
+                            </div>
+
+                            <div>
+                                <label htmlFor="saasTrialDays" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Carência (Dias)</label>
+                                <input
+                                    type="number"
+                                    id="saasTrialDays"
+                                    className="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition-all border border-gray-100 font-bold"
+                                    value={form.saasTrialDays || ''}
+                                    onChange={e => setForm({ ...form, saasTrialDays: e.target.value })}
+                                    placeholder="7"
+                                />
+                                <p className="mt-2 text-[10px] text-gray-400 font-bold uppercase ml-1">
+                                    Vencimento: {(() => {
+                                        const baseDate = new Date(form.createdAt || form.created_at);
+                                        if (isNaN(baseDate.getTime())) return '---';
+                                        const trialDays = parseInt(form.saasTrialDays) || 0;
+                                        const expiryDate = new Date(baseDate);
+                                        expiryDate.setDate(baseDate.getDate() + trialDays);
+                                        return expiryDate.toLocaleDateString();
+                                    })()}
                                 </p>
                             </div>
                         </div>
+                        <p className="text-[10px] text-gray-400 mt-1.5 ml-1 font-medium">
+                            Preço personalizado para esta loja.
+                        </p>
                     </div>
                 </div>
+        </div>
+                </div >
 
-                {/* 🏷️ IDENTIDADE DA LOJA */}
-                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+        {/* 🏷️ IDENTIDADE DA LOJA */ }
+        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">🏪</span>
                         <h3 className="font-black text-xl text-gray-900">Identidade da Loja</h3>
@@ -263,12 +287,12 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
 
 
 
-                {/* 📱 CONTATO E RESPONSÁVEL */}
-                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+        {/* 📱 CONTATO E RESPONSÁVEL */ }
+        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">📱</span>
                         <h3 className="font-black text-xl text-gray-900">Contato e Equipe</h3>
@@ -318,10 +342,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                     </div>
-                </div>
+                </div >
 
-                {/* 🚚 LOGÍSTICA DE ENTREGA */}
-                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+        {/* 🚚 LOGÍSTICA DE ENTREGA */ }
+        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">🚚</span>
                         <h3 className="font-black text-xl text-gray-900">Logística de Entrega</h3>
@@ -391,10 +415,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
 
-                {/* 📍 LOCALIZAÇÃO */}
-                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+        {/* 📍 LOCALIZAÇÃO */ }
+        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">📍</span>
                         <h3 className="font-black text-xl text-gray-900">Localização</h3>
@@ -481,10 +505,10 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
 
-                {/* 💳 OPERAÇÃO E PAGAMENTO */}
-                <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+        {/* 💳 OPERAÇÃO E PAGAMENTO */ }
+        < div className = "bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm" >
                     <div className="flex items-center gap-3 mb-8">
                         <span className="text-2xl">💳</span>
                         <h3 className="font-black text-xl text-gray-900">Operação e Pagamento</h3>
@@ -514,26 +538,26 @@ export default function StoreSettings({ restaurant, onUpdate }: { restaurant: an
                             />
                         </div>
                     </div>
-                </div>
+                </div >
 
-                <div className="sticky bottom-8 z-20">
-                    <button
-                        type="submit"
-                        disabled={loading || uploading}
-                        className="w-full py-5 bg-black text-white font-black rounded-2xl shadow-2xl hover:bg-gray-800 transform active:scale-[0.98] transition-all text-lg uppercase tracking-widest flex items-center justify-center gap-3"
-                    >
-                        {loading ? (
-                            <>
-                                <span className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin"></span>
-                                Salvando...
-                            </>
-                        ) : (
-                            <>
-                                <span>💾</span> Salvar Todas as Alterações
-                            </>
-                        )}
-                    </button>
-                </div>
+        <div className="sticky bottom-8 z-20">
+            <button
+                type="submit"
+                disabled={loading || uploading}
+                className="w-full py-5 bg-black text-white font-black rounded-2xl shadow-2xl hover:bg-gray-800 transform active:scale-[0.98] transition-all text-lg uppercase tracking-widest flex items-center justify-center gap-3"
+            >
+                {loading ? (
+                    <>
+                        <span className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin"></span>
+                        Salvando...
+                    </>
+                ) : (
+                    <>
+                        <span>💾</span> Salvar Todas as Alterações
+                    </>
+                )}
+            </button>
+        </div>
             </form >
         </div >
     );

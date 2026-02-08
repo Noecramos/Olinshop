@@ -147,11 +147,11 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
             <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
                 <h3 className="text-2xl font-black text-gray-900 mb-2">Sua Assinatura</h3>
 
-                <div className="flex items-center gap-4 mb-6">
-                    <div className={`px-4 py-2 rounded-xl text-sm font-bold uppercase ${restaurant.subscription_status === 'active' ? 'bg-green-100 text-green-700' :
-                        restaurant.subscription_status === 'overdue' ? 'bg-red-100 text-red-700' :
-                            restaurant.subscription_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-gray-100 text-gray-500' // Default / Free
+                <div className="flex flex-wrap items-center gap-6 mb-8">
+                    <div className={`px-4 py-2 rounded-xl text-sm font-black uppercase tracking-tight ${restaurant.subscription_status === 'active' ? 'bg-green-50 text-green-600' :
+                            restaurant.subscription_status === 'overdue' ? 'bg-red-50 text-red-600' :
+                                restaurant.subscription_status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
+                                    'bg-gray-50 text-gray-500'
                         }`}>
                         Status: {
                             restaurant.subscription_status === 'active' ? 'Ativo' :
@@ -160,11 +160,21 @@ export default function SubscriptionManager({ restaurant }: SubscriptionManagerP
                                         'Gratuito'
                         }
                     </div>
-                    {restaurant.subscription_expires_at && (
-                        <p className="text-gray-500 font-medium text-sm">
-                            Expira em: {new Date(restaurant.subscription_expires_at).toLocaleDateString()}
-                        </p>
-                    )}
+
+                    <div className="text-gray-900 font-bold text-sm flex items-center gap-2">
+                        <span className="text-gray-400 uppercase text-[10px] tracking-widest">Vencimento:</span>
+                        {(() => {
+                            if (restaurant.subscription_expires_at) {
+                                return new Date(restaurant.subscription_expires_at).toLocaleDateString();
+                            }
+                            const baseDate = new Date(restaurant.createdAt || restaurant.created_at);
+                            if (isNaN(baseDate.getTime())) return '---';
+                            const trialDays = parseInt(restaurant.saasTrialDays || restaurant.saas_trial_days) || 7;
+                            const expiryDate = new Date(baseDate);
+                            expiryDate.setDate(baseDate.getDate() + trialDays);
+                            return expiryDate.toLocaleDateString();
+                        })()}
+                    </div>
                 </div>
 
                 <div className="p-6 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-3xl">
