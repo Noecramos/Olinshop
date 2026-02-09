@@ -89,8 +89,8 @@ function MarketplaceContent() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          // Deduplicate: Show only 1 store per Email (Prefer Multistore Parent)
-          const seenEmails = new Set();
+          // Deduplicate: Show only 1 store per Email+Type (Prefer Multistore Parent)
+          const seenGroups = new Set();
           const uniqueStores: any[] = [];
 
           // Sort: 1. MultistoreEnabled (Parent), 2. Oldest Created (Main Store)
@@ -108,9 +108,10 @@ function MarketplaceContent() {
           });
 
           sorted.forEach(store => {
-            const key = store.email || store.id; // Group by email
-            if (!seenEmails.has(key)) {
-              seenEmails.add(key);
+            // Group by email + type (segmento)
+            const key = `${store.email || store.id}|${store.type || ''}`;
+            if (!seenGroups.has(key)) {
+              seenGroups.add(key);
               uniqueStores.push(store);
             }
           });
@@ -378,7 +379,7 @@ function MarketplaceContent() {
             </div>
           ) : (
             filteredStores.map(store => (
-              <Link key={store.id} href={`/loja/${store.slug}`}>
+              <Link key={store.id} href={store.multistoreEnabled ? `/loja/${store.slug}/select-location` : `/loja/${store.slug}`}>
                 <div className="item-card-row group">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
                     {store.image ? (
