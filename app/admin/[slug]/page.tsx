@@ -358,7 +358,7 @@ export default function StoreAdmin() {
         products: 'Produtos',
         settings: 'Ajustes',
         raspadinha: 'Validador',
-        subscription: 'Estado'
+        subscription: 'Assinatura'
     };
 
     const printDailySummary = () => {
