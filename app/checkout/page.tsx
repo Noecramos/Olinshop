@@ -66,7 +66,7 @@ export default function CheckoutPage() {
     useEffect(() => {
         fetch('/api/config')
             .then(res => res.ok ? res.json() : {})
-            .then(data => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
+            .then((data: any) => setConfig(prev => ({ ...prev, footerText: data.footerText || '' })))
             .catch(() => { });
     }, []);
 
@@ -260,25 +260,80 @@ export default function CheckoutPage() {
                             freightFee = parseFloat(tier.fee);
                             console.log('✅ Local Tier Freight:', freightFee);
                         } else {
-                            // Long Distance (SIMULATED CORREIOS)
-                            freightFee = 25.00 + (distance * 0.5); // R$ 25 base + 0.50/km
-                            console.log('📦 Long Distance Freight:', freightFee);
+                            // Check if beyond all tiers
+                            const lastTier = validTiers[validTiers.length - 1];
+                            const maxTierDistance = lastTier ? parseFloat(lastTier.maxDistance) : 0;
+
+                            // If within 150% of max tier distance, use last tier fee
+                            // Otherwise, mark as out of range
+                            if (distance <= maxTierDistance * 1.5) {
+                                freightFee = parseFloat(lastTier.fee);
+                                console.log('✅ Using last tier fee for slightly out-of-range:', freightFee);
+                            } else {
+                                // Truly out of range - mark as such
+                                console.log('❌ CEP out of delivery range');
+                                setIsCepOutOfRange(true);
+                                setLoading(false);
+                                alert('CEP fora da área de entrega. Por favor, escolha outro método de envio.');
+                                return;
+                            }
                         }
                     } else {
                         freightFee = 15.00 + (distance * 0.8);
                     }
                 } else {
-                    // NOMINATIM FAIL: Use CEP Prefix Logic
-                    const prefix = parseInt(cepClean.substring(0, 2));
-                    if (prefix >= 0 && prefix <= 19) freightFee = 18.00; // SP
-                    else if (prefix >= 20 && prefix <= 28) freightFee = 25.00; // RJ
-                    else freightFee = 35.00; // Far away
-                    console.log('📦 Prefix-based Freight Fallback:', freightFee);
+                    // NOMINATIM FAIL: Use first tier fee if available, otherwise fallback
+                    console.log('⚠️ Nominatim failed to geocode address');
+
+                    // Try to use the first tier fee as a safe default
+                    const tiers = restaurant.deliveryFeeTiers;
+                    if (tiers && Array.isArray(tiers) && tiers.length > 0) {
+                        const validTiers = tiers
+                            .filter((t: any) => t.maxDistance && t.fee)
+                            .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
+
+                        if (validTiers.length > 0) {
+                            freightFee = parseFloat(validTiers[0].fee);
+                            console.log('✅ Using first tier fee (Nominatim fallback):', freightFee);
+                        } else {
+                            // No valid tiers, use basic prefix logic
+                            const prefix = parseInt(cepClean.substring(0, 2));
+                            if (prefix >= 0 && prefix <= 19) freightFee = 18.00; // SP
+                            else if (prefix >= 20 && prefix <= 28) freightFee = 25.00; // RJ
+                            else freightFee = 35.00; // Far away
+                            console.log('📦 Prefix-based Freight Fallback:', freightFee);
+                        }
+                    } else {
+                        // No tiers configured, use prefix logic
+                        const prefix = parseInt(cepClean.substring(0, 2));
+                        if (prefix >= 0 && prefix <= 19) freightFee = 18.00; // SP
+                        else if (prefix >= 20 && prefix <= 28) freightFee = 25.00; // RJ
+                        else freightFee = 35.00; // Far away
+                        console.log('📦 Prefix-based Freight Fallback:', freightFee);
+                    }
                 }
             } else {
-                // NO RESTAURANT GPS: Simple State Prefix Logic
-                const prefix = parseInt(cepClean.substring(0, 2));
-                freightFee = prefix < 30 ? 15.00 : 25.00;
+                // NO RESTAURANT GPS: Use first tier fee if available
+                console.log('⚠️ No restaurant GPS coordinates available');
+                const tiers = restaurant.deliveryFeeTiers;
+                if (tiers && Array.isArray(tiers) && tiers.length > 0) {
+                    const validTiers = tiers
+                        .filter((t: any) => t.maxDistance && t.fee)
+                        .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
+
+                    if (validTiers.length > 0) {
+                        freightFee = parseFloat(validTiers[0].fee);
+                        console.log('✅ Using first tier fee (no GPS):', freightFee);
+                    } else {
+                        // Fallback to basic logic
+                        const prefix = parseInt(cepClean.substring(0, 2));
+                        freightFee = prefix < 30 ? 15.00 : 25.00;
+                    }
+                } else {
+                    // No tiers, use basic prefix logic
+                    const prefix = parseInt(cepClean.substring(0, 2));
+                    freightFee = prefix < 30 ? 15.00 : 25.00;
+                }
             }
 
             if (form.serviceType === 'delivery') {
