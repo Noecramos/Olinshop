@@ -151,7 +151,28 @@ export default function SuperAdmin() {
                     }
 
                     const planPrice = parseFloat(freshRestaurant.saasMonthlyPrice || freshRestaurant.saas_monthly_price) || 49.90;
-                    const message = `Olá, ${freshRestaurant.responsibleName || freshRestaurant.responsible_name || 'Parceiro'}! \n\nSua loja *${freshRestaurant.name}* foi aprovada no LojaKy! 🚀\n\nAcesse seu painel administrativo:\nhttps://lojaky.noviapp.com.br/admin/${freshRestaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${freshRestaurant.slug}\nSenha: ${finalPassword}\n\n*Pagamento:*\nValor: R$ ${planPrice.toFixed(2)}\nPIX: 81 983920320\nBanco Santander\nWorldVuer iByond Brazil\n\nBoas vendas!`;
+                    const name = freshRestaurant.responsibleName || freshRestaurant.responsible_name || 'Parceiro';
+                    const lines = [
+                        `Olá, ${name}!`,
+                        '',
+                        `Sua loja *${freshRestaurant.name}* foi aprovada no LojaKy! 🚀`,
+                        '',
+                        'Acesse seu painel administrativo:',
+                        `https://lojaky.noviapp.com.br/admin/${freshRestaurant.slug}`,
+                        '',
+                        '*Suas Credenciais:*',
+                        `Login: ${freshRestaurant.slug}`,
+                        `Senha: ${finalPassword}`,
+                        '',
+                        '*Pagamento:*',
+                        `Valor: R$ ${planPrice.toFixed(2)}`,
+                        'PIX: 81 983920320',
+                        'Banco Santander',
+                        'WorldVuer iByond Brazil',
+                        '',
+                        'Boas vendas!'
+                    ];
+                    const message = lines.join('\n');
                     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
                 } else if (!phone) {
                     alert('Loja aprovada! Senha gerada: ' + finalPassword);
