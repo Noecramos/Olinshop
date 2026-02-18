@@ -156,7 +156,7 @@ export async function PUT(req: Request) {
 
         if (approved !== undefined) {
             // Generate password if approving and no password exists
-            let password = undefined;
+            let password: string | undefined = undefined;
             if (approved) {
                 const { rows } = await sql`SELECT password, subscription_status FROM restaurants WHERE id = ${id}`;
 
@@ -164,9 +164,8 @@ export async function PUT(req: Request) {
                 const { rows: settings } = await sql`SELECT value FROM global_settings WHERE key = 'saasTrialDays'`;
                 const trialDays = settings.length > 0 ? parseInt(settings[0].value) : 7;
 
-                // Prepare updates
-                const updates: any[] = [];
-                let password = rows[0]?.password;
+                // Use existing password or generate new one
+                password = rows[0]?.password;
 
                 if (!password) {
                     password = Math.random().toString(36).slice(-8);
@@ -192,6 +191,22 @@ export async function PUT(req: Request) {
                         WHERE id = ${id}
                     `;
                 }
+
+                // Fetch and return the full updated restaurant record
+                const { rows: updated } = await sql`
+                    SELECT *,
+                        responsible_name as "responsibleName",
+                        zip_code as "zipCode",
+                        pix_key as "pixKey",
+                        saas_monthly_price as "saasMonthlyPrice",
+                        saas_trial_days as "saasTrialDays",
+                        created_at as "createdAt",
+                        subscription_status,
+                        subscription_expires_at
+                    FROM restaurants WHERE id = ${id}
+                `;
+
+                return NextResponse.json({ success: true, password, restaurant: updated[0] });
             } else {
                 await sql`UPDATE restaurants SET approved = ${approved} WHERE id = ${id}`;
             }

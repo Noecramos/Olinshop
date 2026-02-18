@@ -114,35 +114,46 @@ export default function SuperAdmin() {
 
             const data = await res.json();
             console.log('API Response:', data);
-            const finalPassword = data.password || restaurant.password;
+
+            if (!res.ok) {
+                alert('Erro ao aprovar: ' + (data.error || 'Erro desconhecido'));
+                return;
+            }
 
             if (newStatus) {
-                console.log('Approving restaurant:', restaurant.id);
-                // Update local state to show password immediately
-                setRestaurants(prev => {
-                    const updated = prev.map(r => r.id === restaurant.id ? { ...r, approved: true, password: finalPassword } : r);
-                    console.log('Updated State length:', updated.length);
-                    return updated;
-                });
+                // Use fresh data from the database
+                const freshRestaurant = data.restaurant || restaurant;
+                const finalPassword = data.password || freshRestaurant.password;
 
-                // Send WhatsApp
-                const phone = restaurant.whatsapp || restaurant.phone;
-                if (phone) {
+                console.log('Approving restaurant:', freshRestaurant.id, 'Password:', finalPassword);
+
+                if (!finalPassword) {
+                    alert('⚠️ Loja aprovada mas a senha não foi gerada. Clique em 🔑 para gerar uma nova senha.');
+                }
+
+                // Update local state with fresh DB data
+                setRestaurants(prev => prev.map(r =>
+                    r.id === restaurant.id ? { ...r, ...freshRestaurant, approved: true, password: finalPassword } : r
+                ));
+
+                // Send WhatsApp using fresh data
+                const phone = freshRestaurant.whatsapp || freshRestaurant.phone;
+                if (phone && finalPassword) {
                     let cleanPhone = phone.replace(/\D/g, '');
                     if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
 
-                    // Brazilian "extra nine" correction if 12 digits and looks like AA 9 9...
                     if (cleanPhone.length === 12 && !cleanPhone.startsWith('55') && cleanPhone.substring(2, 4) === '99') {
                         cleanPhone = cleanPhone.substring(0, 2) + cleanPhone.substring(3);
                     }
 
-                    // Add 55 only if it's a domestic number (10-11 digits)
                     if (!cleanPhone.startsWith('55') && cleanPhone.length >= 10 && cleanPhone.length <= 11) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! \n\nSua loja *${restaurant.name}* foi aprovada no LojaKy! 🚀\n\nAcesse seu painel administrativo:\nLink: https://lojaky.noviapp.com.br/admin/${restaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${restaurant.slug}\nSenha: ${finalPassword}\n\nBoas vendas!`;
+
+                    const planPrice = parseFloat(freshRestaurant.saasMonthlyPrice || freshRestaurant.saas_monthly_price) || 49.90;
+                    const message = `https://lojaky.noviapp.com.br\n\nOlá, ${freshRestaurant.responsibleName || freshRestaurant.responsible_name || 'Parceiro'}! \n\nSua loja *${freshRestaurant.name}* foi aprovada no LojaKy! 🚀\n\nAcesse seu painel administrativo:\nLink: https://lojaky.noviapp.com.br/admin/${freshRestaurant.slug}\n\n*Suas Credenciais:*\nLogin: ${freshRestaurant.slug}\nSenha: ${finalPassword}\n\n*Pagamento:*\nValor: R$ ${planPrice.toFixed(2)}\nPIX: 81 983920320\nBanco Santander\nWorldVuer iByond Brazil\n\nBoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
-                } else {
+                } else if (!phone) {
                     alert('Loja aprovada! Senha gerada: ' + finalPassword);
                 }
             } else {
