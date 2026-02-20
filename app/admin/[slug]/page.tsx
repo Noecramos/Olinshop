@@ -676,7 +676,7 @@ export default function StoreAdmin() {
                                                                 {order.serviceType === 'delivery' ? '🛵 Entrega' : '🛍️ Retirada'}
                                                             </span>
                                                             <span className="text-xs text-gray-400 font-bold">
-                                                                {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                                {new Date(order.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                             </span>
                                                         </div>
 
