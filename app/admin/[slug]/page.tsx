@@ -660,63 +660,65 @@ export default function StoreAdmin() {
                                     ) : (
                                         displayedOrders.map(order => (
                                             <div key={order.id} className="p-8 hover:bg-gray-50/50 transition-colors">
-                                                <div className="flex flex-col lg:flex-row justify-between gap-8">
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-3 mb-4">
-                                                            <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg text-xs font-black">#{order.ticketNumber}</span>
-                                                            <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                order.status?.toLowerCase() === 'preparing' ? 'bg-blue-100 text-blue-700' :
-                                                                    'bg-green-100 text-green-700'
-                                                                }`}>
-                                                                {order.status?.toLowerCase() === 'pending' ? 'Pendente' :
-                                                                    order.status?.toLowerCase() === 'preparing' ? 'Expedição' :
-                                                                        order.status?.toLowerCase() === 'sent' ? 'Enviado' : order.status}
-                                                            </span>
-                                                            <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.serviceType === 'delivery' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>
-                                                                {order.serviceType === 'delivery' ? '🛵 Entrega' : '🛍️ Retirada'}
-                                                            </span>
-                                                            <span className="text-xs text-gray-400 font-bold">
-                                                                {new Date(order.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                            </span>
-                                                        </div>
-
-                                                        <div className="mb-4">
-                                                            <h4 className="font-black text-gray-900 text-lg leading-none mb-1">{order.customer?.name}</h4>
-                                                            {order.customer?.cpf && <p className="text-xs text-blue-600 font-bold mb-1">CPF: {order.customer.cpf}</p>}
-                                                            {order.serviceType === 'delivery' && <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>}
-                                                            <p className="text-xs text-gray-400 mt-1">📞 {order.customer?.phone}</p>
-                                                        </div>
-
-                                                        <div className="space-y-2">
-                                                            {(order.items || []).map((item: any, i: number) => (
-                                                                <div key={i} className="flex items-center gap-3 text-sm">
-                                                                    <span className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-md text-[10px] font-black">{item.quantity}x</span>
-                                                                    <span className="font-bold text-gray-700">{item.name}</span>
-                                                                    {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
-                                                                        <span className="text-[10px] text-gray-400">
-                                                                            ({Object.values(item.selectedVariants).join(', ')})
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-
-                                                        {order.observations && (
-                                                            <div className="mt-4 p-4 bg-orange-50 rounded-2xl border border-orange-100 text-xs text-orange-800 font-medium italic">
-                                                                Obs: {order.observations}
-                                                            </div>
-                                                        )}
+                                                <div className="flex flex-col gap-6">
+                                                    {/* Header: ticket, status, service type, date */}
+                                                    <div className="flex items-center gap-3 flex-wrap">
+                                                        <span className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg text-xs font-black">#{order.ticketNumber}</span>
+                                                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                            order.status?.toLowerCase() === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                'bg-green-100 text-green-700'
+                                                            }`}>
+                                                            {order.status?.toLowerCase() === 'pending' ? 'Pendente' :
+                                                                order.status?.toLowerCase() === 'preparing' ? 'Expedição' :
+                                                                    order.status?.toLowerCase() === 'sent' ? 'Enviado' : order.status}
+                                                        </span>
+                                                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${order.serviceType === 'delivery' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>
+                                                            {order.serviceType === 'delivery' ? '🛵 Entrega' : '🛍️ Retirada'}
+                                                        </span>
+                                                        <span className="text-xs text-gray-400 font-bold">
+                                                            {new Date(order.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} • {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
                                                     </div>
 
-                                                    <div className="lg:w-64 flex flex-col justify-between items-end">
-                                                        <div className="text-right">
+                                                    {/* Customer info */}
+                                                    <div>
+                                                        <h4 className="font-black text-gray-900 text-lg leading-none mb-1">{order.customer?.name}</h4>
+                                                        {order.customer?.cpf && <p className="text-xs text-blue-600 font-bold mb-1">CPF: {order.customer.cpf}</p>}
+                                                        {order.serviceType === 'delivery' && <p className="text-sm text-gray-500 font-medium">{order.customer?.address}</p>}
+                                                        <p className="text-xs text-gray-400 mt-1">📞 {order.customer?.phone}</p>
+                                                    </div>
+
+                                                    {/* Items */}
+                                                    <div className="space-y-2">
+                                                        {(order.items || []).map((item: any, i: number) => (
+                                                            <div key={i} className="flex items-center gap-3 text-sm">
+                                                                <span className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-md text-[10px] font-black">{item.quantity}x</span>
+                                                                <span className="font-bold text-gray-700">{item.name}</span>
+                                                                {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                                                                    <span className="text-[10px] text-gray-400">
+                                                                        ({Object.values(item.selectedVariants).join(', ')})
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {order.observations && (
+                                                        <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100 text-xs text-orange-800 font-medium italic">
+                                                            Obs: {order.observations}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Total + Actions row */}
+                                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4 border-t border-gray-100">
+                                                        <div>
                                                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total do Pedido</p>
-                                                            <h3 className="text-2xl font-black text-gray-900">
+                                                            <h3 className="text-2xl font-black text-gray-900 leading-none">
                                                                 {Number(order.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                             </h3>
-                                                            <p className="text-[10px] font-bold text-accent uppercase">{order.paymentMethod}</p>
+                                                            <p className="text-[10px] font-bold text-accent uppercase mt-1">{order.paymentMethod}</p>
                                                             {order.shippingMethod && (
-                                                                <div className="mt-2 text-right">
+                                                                <div className="mt-2">
                                                                     <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black uppercase ring-1 ring-blue-100">
                                                                         📦 {order.shippingMethod}
                                                                     </span>
@@ -729,7 +731,7 @@ export default function StoreAdmin() {
                                                             )}
                                                         </div>
 
-                                                        <div className="flex gap-2 mt-6">
+                                                        <div className="flex gap-2 flex-wrap">
                                                             <button
                                                                 onClick={() => printOrder(order)}
                                                                 className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 font-bold text-xs uppercase"
