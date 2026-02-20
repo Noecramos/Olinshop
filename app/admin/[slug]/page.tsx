@@ -140,16 +140,16 @@ export default function StoreAdmin() {
             let details = '';
             if (item.selectedVariants && Object.keys(item.selectedVariants).length > 0) {
                 const variantLines = Object.entries(item.selectedVariants)
-                    .map(([key, val]) => `• ${key}: ${val}`)
-                    .join('<br> &nbsp;&nbsp;');
-                details = `<div style="font-size: 11px; color: #555; padding-left: 10px; margin-top: 2px;">${variantLines}</div>`;
+                    .map(([key, val]) => `  • ${val}`)
+                    .join('<br>');
+                details = `<div style="font-size: 10px; color: #333; padding-left: 14px;">${variantLines}</div>`;
             }
 
             return `
-            <div style="margin-bottom: 8px;">
-                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+            <div style="margin-bottom: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px;">
                     <span>${item.quantity}x ${item.name}</span>
-                    <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    <span style="white-space: nowrap; margin-left: 4px;">${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                 </div>
                 ${details}
             </div>
@@ -158,23 +158,58 @@ export default function StoreAdmin() {
 
         win.document.write(`
             <html>
-                <body style="font-family: monospace; width: 300px; padding: 20px;">
-                    <h2 style="text-align: center; margin-bottom: 5px;">${restaurant?.name.toUpperCase()}</h2>
-                    <p style="text-align: center; margin-top: 0;">PEDIDO #${order.ticketNumber}</p>
-                    <hr>
-                    <p><strong>Tipo:</strong> ${order.serviceType === 'delivery' ? 'Entrega' : 'Retirada'}</p>
+                <head>
+                    <style>
+                        @page {
+                            size: 80mm auto;
+                            margin: 0;
+                        }
+                        @media print {
+                            html, body {
+                                margin: 0 !important;
+                                padding: 0 !important;
+                            }
+                        }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body {
+                            font-family: 'Courier New', monospace;
+                            width: 72mm;
+                            max-width: 72mm;
+                            padding: 4mm;
+                            font-size: 12px;
+                            line-height: 1.3;
+                            color: #000;
+                        }
+                        .center { text-align: center; }
+                        .bold { font-weight: bold; }
+                        .sep { border: none; border-top: 1px dashed #000; margin: 6px 0; }
+                        .row { display: flex; justify-content: space-between; }
+                        .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin: 4px 0; }
+                        p { margin: 2px 0; font-size: 11px; }
+                        .footer { text-align: center; font-size: 9px; margin-top: 8px; color: #555; }
+                    </style>
+                </head>
+                <body>
+                    <div class="center bold" style="font-size: 14px; margin-bottom: 2px;">${restaurant?.name.toUpperCase()}</div>
+                    <div class="center" style="font-size: 11px; margin-bottom: 4px;">PEDIDO #${order.ticketNumber}</div>
+                    <div class="center" style="font-size: 10px;">${new Date(order.createdAt).toLocaleDateString('pt-BR')} ${new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <hr class="sep">
+                    <p><strong>${order.serviceType === 'delivery' ? '🛵 ENTREGA' : '🛍️ RETIRADA'}</strong></p>
                     <p><strong>Cliente:</strong> ${order.customer?.name}</p>
                     ${order.customer?.cpf ? `<p><strong>CPF:</strong> ${order.customer.cpf}</p>` : ''}
-                    <p><strong>Telefone:</strong> ${order.customer?.phone}</p>
-                    ${order.serviceType === 'delivery' ? `<p><strong>Endereço:</strong> ${order.customer?.address}</p>` : ''}
-                    <hr>
+                    <p><strong>Tel:</strong> ${order.customer?.phone}</p>
+                    ${order.serviceType === 'delivery' ? `<p><strong>End:</strong> ${order.customer?.address}</p>` : ''}
+                    <hr class="sep">
                     ${itemsHtml}
-                    <hr>
-                    <p style="display: flex; justify-content: space-between;"><strong>TOTAL:</strong> <strong>${order.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong></p>
-                    <p><strong>Pagamento:</strong> ${order.paymentMethod?.toUpperCase()}</p>
-                    ${order.observations ? `<p><strong>Obs:</strong> ${order.observations}</p>` : ''}
-                    <hr>
-                    <p style="text-align: center; font-size: 10px;">${new Date(order.createdAt).toLocaleString('pt-BR')}</p>
+                    <hr class="sep">
+                    <div class="total-row">
+                        <span>TOTAL:</span>
+                        <span>${order.total?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </div>
+                    <p><strong>Pgto:</strong> ${order.paymentMethod?.toUpperCase()}</p>
+                    ${order.observations ? `<hr class="sep"><p style="font-size: 11px;"><strong>OBS:</strong> ${order.observations}</p>` : ''}
+                    <hr class="sep">
+                    <div class="footer">LojaKy • ${new Date().getFullYear()}</div>
                 </body>
             </html>
         `);
