@@ -162,62 +162,41 @@ export default function StoreAdmin() {
                     <title>Pedido #${order.ticketNumber}</title>
                     <style>
                         @page {
-                            size: 58mm auto;
-                            margin: 0mm;
-                        }
-                        @media print {
-                            html, body {
-                                width: 58mm !important;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                            }
-                            @page { margin: 0; }
+                            margin: 0;
                         }
                         * { margin: 0; padding: 0; box-sizing: border-box; }
-                        html, body {
-                            width: 58mm;
-                            max-width: 58mm;
-                        }
                         body {
                             font-family: 'Courier New', 'Lucida Console', monospace;
-                            padding: 2mm 3mm;
-                            font-size: 11px;
+                            width: 100%;
+                            padding: 8px;
+                            font-size: 12px;
                             line-height: 1.4;
                             color: #000;
-                            -webkit-print-color-adjust: exact;
+                            word-wrap: break-word;
+                            overflow-wrap: break-word;
                         }
                         .center { text-align: center; }
                         .bold { font-weight: bold; }
                         .sep {
                             border: none;
                             border-top: 1px dashed #000;
-                            margin: 4px 0;
+                            margin: 6px 0;
                         }
                         .total-row {
                             display: flex;
                             justify-content: space-between;
-                            font-size: 13px;
+                            font-size: 14px;
                             font-weight: bold;
                             margin: 4px 0;
                         }
-                        .item-row {
-                            display: flex;
-                            justify-content: space-between;
-                            font-size: 11px;
-                            margin-bottom: 2px;
-                        }
-                        .item-row .price {
-                            white-space: nowrap;
-                            margin-left: 4px;
-                        }
-                        p { margin: 1px 0; font-size: 10px; }
-                        .footer { text-align: center; font-size: 8px; margin-top: 6px; color: #555; }
+                        p { margin: 2px 0; font-size: 11px; }
+                        .footer { text-align: center; font-size: 9px; margin-top: 8px; color: #555; }
                     </style>
                 </head>
                 <body>
-                    <div class="center bold" style="font-size: 13px; margin-bottom: 2px;">${restaurant?.name.toUpperCase()}</div>
-                    <div class="center" style="font-size: 10px; margin-bottom: 2px;">PEDIDO #${order.ticketNumber}</div>
-                    <div class="center" style="font-size: 9px;">${new Date(order.createdAt).toLocaleDateString('pt-BR')} ${new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div class="center bold" style="font-size: 16px; margin-bottom: 4px;">${restaurant?.name.toUpperCase()}</div>
+                    <div class="center" style="font-size: 12px; margin-bottom: 2px;">PEDIDO #${order.ticketNumber}</div>
+                    <div class="center" style="font-size: 11px;">${new Date(order.createdAt).toLocaleDateString('pt-BR')} ${new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
                     <hr class="sep">
                     <p><strong>${order.serviceType === 'delivery' ? 'ENTREGA' : 'RETIRADA'}</strong></p>
                     <p><strong>Cliente:</strong> ${order.customer?.name}</p>
