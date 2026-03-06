@@ -44,18 +44,10 @@ export default function StoreHeader({ name = "LojaKy", image, banner, rating = "
 
     return (
         <div className="relative mb-8">
-            {/* Marketplace Top Bar - IDENTICAL TO MAIN PAGE */}
-            <div
-                className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
-                style={{
-                    backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || 'transparent'),
-                    backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                }}
-            >
-                {/* Share Button - Absolute Positioned Left */}
-                <div className="absolute top-4 left-4 z-[60]">
+            {/* Top Action Bar */}
+            <div className="w-full flex justify-between items-center px-4 pt-4 z-40 relative">
+                {/* Share Button */}
+                <div className="z-[60]">
                     <button
                         onClick={() => {
                             if (navigator.share) {
@@ -79,8 +71,8 @@ export default function StoreHeader({ name = "LojaKy", image, banner, rating = "
                     </button>
                 </div>
 
-                {/* User Profile / Login Button - Absolute Positioned */}
-                <div className="absolute top-4 right-4 z-[60]">
+                {/* User Profile / Login Button */}
+                <div className="z-[60]">
                     {user ? (
                         <div className="flex items-center gap-2 bg-white p-2 pr-4 rounded-full shadow-lg border border-gray-100 animate-fade-in">
                             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-lg border border-gray-200">👤</div>
@@ -104,12 +96,12 @@ export default function StoreHeader({ name = "LojaKy", image, banner, rating = "
             {!isSignupPage && (
                 <div className="container relative mt-4 pb-4 px-4 flex flex-col items-center md:items-start md:flex-row gap-6 z-10">
                     {/* Logo */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white flex-shrink-0">
+                    <div className="w-40 h-40 md:w-56 md:h-56 rounded-full shadow-xl overflow-hidden bg-white flex-shrink-0 z-20">
                         <Image
                             src={image || "https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/app-logo.png"}
                             alt={name || "Logo"}
-                            width={160}
-                            height={160}
+                            width={224}
+                            height={224}
                             className="w-full h-full object-contain"
                         />
                     </div>
