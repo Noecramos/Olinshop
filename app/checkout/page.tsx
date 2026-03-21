@@ -152,20 +152,22 @@ export default function CheckoutPage() {
                     </button>
                 </div>
 
-                {/* Success Overlay - Rendered even if cart is empty (post-checkout) */}
+                {/* Success Overlay - Action Required flow */}
                 {showSuccess && (
                     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
                         <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform animate-scale-in">
-                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                                <span className="text-4xl">✅</span>
+                            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                                <span className="text-4xl">⚠️</span>
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
-                            <p className="text-gray-500 mb-6 font-medium">Siga para o WhatsApp para confirmar seu pedido e enviar o comprovante.</p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Falta um passo!</h2>
+                            <p className="text-gray-500 mb-6 font-medium">Seu pedido foi salvo, agora vamos enviar para a loja, <b>você precisa confirmar clicando no botão abaixo:</b></p>
 
                             <div className="space-y-3">
                                 <a
                                     href={whatsappLink}
-                                    className="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl shadow-lg shadow-green-200 hover:bg-[#128C7E] transition-all flex items-center justify-center gap-3 text-lg"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl shadow-lg shadow-green-200 hover:bg-[#128C7E] transition-all flex items-center justify-center gap-3 text-lg animate-pulse"
                                 >
                                     <span>📱</span> ENVIAR NO WHATSAPP
                                 </a>
@@ -497,7 +499,8 @@ export default function CheckoutPage() {
             clearCart();
             setLoading(false);
             setShowSuccess(true);
-            window.location.href = link;
+            // Auto redirect removed so the user completes the flow manually:
+            // window.location.href = link;
 
         } catch (e) {
             console.error(e);
