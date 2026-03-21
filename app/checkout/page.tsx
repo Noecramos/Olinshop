@@ -156,17 +156,26 @@ export default function CheckoutPage() {
                 {showSuccess && (
                     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
                         <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform animate-scale-in">
-                            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                                <span className="text-4xl">⚠️</span>
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                                <span className="text-4xl text-green-500">✅</span>
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Falta um passo!</h2>
-                            <p className="text-gray-500 mb-6 font-medium">Seu pedido foi salvo, agora vamos enviar para a loja, <b>você precisa confirmar clicando no botão abaixo:</b></p>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Sucesso!</h2>
+                            <p className="text-gray-500 mb-6 font-medium whitespace-pre-line">
+                                Seu pedido foi salvo, agora vamos
+                                enviar para a loja, você precisa
+                                confirmar clicando no botão abaixo:
+                            </p>
 
                             <div className="space-y-3">
                                 <a
                                     href={whatsappLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => {
+                                        setTimeout(() => {
+                                            router.push(restaurant?.slug ? `/loja/${restaurant.slug}` : '/');
+                                        }, 100);
+                                    }}
                                     className="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl shadow-lg shadow-green-200 hover:bg-[#128C7E] transition-all flex items-center justify-center gap-3 text-lg animate-pulse"
                                 >
                                     <span>📱</span> ENVIAR NO WHATSAPP
@@ -176,7 +185,7 @@ export default function CheckoutPage() {
                                     onClick={() => router.push(restaurant?.slug ? `/loja/${restaurant.slug}` : '/')}
                                     className="w-full bg-gray-50 text-gray-400 font-bold py-3 px-4 rounded-2xl hover:bg-gray-100 transition-colors text-sm"
                                 >
-                                    Voltar à Loja
+                                    voltar à loja
                                 </button>
                             </div>
                         </div>
